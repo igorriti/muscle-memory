@@ -97,6 +97,16 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
         {/* Customer message placeholder */}
         <rect x={CUSTOMER.x} y={CUSTOMER.y} width={CUSTOMER.w} height={CUSTOMER.h}
               rx={8} fill="#eff3ff" stroke="#c7d7fe" strokeWidth={1} />
+        {/* Customer body */}
+        <text x={CUSTOMER.x + 14} y={CUSTOMER.y + HEADER_H + 22} fontSize={36}
+              fontFamily="Georgia, serif" fill="#c7d7fe" opacity={0.7}>
+          &ldquo;
+        </text>
+        <text x={CUSTOMER.x + CUSTOMER.w / 2} y={CUSTOMER.y + HEADER_H + (CUSTOMER.h - HEADER_H) / 2 + 4}
+              fontSize={14} fontFamily="'Geist', sans-serif" fill="#334"
+              fontStyle="italic" textAnchor="middle" dominantBaseline="middle">
+          Cancel my order ORD-412
+        </text>
         <BoxHeader x={CUSTOMER.x} y={CUSTOMER.y} w={CUSTOMER.w} rx={8}
                    label="CUSTOMER MESSAGE" status={phase === 'idle' ? 'idle' : 'done'} showCheck={phase !== 'idle'} />
 
