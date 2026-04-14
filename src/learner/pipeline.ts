@@ -20,9 +20,11 @@ export async function runLearningPipeline(
   const unclassified = store.getUnclassifiedTraces();
   if (unclassified.length === 0) return { templatesCreated: 0, templatesUpdated: 0 };
 
-  // Cluster by tool sequence: traces that called the same tools in the same order
-  // belong together. This is far more accurate than embedding similarity for clustering.
-  const clusters = clusterByToolSequence(unclassified);
+  // Cluster by FIRST tool called — traces that start with the same tool
+  // likely represent the same intent even if subsequent tools vary.
+  // This groups "get_order → cancel_order" and "get_order → cancel_order → send_notification"
+  // into the same cluster, then the graph extraction builds the branches.
+  const clusters = clusterByFirstTool(unclassified);
 
   let created = 0;
   let updated = 0;
@@ -30,16 +32,21 @@ export async function runLearningPipeline(
   for (const cluster of clusters) {
     if (cluster.length < config.minTracesForTemplate) continue;
 
-    const centroid = computeCentroid(cluster.map(t => t.userMessageEmbedding!));
+    const withEmbeddings = cluster.filter(t => t.userMessageEmbedding != null);
+    if (withEmbeddings.length === 0) continue;
+
+    const centroid = computeCentroid(withEmbeddings.map(t => t.userMessageEmbedding!));
     const existing = store.getAllActiveTemplates();
-    const existingMatch = existing.find(t => cosine(centroid, t.embedding) > 0.85);
+    const existingMatch = existing.find(t => cosine(centroid, t.embedding) > 0.90);
 
     if (existingMatch) {
       updated++;
     } else {
-      const graph = extractGraphFromTraces(cluster);
+      const graph = buildBranchingGraph(cluster);
+      if (graph.nodes.length === 0) continue;
+
       const argSchema = inferArgSchema(cluster);
-      const name = await generateName(cluster, config);
+      const name = generateNameFromTools(cluster);
 
       const template: Template = {
         templateId: uuid(),
@@ -66,47 +73,29 @@ export async function runLearningPipeline(
   return { templatesCreated: created, templatesUpdated: updated };
 }
 
+// ════════════════════════════════════════════
+//  CLUSTERING
+// ════════════════════════════════════════════
+
 /**
- * Cluster traces by their tool-call sequence.
- * "Cancel my order" and "hey cancel asap" both call [cancel_order] → same cluster.
- * "Track my order" calls [track_order] → different cluster.
- * This is deterministic and perfectly accurate — no embedding guesswork.
+ * Cluster by the first tool called.
+ * "Cancel order" queries always start with cancel_order or get_order.
+ * "Track order" queries start with track_order.
+ * This creates broader clusters than exact-sequence matching,
+ * letting the graph extraction build branches.
  */
-function clusterByToolSequence(traces: Trace[]): Trace[][] {
+function clusterByFirstTool(traces: Trace[]): Trace[][] {
   const groups = new Map<string, Trace[]>();
   for (const t of traces) {
-    const key = t.steps.map(s => s.toolName).join(' → ') || '(no tools)';
-    if (!groups.has(key)) groups.set(key, []);
-    groups.get(key)!.push(t);
+    const firstTool = t.steps[0]?.toolName ?? '(none)';
+    if (!groups.has(firstTool)) groups.set(firstTool, []);
+    groups.get(firstTool)!.push(t);
   }
   return [...groups.values()];
 }
 
-function clusterTraces(traces: Trace[], threshold: number): Trace[][] {
-  const assigned = new Set<number>();
-  const clusters: Trace[][] = [];
-
-  for (let i = 0; i < traces.length; i++) {
-    if (assigned.has(i)) continue;
-    const cluster: Trace[] = [traces[i]];
-    assigned.add(i);
-
-    for (let j = i + 1; j < traces.length; j++) {
-      if (assigned.has(j)) continue;
-      if (!traces[i].userMessageEmbedding || !traces[j].userMessageEmbedding) continue;
-
-      const sim = cosine(traces[i].userMessageEmbedding!, traces[j].userMessageEmbedding!);
-      if (sim >= threshold) {
-        cluster.push(traces[j]);
-        assigned.add(j);
-      }
-    }
-    clusters.push(cluster);
-  }
-  return clusters;
-}
-
 function computeCentroid(embeddings: number[][]): number[] {
+  if (embeddings.length === 0) return [];
   const dim = embeddings[0].length;
   const centroid = new Array(dim).fill(0);
   for (const emb of embeddings) {
@@ -116,79 +105,168 @@ function computeCentroid(embeddings: number[][]): number[] {
   return centroid;
 }
 
+// ════════════════════════════════════════════
+//  BRANCHING GRAPH EXTRACTION
+// ════════════════════════════════════════════
+
 /**
- * Build the execution graph directly from recorded traces.
- * No LLM needed — the traces already contain exact tool names, args, and order.
+ * Build a branching DAG from traces. Handles:
+ * 1. Multiple paths (80% do A→B, 20% do A→B→C)
+ * 2. Weighted edges based on frequency
+ * 3. Conditions extracted from output values when paths diverge
+ * 4. Fallback edges when a tool fails and a different tool is called
  *
- * Algorithm:
- * 1. Find the most common tool sequence across traces
- * 2. Build nodes from that sequence with arg templates
- * 3. Build edges connecting sequential nodes
+ * All deterministic — no LLM needed.
  */
-function extractGraphFromTraces(traces: Trace[]): ExecutionGraph {
-  // Find the most common tool-call sequence
-  const sequenceCounts = new Map<string, { count: number; steps: Trace['steps'] }>();
+function buildBranchingGraph(traces: Trace[]): ExecutionGraph {
+  // Step 1: Collect all unique tool positions
+  // Each (position, toolName) pair is a node
+  const nodeMap = new Map<string, { tool: string; position: number; count: number }>();
+  const maxSteps = Math.max(...traces.map(t => t.steps.length), 0);
+
   for (const t of traces) {
-    const key = t.steps.map(s => s.toolName).join(' → ');
-    const existing = sequenceCounts.get(key);
-    if (existing) {
-      existing.count++;
-    } else {
-      sequenceCounts.set(key, { count: 1, steps: t.steps });
+    for (let i = 0; i < t.steps.length; i++) {
+      const step = t.steps[i];
+      const key = `${i}:${step.toolName}`;
+      if (!nodeMap.has(key)) {
+        nodeMap.set(key, { tool: step.toolName, position: i, count: 0 });
+      }
+      nodeMap.get(key)!.count++;
     }
   }
 
-  // Pick the most frequent sequence
-  let bestSteps: Trace['steps'] = traces[0]?.steps ?? [];
-  let bestCount = 0;
-  for (const [, entry] of sequenceCounts) {
-    if (entry.count > bestCount) {
-      bestCount = entry.count;
-      bestSteps = entry.steps;
-    }
-  }
+  // Create nodes with IDs
+  const nodes: GraphNode[] = [];
+  const nodeIds = new Map<string, string>(); // key → nodeId
 
-  // Build nodes from the steps
-  const nodes: GraphNode[] = bestSteps.map((step, i) => {
-    // Build argsTemplate: values that vary across traces become {field_name}
+  for (const [key, info] of nodeMap) {
+    const id = `n${nodes.length + 1}`;
+    nodeIds.set(key, id);
+
+    // Build argsTemplate from traces at this position
     const argsTemplate: Record<string, string> = {};
-    const allInputsAtStep = traces
-      .filter(t => t.steps[i]?.toolName === step.toolName)
-      .map(t => t.steps[i]?.toolInput ?? {});
+    const stepsAtPos = traces
+      .filter(t => t.steps[info.position]?.toolName === info.tool)
+      .map(t => t.steps[info.position]);
 
-    for (const [key, value] of Object.entries(step.toolInput ?? {})) {
-      const valuesAtKey = allInputsAtStep.map(inp => inp[key]).filter(v => v != null);
-      const unique = new Set(valuesAtKey.map(String));
-      if (unique.size > 1) {
-        // Value varies → make it a variable
-        argsTemplate[key] = `{${key}}`;
-      } else {
-        // Value is constant → keep it static
-        argsTemplate[key] = String(value);
+    if (stepsAtPos.length > 0) {
+      const sampleInput = stepsAtPos[0].toolInput ?? {};
+      for (const [k, v] of Object.entries(sampleInput)) {
+        const values = stepsAtPos.map(s => s.toolInput?.[k]).filter(x => x != null);
+        const unique = new Set(values.map(String));
+        argsTemplate[k] = unique.size > 1 ? `{${k}}` : String(v);
       }
     }
 
-    return { id: `n${i + 1}`, tool: step.toolName, argsTemplate };
-  });
+    nodes.push({ id, tool: info.tool, argsTemplate });
+  }
 
-  // Build edges connecting sequential nodes
+  // Step 2: Build edges by counting transitions
+  const edgeCounts = new Map<string, { count: number; total: number; failCount: number; conditions: Map<string, number> }>();
+
+  for (const t of traces) {
+    for (let i = 0; i < t.steps.length - 1; i++) {
+      const fromKey = `${i}:${t.steps[i].toolName}`;
+      const toKey = `${i + 1}:${t.steps[i + 1].toolName}`;
+      const fromId = nodeIds.get(fromKey);
+      const toId = nodeIds.get(toKey);
+      if (!fromId || !toId) continue;
+
+      const edgeKey = `${fromId}→${toId}`;
+      if (!edgeCounts.has(edgeKey)) {
+        edgeCounts.set(edgeKey, { count: 0, total: 0, failCount: 0, conditions: new Map() });
+      }
+      const ec = edgeCounts.get(edgeKey)!;
+      ec.count++;
+
+      // Track if this transition happened after a failure
+      if (!t.steps[i].success) ec.failCount++;
+
+      // Track output values for condition extraction
+      const output = t.steps[i].toolOutput;
+      if (output && typeof output === 'object') {
+        for (const [k, v] of Object.entries(output)) {
+          if (typeof v === 'string' || typeof v === 'boolean' || typeof v === 'number') {
+            const condKey = `${fromId}.output.${k} == ${JSON.stringify(v)}`;
+            ec.conditions.set(condKey, (ec.conditions.get(condKey) ?? 0) + 1);
+          }
+        }
+      }
+    }
+  }
+
+  // Count how many traces pass through each node (for weight calculation)
+  for (const t of traces) {
+    for (let i = 0; i < t.steps.length - 1; i++) {
+      const fromKey = `${i}:${t.steps[i].toolName}`;
+      const toKey = `${i + 1}:${t.steps[i + 1].toolName}`;
+      const fromId = nodeIds.get(fromKey);
+      const toId = nodeIds.get(toKey);
+      if (!fromId || !toId) continue;
+      // Count total outgoing from this node
+      for (const [ek, ev] of edgeCounts) {
+        if (ek.startsWith(fromId + '→')) {
+          ev.total = traces.filter(tr => {
+            const idx = tr.steps.findIndex((s, j) => `${j}:${s.toolName}` === fromKey);
+            return idx >= 0;
+          }).length;
+        }
+      }
+    }
+  }
+
+  // Step 3: Create edges with weights and conditions
   const edges: GraphEdge[] = [];
-  for (let i = 0; i < nodes.length - 1; i++) {
+  for (const [edgeKey, ec] of edgeCounts) {
+    const [fromId, toId] = edgeKey.split('→');
+    const weight = ec.total > 0 ? ec.count / ec.total : 1;
+    const isFallback = ec.failCount > ec.count / 2;
+
+    // Extract condition: find the most common output value for this edge
+    // that distinguishes it from other edges from the same source
+    let condition: string | null = null;
+    const otherEdgesFromSame = [...edgeCounts.entries()]
+      .filter(([k]) => k.startsWith(fromId + '→') && k !== edgeKey);
+
+    if (otherEdgesFromSame.length > 0 && ec.conditions.size > 0) {
+      // Find condition that best differentiates this edge
+      let bestCond = '';
+      let bestScore = 0;
+      for (const [cond, count] of ec.conditions) {
+        const score = count / ec.count; // what fraction of this edge's traces have this condition
+        if (score > bestScore && score > 0.7) {
+          bestScore = score;
+          bestCond = cond;
+        }
+      }
+      if (bestCond) condition = bestCond;
+    }
+
     edges.push({
-      from: nodes[i].id,
-      to: nodes[i + 1].id,
-      condition: null,
-      weight: bestCount / traces.length,
-      type: 'normal' as const,
+      from: fromId,
+      to: toId,
+      condition,
+      weight,
+      type: isFallback ? 'fallback' : 'normal',
     });
   }
+
+  // Find root node (position 0)
+  const rootNode = nodes.find(n => {
+    const entry = [...nodeMap.entries()].find(([, info]) => info.position === 0);
+    return entry && nodeIds.get(entry[0]) === n.id;
+  });
 
   return {
     nodes,
     edges,
-    rootNodeId: nodes[0]?.id ?? 'n1',
+    rootNodeId: rootNode?.id ?? nodes[0]?.id ?? 'n1',
   };
 }
+
+// ════════════════════════════════════════════
+//  ARG SCHEMA INFERENCE
+// ════════════════════════════════════════════
 
 function inferArgSchema(traces: Trace[]): ArgField[] {
   const firstStepArgs = traces.map(t => t.steps[0]?.toolInput ?? {});
@@ -217,17 +295,29 @@ function inferArgSchema(traces: Trace[]): ArgField[] {
   return fields;
 }
 
-async function generateName(traces: Trace[], config: MithrilConfig): Promise<string> {
-  if (!config.extractorModel) {
-    // fallback: generate name from first trace's tool calls
-    const tools = traces[0].steps.map(s => s.toolName);
-    return tools.slice(0, 2).join('_');
+// ════════════════════════════════════════════
+//  NAME GENERATION (deterministic, no LLM)
+// ════════════════════════════════════════════
+
+/**
+ * Generate template name from the tools called.
+ * No LLM needed — the tool names are descriptive enough.
+ */
+function generateNameFromTools(traces: Trace[]): string {
+  // Get the most common first tool
+  const toolCounts = new Map<string, number>();
+  for (const t of traces) {
+    const tools = t.steps.map(s => s.toolName).join('_');
+    toolCounts.set(tools, (toolCounts.get(tools) ?? 0) + 1);
   }
 
-  const messages = traces.slice(0, 5).map(t => t.userMessage);
-  const { text } = await generateText({
-    model: config.extractorModel,
-    prompt: `Given these user messages that all represent the same type of task, generate a short snake_case name (2-3 words max) that describes the task type. Messages:\n${messages.join('\n')}\n\nName:`,
-  });
-  return text.trim().toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
+  let bestTools = '';
+  let bestCount = 0;
+  for (const [tools, count] of toolCounts) {
+    if (count > bestCount) { bestCount = count; bestTools = tools; }
+  }
+
+  // Use first 2 tool names as the template name
+  const parts = bestTools.split('_').slice(0, 3);
+  return parts.join('_') || 'unknown';
 }

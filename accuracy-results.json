@@ -1,0 +1,6703 @@
+{
+  "total": 500,
+  "memoryServed": 371,
+  "accuracy": {
+    "all": {
+      "exact": 277,
+      "core": 300,
+      "overlap": 320
+    },
+    "memoryOnly": {
+      "exact": 148,
+      "core": 191,
+      "overlap": 211
+    }
+  },
+  "details": [
+    {
+      "p": "cancel_order",
+      "q": "Cancel my order ORD-1000",
+      "wo": [
+        "cancel_order"
+      ],
+      "w": [
+        "cancel_order"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "track_order",
+      "q": "Where is my order ORD-1000?",
+      "wo": [
+        "get_order_status",
+        "track_order",
+        "estimate_delivery"
+      ],
+      "w": [
+        "get_order_status",
+        "track_order",
+        "estimate_delivery"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "return_item",
+      "q": "I want to return my order ORD-1000",
+      "wo": [
+        "get_order"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_order_status",
+      "q": "What is the status of order ORD-1000?",
+      "wo": [
+        "get_order_status"
+      ],
+      "w": [
+        "get_order_status"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "process_refund",
+      "q": "I need a refund for order ORD-1000",
+      "wo": [
+        "get_order"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_order_invoice",
+      "q": "Get the invoice for order ORD-1000",
+      "wo": [
+        "get_invoice"
+      ],
+      "w": [
+        "get_invoice"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_stock",
+      "q": "Is product ORD-1000 in stock?",
+      "wo": [
+        "get_product"
+      ],
+      "w": [
+        "get_product"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "add_to_cart",
+      "q": "Add product ORD-1000 to my cart",
+      "wo": [
+        "add_to_cart"
+      ],
+      "w": [
+        "add_to_cart"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "apply_coupon",
+      "q": "Apply coupon code ORDER1000 to my cart",
+      "wo": [
+        "apply_coupon"
+      ],
+      "w": [
+        "apply_coupon"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "create_support_ticket",
+      "q": "I need help with order ORD-1000",
+      "wo": [
+        "get_order"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_refund_status",
+      "q": "What is the refund status for order ORD-1000?",
+      "wo": [
+        "get_refund_status"
+      ],
+      "w": [
+        "get_refund_status"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "exchange_product",
+      "q": "I want to exchange an item from order ORD-1000",
+      "wo": [
+        "get_order_items"
+      ],
+      "w": [
+        "get_order_items"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "cancel_subscription",
+      "q": "Cancel my subscription ORD-1000",
+      "wo": [],
+      "w": [],
+      "ph": 1,
+      "ex": true,
+      "co": false
+    },
+    {
+      "p": "check_loyalty_points",
+      "q": "How many loyalty points do I have?",
+      "wo": [
+        "get_loyalty_points"
+      ],
+      "w": [
+        "get_loyalty_points"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "add_to_wishlist",
+      "q": "Add product ORD-1000 to my wishlist",
+      "wo": [],
+      "w": [],
+      "ph": 1,
+      "ex": true,
+      "co": false
+    },
+    {
+      "p": "get_shipping_rates",
+      "q": "What are the shipping options for order ORD-1000?",
+      "wo": [
+        "get_shipping_rates"
+      ],
+      "w": [
+        "get_shipping_rates"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "subscribe_stock_alert",
+      "q": "Notify me when product ORD-1000 is back in stock",
+      "wo": [],
+      "w": [],
+      "ph": 1,
+      "ex": true,
+      "co": false
+    },
+    {
+      "p": "get_payment_status",
+      "q": "Check payment status for order ORD-1000",
+      "wo": [
+        "get_payment_status"
+      ],
+      "w": [
+        "get_payment_status"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "reorder_previous",
+      "q": "Reorder everything from order ORD-1000",
+      "wo": [
+        "reorder"
+      ],
+      "w": [
+        "reorder"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_order_details",
+      "q": "Show me the details for order ORD-1000",
+      "wo": [
+        "get_order",
+        "get_order_items",
+        "get_order_status",
+        "get_order_total",
+        "estimate_delivery"
+      ],
+      "w": [
+        "get_order",
+        "get_order_items",
+        "get_order_status",
+        "get_order_total",
+        "estimate_delivery"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "cancel_order",
+      "q": "hey i need to cancel order 1001 asap",
+      "wo": [
+        "cancel_order"
+      ],
+      "w": [
+        "cancel_order"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "track_order",
+      "q": "any updates on ORD-1001? its been 5 days",
+      "wo": [
+        "get_order_status",
+        "track_order",
+        "estimate_delivery",
+        "get_order_timeline"
+      ],
+      "w": [
+        "get_order_status",
+        "track_order",
+        "estimate_delivery",
+        "get_order_timeline"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "return_item",
+      "q": "the product from order ORD-1001 is defective, need to return",
+      "wo": [
+        "get_order_items",
+        "get_return_reasons",
+        "get_return_policy"
+      ],
+      "w": [
+        "get_order_items",
+        "get_return_reasons",
+        "get_return_policy"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_order_status",
+      "q": "is my order ORD-1001 confirmed?",
+      "wo": [
+        "get_order_status"
+      ],
+      "w": [
+        "get_order_status"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "process_refund",
+      "q": "refund me for ORD-1001 please, product was broken",
+      "wo": [
+        "refund_payment"
+      ],
+      "w": [
+        "refund_payment"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_order_invoice",
+      "q": "i need a receipt for ORD-1001 for my taxes",
+      "wo": [
+        "get_receipt"
+      ],
+      "w": [
+        "get_receipt"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_stock",
+      "q": "do you still have item ORD-1001?",
+      "wo": [
+        "get_order_items"
+      ],
+      "w": [
+        "get_order_items"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "add_to_cart",
+      "q": "i wanna buy ORD-1001, add it",
+      "wo": [
+        "add_to_cart"
+      ],
+      "w": [
+        "add_to_cart"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "apply_coupon",
+      "q": "i have a discount code ORDER1001",
+      "wo": [],
+      "w": [],
+      "ph": 1,
+      "ex": true,
+      "co": false
+    },
+    {
+      "p": "create_support_ticket",
+      "q": "something went wrong with ORD-1001, need support",
+      "wo": [],
+      "w": [],
+      "ph": 1,
+      "ex": true,
+      "co": false
+    },
+    {
+      "p": "get_refund_status",
+      "q": "when will i get my refund for ORD-1001?",
+      "wo": [
+        "get_refund_status",
+        "get_return_status",
+        "get_return_timeline"
+      ],
+      "w": [
+        "get_refund_status",
+        "get_return_status",
+        "get_return_timeline"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "exchange_product",
+      "q": "can i swap something from ORD-1001 for a different size?",
+      "wo": [
+        "get_order_items"
+      ],
+      "w": [
+        "get_order_items"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "cancel_subscription",
+      "q": "i want to stop my subscription ORD-1001",
+      "wo": [
+        "cancel_order"
+      ],
+      "w": [
+        "cancel_order"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_loyalty_points",
+      "q": "whats my points balance?",
+      "wo": [
+        "get_loyalty_points"
+      ],
+      "w": [
+        "get_loyalty_points"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "add_to_wishlist",
+      "q": "save ORD-1001 for later",
+      "wo": [],
+      "w": [],
+      "ph": 1,
+      "ex": true,
+      "co": false
+    },
+    {
+      "p": "get_shipping_rates",
+      "q": "how much is delivery for ORD-1001?",
+      "wo": [
+        "get_shipping_rates"
+      ],
+      "w": [
+        "get_shipping_rates"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "subscribe_stock_alert",
+      "q": "alert me when ORD-1001 is available again",
+      "wo": [],
+      "w": [],
+      "ph": 1,
+      "ex": true,
+      "co": false
+    },
+    {
+      "p": "get_payment_status",
+      "q": "did my payment for ORD-1001 go through?",
+      "wo": [
+        "get_payment_status",
+        "get_order_status"
+      ],
+      "w": [
+        "get_payment_status",
+        "get_order_status"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "reorder_previous",
+      "q": "i want the same stuff as ORD-1001 again",
+      "wo": [
+        "reorder"
+      ],
+      "w": [
+        "reorder"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_order_details",
+      "q": "what did i order in ORD-1001?",
+      "wo": [
+        "get_order_items"
+      ],
+      "w": [
+        "get_order_items"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "cancel_order",
+      "q": "i changed my mind about ORD-1002, please cancel it",
+      "wo": [
+        "cancel_order"
+      ],
+      "w": [
+        "cancel_order"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "track_order",
+      "q": "track order 1002 please",
+      "wo": [
+        "track_order",
+        "get_order_status",
+        "estimate_delivery"
+      ],
+      "w": [
+        "track_order",
+        "get_order_status",
+        "estimate_delivery"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "return_item",
+      "q": "how do i send back order ORD-1002?",
+      "wo": [
+        "get_order"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_order_status",
+      "q": "just checking on ORD-1002, any update?",
+      "wo": [
+        "get_order_status",
+        "track_order",
+        "estimate_delivery",
+        "get_order_timeline"
+      ],
+      "w": [
+        "get_order_status",
+        "track_order",
+        "estimate_delivery",
+        "get_order_timeline"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "process_refund",
+      "q": "order ORD-1002 was terrible, i want my money back",
+      "wo": [
+        "get_order"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_order_invoice",
+      "q": "can you send the invoice for order ORD-1002 to my email?",
+      "wo": [
+        "get_invoice"
+      ],
+      "w": [
+        "get_invoice"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_stock",
+      "q": "check if ORD-1002 is available",
+      "wo": [
+        "get_order_status"
+      ],
+      "w": [
+        "get_order_status"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "add_to_cart",
+      "q": "put ORD-1002 in my shopping cart",
+      "wo": [
+        "duplicate_order"
+      ],
+      "w": [
+        "duplicate_order"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "apply_coupon",
+      "q": "use promo ORDER1002 on my order",
+      "wo": [],
+      "w": [],
+      "ph": 1,
+      "ex": true,
+      "co": false
+    },
+    {
+      "p": "create_support_ticket",
+      "q": "create a ticket for order ORD-1002",
+      "wo": [],
+      "w": [],
+      "ph": 1,
+      "ex": true,
+      "co": false
+    },
+    {
+      "p": "get_refund_status",
+      "q": "check refund progress for order ORD-1002",
+      "wo": [
+        "get_refund_status",
+        "get_return_status"
+      ],
+      "w": [
+        "get_refund_status",
+        "get_return_status"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "exchange_product",
+      "q": "exchange request for ORD-1002",
+      "wo": [
+        "get_order_items"
+      ],
+      "w": [
+        "get_order_items"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "cancel_subscription",
+      "q": "unsubscribe from ORD-1002",
+      "wo": [
+        "cancel_order"
+      ],
+      "w": [
+        "cancel_order"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_loyalty_points",
+      "q": "check my rewards",
+      "wo": [
+        "get_loyalty_points"
+      ],
+      "w": [
+        "get_loyalty_points"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "add_to_wishlist",
+      "q": "wishlist ORD-1002",
+      "wo": [
+        "get_order_items"
+      ],
+      "w": [
+        "get_order_items"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_shipping_rates",
+      "q": "shipping cost for order ORD-1002",
+      "wo": [
+        "get_shipping_rates"
+      ],
+      "w": [
+        "get_shipping_rates"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "subscribe_stock_alert",
+      "q": "stock notification for ORD-1002 please",
+      "wo": [
+        "get_order_status"
+      ],
+      "w": [
+        "get_order_status"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_payment_status",
+      "q": "payment confirmation for ORD-1002",
+      "wo": [
+        "get_payment_status",
+        "get_receipt",
+        "get_order_status"
+      ],
+      "w": [
+        "get_payment_status",
+        "get_receipt",
+        "get_order_status"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "reorder_previous",
+      "q": "repeat order ORD-1002",
+      "wo": [
+        "reorder"
+      ],
+      "w": [
+        "reorder"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_order_details",
+      "q": "order ORD-1002 details",
+      "wo": [
+        "get_order",
+        "get_order_items",
+        "get_order_status",
+        "get_order_total",
+        "estimate_delivery"
+      ],
+      "w": [
+        "get_order",
+        "get_order_items",
+        "get_order_status",
+        "get_order_total",
+        "estimate_delivery"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "cancel_order",
+      "q": "can you stop order ORD-1003 from shipping? i dont want it an",
+      "wo": [
+        "get_order_status"
+      ],
+      "w": [
+        "get_order_status"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "track_order",
+      "q": "i havent received ORD-1003 yet, where is it?",
+      "wo": [
+        "get_order_status",
+        "track_order",
+        "estimate_delivery",
+        "get_order_timeline"
+      ],
+      "w": [
+        "get_order_status",
+        "track_order",
+        "estimate_delivery",
+        "get_order_timeline"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "return_item",
+      "q": "return ORD-1003, wrong size",
+      "wo": [
+        "create_return"
+      ],
+      "w": [
+        "create_return"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_order_status",
+      "q": "did order ORD-1003 go through?",
+      "wo": [
+        "get_order_status"
+      ],
+      "w": [
+        "get_order_status"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "process_refund",
+      "q": "process a refund for ORD-1003",
+      "wo": [
+        "refund_payment"
+      ],
+      "w": [
+        "refund_payment"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_order_invoice",
+      "q": "invoice for ORD-1003 please",
+      "wo": [
+        "get_invoice"
+      ],
+      "w": [
+        "get_invoice"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_stock",
+      "q": "is ORD-1003 sold out?",
+      "wo": [
+        "get_order_items"
+      ],
+      "w": [
+        "get_order_items"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "add_to_cart",
+      "q": "add item ORD-1003 to cart please",
+      "wo": [
+        "get_order"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "apply_coupon",
+      "q": "apply ORDER1003 coupon",
+      "wo": [],
+      "w": [],
+      "ph": 1,
+      "ex": true,
+      "co": false
+    },
+    {
+      "p": "create_support_ticket",
+      "q": "i have a problem with my order ORD-1003",
+      "wo": [
+        "get_order"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_refund_status",
+      "q": "has the refund for ORD-1003 been processed?",
+      "wo": [
+        "get_refund_status",
+        "get_order_status"
+      ],
+      "w": [
+        "get_refund_status",
+        "get_order_status"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "exchange_product",
+      "q": "wrong color on ORD-1003, want to exchange",
+      "wo": [
+        "get_order_items"
+      ],
+      "w": [
+        "get_order_items"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "cancel_subscription",
+      "q": "end my subscription ORD-1003 please",
+      "wo": [
+        "cancel_order"
+      ],
+      "w": [
+        "cancel_order"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_loyalty_points",
+      "q": "how many points have i earned?",
+      "wo": [
+        "get_loyalty_points"
+      ],
+      "w": [
+        "get_loyalty_points"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "add_to_wishlist",
+      "q": "i want to save product ORD-1003",
+      "wo": [
+        "add_to_cart"
+      ],
+      "w": [
+        "add_to_cart"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_shipping_rates",
+      "q": "what are the delivery prices for ORD-1003?",
+      "wo": [
+        "get_shipping_rates"
+      ],
+      "w": [
+        "get_shipping_rates"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "subscribe_stock_alert",
+      "q": "let me know when ORD-1003 is restocked",
+      "wo": [
+        "get_order_items"
+      ],
+      "w": [
+        "get_order_items"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_payment_status",
+      "q": "was order ORD-1003 charged?",
+      "wo": [
+        "get_payment_status"
+      ],
+      "w": [
+        "get_payment_status"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "reorder_previous",
+      "q": "buy the same items as order ORD-1003",
+      "wo": [
+        "reorder"
+      ],
+      "w": [
+        "reorder"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_order_details",
+      "q": "pull up order ORD-1003",
+      "wo": [
+        "get_order",
+        "get_order_status",
+        "get_order_items",
+        "get_order_total"
+      ],
+      "w": [
+        "get_order",
+        "get_order_status",
+        "get_order_items",
+        "get_order_total"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "cancel_order",
+      "q": "please cancel ORD-1004 i ordered the wrong thing",
+      "wo": [
+        "cancel_order"
+      ],
+      "w": [
+        "cancel_order"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "track_order",
+      "q": "can you check shipping status for order ORD-1004",
+      "wo": [
+        "track_order"
+      ],
+      "w": [
+        "track_order"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "return_item",
+      "q": "i got order ORD-1004 but its not what i expected, return ple",
+      "wo": [
+        "get_order"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_order_status",
+      "q": "status update for ORD-1004 please",
+      "wo": [
+        "get_order_status",
+        "track_order",
+        "estimate_delivery"
+      ],
+      "w": [
+        "get_order_status",
+        "track_order",
+        "estimate_delivery"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "process_refund",
+      "q": "can i get a refund on order ORD-1004? never received it",
+      "wo": [
+        "get_order_status",
+        "track_order",
+        "get_refund_status",
+        "get_return_status"
+      ],
+      "w": [
+        "get_order_status",
+        "track_order",
+        "get_refund_status",
+        "get_return_status"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_order_invoice",
+      "q": "i need a pdf invoice of order ORD-1004",
+      "wo": [
+        "get_invoice"
+      ],
+      "w": [
+        "get_invoice"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_stock",
+      "q": "i want to buy ORD-1004 but is it in stock?",
+      "wo": [
+        "get_product_availability"
+      ],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "add_to_cart",
+      "q": "cart add ORD-1004",
+      "wo": [],
+      "w": [],
+      "ph": 1,
+      "ex": true,
+      "co": false
+    },
+    {
+      "p": "apply_coupon",
+      "q": "enter code ORDER1004 for discount",
+      "wo": [
+        "apply_coupon"
+      ],
+      "w": [
+        "apply_coupon"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "create_support_ticket",
+      "q": "ORD-1004 has issues, please help",
+      "wo": [],
+      "w": [],
+      "ph": 1,
+      "ex": true,
+      "co": false
+    },
+    {
+      "p": "get_refund_status",
+      "q": "refund status ORD-1004",
+      "wo": [
+        "get_refund_status"
+      ],
+      "w": [
+        "get_refund_status"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "exchange_product",
+      "q": "i need to exchange the product from order ORD-1004",
+      "wo": [
+        "get_order_items"
+      ],
+      "w": [
+        "get_order_items"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "cancel_subscription",
+      "q": "how do i cancel subscription ORD-1004?",
+      "wo": [
+        "cancel_order"
+      ],
+      "w": [
+        "cancel_order"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_loyalty_points",
+      "q": "loyalty points balance",
+      "wo": [
+        "get_loyalty_points"
+      ],
+      "w": [
+        "get_loyalty_points"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "add_to_wishlist",
+      "q": "add ORD-1004 to my saved items",
+      "wo": [],
+      "w": [],
+      "ph": 1,
+      "ex": true,
+      "co": false
+    },
+    {
+      "p": "get_shipping_rates",
+      "q": "cheapest shipping for ORD-1004?",
+      "wo": [
+        "get_shipping_rates"
+      ],
+      "w": [
+        "get_shipping_rates"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "subscribe_stock_alert",
+      "q": "i want to be notified when ORD-1004 comes back",
+      "wo": [
+        "get_order_status"
+      ],
+      "w": [
+        "get_order_status"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_payment_status",
+      "q": "verify payment ORD-1004",
+      "wo": [
+        "get_payment_status"
+      ],
+      "w": [
+        "get_payment_status"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "reorder_previous",
+      "q": "place same order as ORD-1004",
+      "wo": [
+        "reorder"
+      ],
+      "w": [
+        "reorder"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_order_details",
+      "q": "whats in order ORD-1004?",
+      "wo": [
+        "get_order_items"
+      ],
+      "w": [
+        "get_order_items"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "cancel_order",
+      "q": "i want to cancel. order number is 1005",
+      "wo": [
+        "cancel_order"
+      ],
+      "w": [
+        "cancel_order"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "track_order",
+      "q": "whats happening with my delivery ORD-1005",
+      "wo": [
+        "get_order_status",
+        "track_order",
+        "estimate_delivery",
+        "get_order_timeline"
+      ],
+      "w": [
+        "get_order_status",
+        "track_order",
+        "estimate_delivery",
+        "get_order_timeline"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "return_item",
+      "q": "need a return label for ORD-1005",
+      "wo": [
+        "get_return_label"
+      ],
+      "w": [
+        "get_return_label"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_order_status",
+      "q": "has my order ORD-1005 been processed yet?",
+      "wo": [
+        "get_order_status"
+      ],
+      "w": [
+        "get_order_status"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "process_refund",
+      "q": "i returned ORD-1005 already, where is my refund?",
+      "wo": [
+        "get_refund_status",
+        "get_return_status",
+        "get_return_timeline"
+      ],
+      "w": [
+        "get_refund_status",
+        "get_return_status",
+        "get_return_timeline"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_order_invoice",
+      "q": "download invoice ORD-1005",
+      "wo": [
+        "get_invoice"
+      ],
+      "w": [
+        "get_invoice"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_stock",
+      "q": "availability check for product ORD-1005",
+      "wo": [
+        "get_product_availability"
+      ],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "add_to_cart",
+      "q": "i want to purchase product ORD-1005",
+      "wo": [
+        "get_product"
+      ],
+      "w": [
+        "get_product"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "apply_coupon",
+      "q": "ORDER1005 is my coupon, apply it please",
+      "wo": [
+        "apply_coupon"
+      ],
+      "w": [
+        "apply_coupon"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "create_support_ticket",
+      "q": "need to speak to someone about order ORD-1005",
+      "wo": [
+        "get_order"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_refund_status",
+      "q": "its been a week, wheres my refund for ORD-1005?",
+      "wo": [
+        "get_refund_status",
+        "get_return_status",
+        "get_order_status"
+      ],
+      "w": [
+        "get_refund_status"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": true
+    },
+    {
+      "p": "exchange_product",
+      "q": "swap item from ORD-1005 please",
+      "wo": [
+        "get_order",
+        "get_order_items"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": true
+    },
+    {
+      "p": "cancel_subscription",
+      "q": "dont renew subscription ORD-1005",
+      "wo": [
+        "get_order"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_loyalty_points",
+      "q": "show me my reward points",
+      "wo": [
+        "get_loyalty_points"
+      ],
+      "w": [
+        "get_loyalty_points"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "add_to_wishlist",
+      "q": "bookmark product ORD-1005",
+      "wo": [],
+      "w": [
+        "reorder"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_shipping_rates",
+      "q": "express shipping available for order ORD-1005?",
+      "wo": [
+        "get_shipping_rates",
+        "get_order_status"
+      ],
+      "w": [
+        "get_shipping_rates"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": true
+    },
+    {
+      "p": "subscribe_stock_alert",
+      "q": "restock alert for product ORD-1005",
+      "wo": [
+        "get_product"
+      ],
+      "w": [
+        "reorder"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_payment_status",
+      "q": "is my payment for ORD-1005 confirmed?",
+      "wo": [
+        "get_payment_status"
+      ],
+      "w": [
+        "get_payment_status"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "reorder_previous",
+      "q": "reorder ORD-1005",
+      "wo": [
+        "reorder"
+      ],
+      "w": [
+        "reorder"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_order_details",
+      "q": "info about my order ORD-1005",
+      "wo": [
+        "get_order",
+        "get_order_status",
+        "estimate_delivery",
+        "get_order_items"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": true
+    },
+    {
+      "p": "cancel_order",
+      "q": "ORD-1006 cancel please, bought it by accident",
+      "wo": [
+        "cancel_order"
+      ],
+      "w": [
+        "cancel_order"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "track_order",
+      "q": "order ORD-1006 tracking info please",
+      "wo": [
+        "track_order",
+        "get_order_status",
+        "get_order_timeline"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "return_item",
+      "q": "ORD-1006 doesnt work, i want to return it and get my money b",
+      "wo": [
+        "get_order"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_order_status",
+      "q": "i placed order ORD-1006 yesterday, is it being prepared?",
+      "wo": [
+        "get_order_status",
+        "get_order_timeline"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "process_refund",
+      "q": "please refund order ORD-1006, charged twice",
+      "wo": [
+        "get_order"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_order_invoice",
+      "q": "where can i find the receipt for order ORD-1006?",
+      "wo": [
+        "get_receipt"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "check_stock",
+      "q": "can i order ORD-1006 right now or is it out of stock?",
+      "wo": [
+        "get_order_items"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "add_to_cart",
+      "q": "add ORD-1006 to my basket",
+      "wo": [],
+      "w": [
+        "reorder"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "apply_coupon",
+      "q": "how do i use coupon ORDER1006?",
+      "wo": [],
+      "w": [
+        "apply_coupon"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "create_support_ticket",
+      "q": "open a complaint about ORD-1006",
+      "wo": [
+        "add_order_note"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_refund_status",
+      "q": "i returned ORD-1006 and waiting for refund",
+      "wo": [
+        "get_return_status",
+        "get_refund_status",
+        "get_return_timeline"
+      ],
+      "w": [
+        "get_refund_status"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "exchange_product",
+      "q": "order ORD-1006 exchange for different model",
+      "wo": [
+        "get_order_items"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "cancel_subscription",
+      "q": "subscription ORD-1006 cancel",
+      "wo": [
+        "cancel_order"
+      ],
+      "w": [
+        "cancel_order"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_loyalty_points",
+      "q": "do i have any loyalty points?",
+      "wo": [
+        "get_loyalty_points"
+      ],
+      "w": [
+        "get_loyalty_points"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "add_to_wishlist",
+      "q": "save ORD-1006 to my wish list",
+      "wo": [],
+      "w": [
+        "reorder"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_shipping_rates",
+      "q": "show me shipping rates for ORD-1006",
+      "wo": [
+        "get_shipping_rates"
+      ],
+      "w": [
+        "get_shipping_rates"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "subscribe_stock_alert",
+      "q": "email me when ORD-1006 is in stock",
+      "wo": [],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_payment_status",
+      "q": "payment status on order ORD-1006",
+      "wo": [
+        "get_payment_status"
+      ],
+      "w": [
+        "get_payment_status"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "reorder_previous",
+      "q": "i want to order the same thing as ORD-1006",
+      "wo": [
+        "reorder"
+      ],
+      "w": [
+        "reorder"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_order_details",
+      "q": "order summary for ORD-1006",
+      "wo": [
+        "get_order",
+        "get_order_items",
+        "get_order_total",
+        "get_order_status"
+      ],
+      "w": [
+        "reorder"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "cancel_order",
+      "q": "hi, how do i cancel order ORD-1007?",
+      "wo": [
+        "get_order_status"
+      ],
+      "w": [
+        "cancel_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "track_order",
+      "q": "my package ORD-1007 hasnt arrived, can you track it",
+      "wo": [
+        "track_order",
+        "get_order_status",
+        "estimate_delivery",
+        "get_order_timeline"
+      ],
+      "w": [
+        "track_order",
+        "get_order_status",
+        "estimate_delivery",
+        "get_order_timeline"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "return_item",
+      "q": "start return process for order ORD-1007",
+      "wo": [
+        "get_order",
+        "get_return_status",
+        "get_return_reasons"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": true
+    },
+    {
+      "p": "check_order_status",
+      "q": "can you tell me whats going on with order ORD-1007",
+      "wo": [
+        "get_order_status",
+        "track_order",
+        "get_order_timeline",
+        "estimate_delivery"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "process_refund",
+      "q": "ORD-1007 refund request",
+      "wo": [
+        "get_order_status",
+        "get_refund_status",
+        "get_order"
+      ],
+      "w": [
+        "get_refund_status"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_order_invoice",
+      "q": "send me the billing details for ORD-1007",
+      "wo": [
+        "get_order_total",
+        "get_order_tax_breakdown",
+        "get_invoice",
+        "get_receipt",
+        "get_payment_status"
+      ],
+      "w": [
+        "get_payment_status"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "check_stock",
+      "q": "ORD-1007 stock status?",
+      "wo": [
+        "get_order_status"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "add_to_cart",
+      "q": "can you add product ORD-1007 to my cart?",
+      "wo": [
+        "add_to_cart"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "apply_coupon",
+      "q": "got a promo code ORDER1007, can you apply it?",
+      "wo": [
+        "apply_coupon"
+      ],
+      "w": [
+        "apply_coupon"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "create_support_ticket",
+      "q": "order ORD-1007 is messed up, help me",
+      "wo": [],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_refund_status",
+      "q": "money still not back for order ORD-1007",
+      "wo": [
+        "get_refund_status",
+        "get_order",
+        "get_return_status"
+      ],
+      "w": [
+        "get_refund_status"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": true
+    },
+    {
+      "p": "exchange_product",
+      "q": "got the wrong size in ORD-1007, can i exchange?",
+      "wo": [
+        "get_order"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "cancel_subscription",
+      "q": "please stop charging me for subscription ORD-1007",
+      "wo": [
+        "get_order"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_loyalty_points",
+      "q": "i want to know my points total",
+      "wo": [
+        "get_loyalty_points"
+      ],
+      "w": [
+        "get_loyalty_points"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "add_to_wishlist",
+      "q": "put ORD-1007 on my wishlist",
+      "wo": [],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_shipping_rates",
+      "q": "how much to ship ORD-1007?",
+      "wo": [
+        "get_shipping_rates"
+      ],
+      "w": [
+        "get_shipping_rates"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "subscribe_stock_alert",
+      "q": "set up stock alert for ORD-1007",
+      "wo": [],
+      "w": [],
+      "ph": 1,
+      "ex": true,
+      "co": false
+    },
+    {
+      "p": "get_payment_status",
+      "q": "did you receive payment for ORD-1007?",
+      "wo": [
+        "get_payment_status"
+      ],
+      "w": [
+        "get_payment_status"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "reorder_previous",
+      "q": "duplicate order ORD-1007",
+      "wo": [
+        "duplicate_order"
+      ],
+      "w": [
+        "reorder"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_order_details",
+      "q": "show order ORD-1007",
+      "wo": [
+        "get_order",
+        "get_order_items",
+        "get_order_total",
+        "get_order_status"
+      ],
+      "w": [
+        "reorder"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "cancel_order",
+      "q": "i need order ORD-1008 cancelled before it ships",
+      "wo": [
+        "get_order_status"
+      ],
+      "w": [
+        "cancel_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "track_order",
+      "q": "hi i placed order ORD-1008 last week and still waiting",
+      "wo": [
+        "get_order_status",
+        "track_order",
+        "estimate_delivery",
+        "get_order_timeline"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "return_item",
+      "q": "can i return the items from ORD-1008? bought them 2 weeks ag",
+      "wo": [
+        "get_order"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_order_status",
+      "q": "order ORD-1008 status?",
+      "wo": [
+        "get_order_status"
+      ],
+      "w": [
+        "get_refund_status"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "process_refund",
+      "q": "i want a full refund for order ORD-1008",
+      "wo": [
+        "get_order"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_order_invoice",
+      "q": "i need proof of purchase for order ORD-1008",
+      "wo": [
+        "get_invoice",
+        "get_receipt"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "check_stock",
+      "q": "how many of ORD-1008 do you have left?",
+      "wo": [],
+      "w": [],
+      "ph": 1,
+      "ex": true,
+      "co": false
+    },
+    {
+      "p": "add_to_cart",
+      "q": "id like to buy ORD-1008, add to cart",
+      "wo": [
+        "get_order_items"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "apply_coupon",
+      "q": "discount code ORDER1008",
+      "wo": [
+        "apply_coupon"
+      ],
+      "w": [
+        "apply_coupon"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "create_support_ticket",
+      "q": "support needed for ORD-1008",
+      "wo": [
+        "get_order"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_refund_status",
+      "q": "update on my refund for ORD-1008 please",
+      "wo": [
+        "get_refund_status",
+        "get_return_status",
+        "get_order_status"
+      ],
+      "w": [
+        "get_refund_status"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": true
+    },
+    {
+      "p": "exchange_product",
+      "q": "exchange ORD-1008 item for a larger one",
+      "wo": [
+        "get_order_items"
+      ],
+      "w": [
+        "reorder"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "cancel_subscription",
+      "q": "i want out of subscription ORD-1008",
+      "wo": [
+        "cancel_order"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "check_loyalty_points",
+      "q": "rewards balance check",
+      "wo": [
+        "get_loyalty_points"
+      ],
+      "w": [
+        "get_loyalty_points"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "add_to_wishlist",
+      "q": "i like ORD-1008, save it for me",
+      "wo": [
+        "duplicate_order"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_shipping_rates",
+      "q": "delivery fee for order ORD-1008",
+      "wo": [
+        "get_shipping_rates"
+      ],
+      "w": [
+        "get_shipping_rates"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "subscribe_stock_alert",
+      "q": "ORD-1008 out of stock, notify me when back",
+      "wo": [
+        "get_order_items"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_payment_status",
+      "q": "has ORD-1008 been paid?",
+      "wo": [
+        "get_payment_status"
+      ],
+      "w": [
+        "get_payment_status"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "reorder_previous",
+      "q": "can you re-place order ORD-1008?",
+      "wo": [
+        "reorder"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_order_details",
+      "q": "give me details on ORD-1008",
+      "wo": [
+        "get_order",
+        "get_order_status",
+        "get_order_items",
+        "get_order_total",
+        "get_order_timeline"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": true
+    },
+    {
+      "p": "cancel_order",
+      "q": "cancel ORD-1009, my card was charged but i dont want it",
+      "wo": [
+        "cancel_order"
+      ],
+      "w": [
+        "cancel_order"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "track_order",
+      "q": "is ORD-1009 on its way? need it by friday",
+      "wo": [
+        "get_order_status",
+        "track_order",
+        "estimate_delivery"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "return_item",
+      "q": "i want to send order ORD-1009 back",
+      "wo": [
+        "get_order_status"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "check_order_status",
+      "q": "when will order ORD-1009 be ready?",
+      "wo": [
+        "get_order_status",
+        "estimate_delivery",
+        "get_order_timeline",
+        "track_order"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "process_refund",
+      "q": "money back for ORD-1009 please",
+      "wo": [
+        "refund_payment"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_order_invoice",
+      "q": "ORD-1009 invoice download",
+      "wo": [
+        "get_invoice"
+      ],
+      "w": [
+        "get_invoice"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_stock",
+      "q": "is product ORD-1009 still available to purchase?",
+      "wo": [
+        "get_product"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "add_to_cart",
+      "q": "shopping cart add ORD-1009",
+      "wo": [],
+      "w": [
+        "reorder"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "apply_coupon",
+      "q": "apply ORDER1009 to my purchase",
+      "wo": [],
+      "w": [
+        "apply_coupon"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "create_support_ticket",
+      "q": "file a complaint about order ORD-1009",
+      "wo": [
+        "get_order"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_refund_status",
+      "q": "ORD-1009 refund, any news?",
+      "wo": [
+        "get_refund_status"
+      ],
+      "w": [
+        "get_refund_status"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "exchange_product",
+      "q": "need to trade in my item from ORD-1009",
+      "wo": [
+        "get_order"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "cancel_subscription",
+      "q": "terminate subscription ORD-1009",
+      "wo": [
+        "get_order"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_loyalty_points",
+      "q": "what are my current loyalty points?",
+      "wo": [
+        "get_loyalty_points"
+      ],
+      "w": [
+        "get_loyalty_points"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "add_to_wishlist",
+      "q": "add ORD-1009 to favorites",
+      "wo": [],
+      "w": [
+        "reorder"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_shipping_rates",
+      "q": "shipping options and prices for ORD-1009",
+      "wo": [
+        "get_shipping_rates"
+      ],
+      "w": [
+        "get_shipping_rates"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "subscribe_stock_alert",
+      "q": "subscribe to restock notification ORD-1009",
+      "wo": [],
+      "w": [],
+      "ph": 1,
+      "ex": true,
+      "co": false
+    },
+    {
+      "p": "get_payment_status",
+      "q": "check if payment went through for ORD-1009",
+      "wo": [
+        "get_payment_status",
+        "get_order_status"
+      ],
+      "w": [
+        "get_payment_status"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": true
+    },
+    {
+      "p": "reorder_previous",
+      "q": "same as ORD-1009 please, reorder",
+      "wo": [
+        "reorder"
+      ],
+      "w": [
+        "reorder"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_order_details",
+      "q": "what was in my order ORD-1009?",
+      "wo": [
+        "get_order_items"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "cancel_order",
+      "q": "Cancel my order ORD-1010",
+      "wo": [
+        "cancel_order"
+      ],
+      "w": [
+        "cancel_order"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "track_order",
+      "q": "Where is my order ORD-1010?",
+      "wo": [
+        "get_order_status",
+        "track_order",
+        "estimate_delivery"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "return_item",
+      "q": "I want to return my order ORD-1010",
+      "wo": [
+        "get_order"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_order_status",
+      "q": "What is the status of order ORD-1010?",
+      "wo": [
+        "get_order_status"
+      ],
+      "w": [
+        "get_refund_status"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "process_refund",
+      "q": "I need a refund for order ORD-1010",
+      "wo": [
+        "get_order"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_order_invoice",
+      "q": "Get the invoice for order ORD-1010",
+      "wo": [
+        "get_invoice"
+      ],
+      "w": [
+        "get_invoice"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_stock",
+      "q": "Is product ORD-1010 in stock?",
+      "wo": [
+        "get_product_availability"
+      ],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "add_to_cart",
+      "q": "Add product ORD-1010 to my cart",
+      "wo": [
+        "add_to_cart"
+      ],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "apply_coupon",
+      "q": "Apply coupon code ORDER1010 to my cart",
+      "wo": [
+        "apply_coupon"
+      ],
+      "w": [
+        "apply_coupon"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "create_support_ticket",
+      "q": "I need help with order ORD-1010",
+      "wo": [
+        "get_order",
+        "get_order_status",
+        "track_order",
+        "estimate_delivery"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": true
+    },
+    {
+      "p": "get_refund_status",
+      "q": "What is the refund status for order ORD-1010?",
+      "wo": [
+        "get_refund_status"
+      ],
+      "w": [
+        "get_refund_status"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "exchange_product",
+      "q": "I want to exchange an item from order ORD-1010",
+      "wo": [
+        "get_order_items"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "cancel_subscription",
+      "q": "Cancel my subscription ORD-1010",
+      "wo": [],
+      "w": [
+        "cancel_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "check_loyalty_points",
+      "q": "How many loyalty points do I have?",
+      "wo": [
+        "get_loyalty_points"
+      ],
+      "w": [
+        "get_loyalty_points"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "add_to_wishlist",
+      "q": "Add product ORD-1010 to my wishlist",
+      "wo": [],
+      "w": [],
+      "ph": 1,
+      "ex": true,
+      "co": false
+    },
+    {
+      "p": "get_shipping_rates",
+      "q": "What are the shipping options for order ORD-1010?",
+      "wo": [
+        "get_shipping_rates"
+      ],
+      "w": [
+        "get_shipping_rates"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "subscribe_stock_alert",
+      "q": "Notify me when product ORD-1010 is back in stock",
+      "wo": [],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_payment_status",
+      "q": "Check payment status for order ORD-1010",
+      "wo": [
+        "get_payment_status",
+        "get_order_status"
+      ],
+      "w": [
+        "get_payment_status"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": true
+    },
+    {
+      "p": "reorder_previous",
+      "q": "Reorder everything from order ORD-1010",
+      "wo": [
+        "reorder"
+      ],
+      "w": [
+        "reorder"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_order_details",
+      "q": "Show me the details for order ORD-1010",
+      "wo": [
+        "get_order",
+        "get_order_items",
+        "get_order_status",
+        "get_order_total",
+        "estimate_delivery"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": true
+    },
+    {
+      "p": "cancel_order",
+      "q": "hey i need to cancel order 1011 asap",
+      "wo": [
+        "cancel_order"
+      ],
+      "w": [
+        "cancel_order"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "track_order",
+      "q": "any updates on ORD-1011? its been 5 days",
+      "wo": [
+        "get_order_status",
+        "track_order",
+        "estimate_delivery",
+        "get_order_timeline"
+      ],
+      "w": [
+        "get_order_status",
+        "track_order",
+        "estimate_delivery",
+        "get_order_timeline"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "return_item",
+      "q": "the product from order ORD-1011 is defective, need to return",
+      "wo": [
+        "get_order_items",
+        "get_return_policy",
+        "get_return_reasons"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "check_order_status",
+      "q": "is my order ORD-1011 confirmed?",
+      "wo": [
+        "get_order_status"
+      ],
+      "w": [
+        "get_payment_status"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "process_refund",
+      "q": "refund me for ORD-1011 please, product was broken",
+      "wo": [
+        "create_return"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_order_invoice",
+      "q": "i need a receipt for ORD-1011 for my taxes",
+      "wo": [
+        "get_receipt"
+      ],
+      "w": [
+        "get_payment_status"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "check_stock",
+      "q": "do you still have item ORD-1011?",
+      "wo": [],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "add_to_cart",
+      "q": "i wanna buy ORD-1011, add it",
+      "wo": [
+        "add_to_cart"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "apply_coupon",
+      "q": "i have a discount code ORDER1011",
+      "wo": [],
+      "w": [
+        "apply_coupon"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "create_support_ticket",
+      "q": "something went wrong with ORD-1011, need support",
+      "wo": [
+        "get_order"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_refund_status",
+      "q": "when will i get my refund for ORD-1011?",
+      "wo": [
+        "get_refund_status",
+        "get_return_status",
+        "get_order_status"
+      ],
+      "w": [
+        "get_refund_status"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": true
+    },
+    {
+      "p": "exchange_product",
+      "q": "can i swap something from ORD-1011 for a different size?",
+      "wo": [
+        "get_order_items"
+      ],
+      "w": [
+        "get_order_items"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "cancel_subscription",
+      "q": "i want to stop my subscription ORD-1011",
+      "wo": [
+        "get_order_status"
+      ],
+      "w": [
+        "cancel_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "check_loyalty_points",
+      "q": "whats my points balance?",
+      "wo": [
+        "get_loyalty_points"
+      ],
+      "w": [
+        "get_loyalty_points"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "add_to_wishlist",
+      "q": "save ORD-1011 for later",
+      "wo": [],
+      "w": [
+        "reorder"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_shipping_rates",
+      "q": "how much is delivery for ORD-1011?",
+      "wo": [
+        "get_shipping_rates"
+      ],
+      "w": [
+        "get_shipping_rates"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "subscribe_stock_alert",
+      "q": "alert me when ORD-1011 is available again",
+      "wo": [],
+      "w": [],
+      "ph": 1,
+      "ex": true,
+      "co": false
+    },
+    {
+      "p": "get_payment_status",
+      "q": "did my payment for ORD-1011 go through?",
+      "wo": [
+        "get_payment_status",
+        "get_order_status"
+      ],
+      "w": [
+        "get_payment_status"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": true
+    },
+    {
+      "p": "reorder_previous",
+      "q": "i want the same stuff as ORD-1011 again",
+      "wo": [
+        "reorder"
+      ],
+      "w": [
+        "reorder"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_order_details",
+      "q": "what did i order in ORD-1011?",
+      "wo": [
+        "get_order_items"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "cancel_order",
+      "q": "i changed my mind about ORD-1012, please cancel it",
+      "wo": [
+        "cancel_order"
+      ],
+      "w": [
+        "cancel_order"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "track_order",
+      "q": "track order 1012 please",
+      "wo": [
+        "get_order_status",
+        "track_order",
+        "estimate_delivery"
+      ],
+      "w": [
+        "track_order",
+        "get_order_status",
+        "estimate_delivery"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "return_item",
+      "q": "how do i send back order ORD-1012?",
+      "wo": [
+        "get_order",
+        "get_return_status"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": true
+    },
+    {
+      "p": "check_order_status",
+      "q": "just checking on ORD-1012, any update?",
+      "wo": [
+        "get_order_status",
+        "track_order",
+        "estimate_delivery"
+      ],
+      "w": [
+        "get_order_status",
+        "track_order",
+        "estimate_delivery"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "process_refund",
+      "q": "order ORD-1012 was terrible, i want my money back",
+      "wo": [
+        "get_order"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_order_invoice",
+      "q": "can you send the invoice for order ORD-1012 to my email?",
+      "wo": [
+        "get_invoice"
+      ],
+      "w": [
+        "get_invoice"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_stock",
+      "q": "check if ORD-1012 is available",
+      "wo": [
+        "get_order_status"
+      ],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "add_to_cart",
+      "q": "put ORD-1012 in my shopping cart",
+      "wo": [
+        "get_order_items"
+      ],
+      "w": [
+        "reorder"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "apply_coupon",
+      "q": "use promo ORDER1012 on my order",
+      "wo": [
+        "list_orders"
+      ],
+      "w": [
+        "apply_coupon"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "create_support_ticket",
+      "q": "create a ticket for order ORD-1012",
+      "wo": [],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_refund_status",
+      "q": "check refund progress for order ORD-1012",
+      "wo": [
+        "get_refund_status",
+        "get_return_status",
+        "get_order_status"
+      ],
+      "w": [
+        "get_refund_status"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": true
+    },
+    {
+      "p": "exchange_product",
+      "q": "exchange request for ORD-1012",
+      "wo": [
+        "get_order"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "cancel_subscription",
+      "q": "unsubscribe from ORD-1012",
+      "wo": [
+        "get_order_status"
+      ],
+      "w": [
+        "cancel_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "check_loyalty_points",
+      "q": "check my rewards",
+      "wo": [
+        "get_loyalty_points"
+      ],
+      "w": [
+        "get_loyalty_points"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "add_to_wishlist",
+      "q": "wishlist ORD-1012",
+      "wo": [
+        "get_order_items"
+      ],
+      "w": [
+        "reorder"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_shipping_rates",
+      "q": "shipping cost for order ORD-1012",
+      "wo": [
+        "get_shipping_rates"
+      ],
+      "w": [
+        "get_shipping_rates"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "subscribe_stock_alert",
+      "q": "stock notification for ORD-1012 please",
+      "wo": [
+        "get_order_status"
+      ],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_payment_status",
+      "q": "payment confirmation for ORD-1012",
+      "wo": [
+        "get_payment_status",
+        "get_receipt",
+        "get_order_status"
+      ],
+      "w": [
+        "get_payment_status"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": true
+    },
+    {
+      "p": "reorder_previous",
+      "q": "repeat order ORD-1012",
+      "wo": [
+        "reorder"
+      ],
+      "w": [
+        "reorder"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_order_details",
+      "q": "order ORD-1012 details",
+      "wo": [
+        "get_order",
+        "get_order_items",
+        "get_order_status",
+        "get_order_total",
+        "estimate_delivery"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": true
+    },
+    {
+      "p": "cancel_order",
+      "q": "can you stop order ORD-1013 from shipping? i dont want it an",
+      "wo": [
+        "get_order_status"
+      ],
+      "w": [
+        "cancel_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "track_order",
+      "q": "i havent received ORD-1013 yet, where is it?",
+      "wo": [
+        "get_order_status",
+        "track_order",
+        "estimate_delivery",
+        "get_order_timeline"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "return_item",
+      "q": "return ORD-1013, wrong size",
+      "wo": [
+        "create_return"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "check_order_status",
+      "q": "did order ORD-1013 go through?",
+      "wo": [
+        "get_order_status",
+        "get_payment_status",
+        "verify_order"
+      ],
+      "w": [
+        "get_payment_status"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "process_refund",
+      "q": "process a refund for ORD-1013",
+      "wo": [
+        "refund_payment"
+      ],
+      "w": [
+        "get_refund_status"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_order_invoice",
+      "q": "invoice for ORD-1013 please",
+      "wo": [
+        "get_invoice"
+      ],
+      "w": [
+        "get_invoice"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_stock",
+      "q": "is ORD-1013 sold out?",
+      "wo": [
+        "get_order_items"
+      ],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "add_to_cart",
+      "q": "add item ORD-1013 to cart please",
+      "wo": [
+        "get_order_items"
+      ],
+      "w": [
+        "reorder"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "apply_coupon",
+      "q": "apply ORDER1013 coupon",
+      "wo": [
+        "apply_coupon"
+      ],
+      "w": [
+        "apply_coupon"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "create_support_ticket",
+      "q": "i have a problem with my order ORD-1013",
+      "wo": [],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_refund_status",
+      "q": "has the refund for ORD-1013 been processed?",
+      "wo": [
+        "get_refund_status",
+        "get_order_status"
+      ],
+      "w": [
+        "get_refund_status"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": true
+    },
+    {
+      "p": "exchange_product",
+      "q": "wrong color on ORD-1013, want to exchange",
+      "wo": [
+        "create_return"
+      ],
+      "w": [
+        "create_return"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "cancel_subscription",
+      "q": "end my subscription ORD-1013 please",
+      "wo": [
+        "get_order_status"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "check_loyalty_points",
+      "q": "how many points have i earned?",
+      "wo": [
+        "get_loyalty_points"
+      ],
+      "w": [
+        "get_loyalty_points"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "add_to_wishlist",
+      "q": "i want to save product ORD-1013",
+      "wo": [
+        "add_to_cart"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_shipping_rates",
+      "q": "what are the delivery prices for ORD-1013?",
+      "wo": [
+        "get_shipping_rates"
+      ],
+      "w": [
+        "get_shipping_rates"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "subscribe_stock_alert",
+      "q": "let me know when ORD-1013 is restocked",
+      "wo": [],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_payment_status",
+      "q": "was order ORD-1013 charged?",
+      "wo": [
+        "get_payment_status",
+        "get_order_status",
+        "get_order"
+      ],
+      "w": [
+        "get_payment_status"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": true
+    },
+    {
+      "p": "reorder_previous",
+      "q": "buy the same items as order ORD-1013",
+      "wo": [
+        "reorder"
+      ],
+      "w": [
+        "reorder"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_order_details",
+      "q": "pull up order ORD-1013",
+      "wo": [
+        "get_order",
+        "get_order_status",
+        "get_order_items",
+        "get_order_total"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": true
+    },
+    {
+      "p": "cancel_order",
+      "q": "please cancel ORD-1014 i ordered the wrong thing",
+      "wo": [
+        "cancel_order"
+      ],
+      "w": [
+        "cancel_order"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "track_order",
+      "q": "can you check shipping status for order ORD-1014",
+      "wo": [
+        "get_order_status",
+        "track_order",
+        "get_order_timeline"
+      ],
+      "w": [
+        "track_order",
+        "get_order_status",
+        "estimate_delivery"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "return_item",
+      "q": "i got order ORD-1014 but its not what i expected, return ple",
+      "wo": [
+        "get_order"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_order_status",
+      "q": "status update for ORD-1014 please",
+      "wo": [
+        "get_order_status",
+        "track_order",
+        "estimate_delivery"
+      ],
+      "w": [
+        "get_order_status",
+        "track_order",
+        "estimate_delivery"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "process_refund",
+      "q": "can i get a refund on order ORD-1014? never received it",
+      "wo": [
+        "get_order_status",
+        "track_order",
+        "get_refund_status",
+        "get_order"
+      ],
+      "w": [
+        "get_refund_status"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_order_invoice",
+      "q": "i need a pdf invoice of order ORD-1014",
+      "wo": [
+        "get_invoice"
+      ],
+      "w": [
+        "get_invoice"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_stock",
+      "q": "i want to buy ORD-1014 but is it in stock?",
+      "wo": [
+        "get_product_availability"
+      ],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "add_to_cart",
+      "q": "cart add ORD-1014",
+      "wo": [],
+      "w": [
+        "reorder"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "apply_coupon",
+      "q": "enter code ORDER1014 for discount",
+      "wo": [
+        "apply_coupon"
+      ],
+      "w": [
+        "apply_coupon"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "create_support_ticket",
+      "q": "ORD-1014 has issues, please help",
+      "wo": [
+        "get_order",
+        "get_order_status",
+        "get_order_timeline",
+        "track_order"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": true
+    },
+    {
+      "p": "get_refund_status",
+      "q": "refund status ORD-1014",
+      "wo": [
+        "get_refund_status"
+      ],
+      "w": [
+        "get_refund_status"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "exchange_product",
+      "q": "i need to exchange the product from order ORD-1014",
+      "wo": [
+        "get_order_items"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "cancel_subscription",
+      "q": "how do i cancel subscription ORD-1014?",
+      "wo": [
+        "get_order"
+      ],
+      "w": [
+        "cancel_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "check_loyalty_points",
+      "q": "loyalty points balance",
+      "wo": [
+        "get_loyalty_points"
+      ],
+      "w": [
+        "get_loyalty_points"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "add_to_wishlist",
+      "q": "add ORD-1014 to my saved items",
+      "wo": [],
+      "w": [
+        "reorder"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_shipping_rates",
+      "q": "cheapest shipping for ORD-1014?",
+      "wo": [
+        "get_shipping_rates"
+      ],
+      "w": [
+        "get_shipping_rates"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "subscribe_stock_alert",
+      "q": "i want to be notified when ORD-1014 comes back",
+      "wo": [
+        "get_order_status"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_payment_status",
+      "q": "verify payment ORD-1014",
+      "wo": [
+        "get_payment_status"
+      ],
+      "w": [
+        "get_payment_status"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "reorder_previous",
+      "q": "place same order as ORD-1014",
+      "wo": [
+        "reorder"
+      ],
+      "w": [
+        "reorder"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_order_details",
+      "q": "whats in order ORD-1014?",
+      "wo": [
+        "get_order",
+        "get_order_items",
+        "get_order_status",
+        "get_order_total"
+      ],
+      "w": [
+        "reorder"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "cancel_order",
+      "q": "i want to cancel. order number is 1015",
+      "wo": [
+        "cancel_order"
+      ],
+      "w": [
+        "cancel_order"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "track_order",
+      "q": "whats happening with my delivery ORD-1015",
+      "wo": [
+        "get_order_status",
+        "track_order",
+        "estimate_delivery",
+        "get_order_timeline"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "return_item",
+      "q": "need a return label for ORD-1015",
+      "wo": [
+        "get_return_label"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "check_order_status",
+      "q": "has my order ORD-1015 been processed yet?",
+      "wo": [
+        "get_order_status"
+      ],
+      "w": [
+        "track_order",
+        "get_order_status",
+        "estimate_delivery"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "process_refund",
+      "q": "i returned ORD-1015 already, where is my refund?",
+      "wo": [
+        "get_return_status",
+        "get_refund_status",
+        "get_return_timeline"
+      ],
+      "w": [
+        "get_refund_status"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_order_invoice",
+      "q": "download invoice ORD-1015",
+      "wo": [
+        "get_invoice"
+      ],
+      "w": [
+        "get_invoice"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_stock",
+      "q": "availability check for product ORD-1015",
+      "wo": [
+        "get_product_availability"
+      ],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "add_to_cart",
+      "q": "i want to purchase product ORD-1015",
+      "wo": [
+        "get_product"
+      ],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "apply_coupon",
+      "q": "ORDER1015 is my coupon, apply it please",
+      "wo": [
+        "apply_coupon"
+      ],
+      "w": [
+        "apply_coupon"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "create_support_ticket",
+      "q": "need to speak to someone about order ORD-1015",
+      "wo": [
+        "get_order"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_refund_status",
+      "q": "its been a week, wheres my refund for ORD-1015?",
+      "wo": [
+        "get_refund_status",
+        "get_return_status",
+        "get_order_status"
+      ],
+      "w": [
+        "get_refund_status"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": true
+    },
+    {
+      "p": "exchange_product",
+      "q": "swap item from ORD-1015 please",
+      "wo": [],
+      "w": [
+        "get_order_items"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "cancel_subscription",
+      "q": "dont renew subscription ORD-1015",
+      "wo": [
+        "get_order_status"
+      ],
+      "w": [
+        "get_order_status"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_loyalty_points",
+      "q": "show me my reward points",
+      "wo": [
+        "get_loyalty_points"
+      ],
+      "w": [
+        "get_loyalty_points"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "add_to_wishlist",
+      "q": "bookmark product ORD-1015",
+      "wo": [],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_shipping_rates",
+      "q": "express shipping available for order ORD-1015?",
+      "wo": [
+        "get_shipping_rates"
+      ],
+      "w": [
+        "get_shipping_rates"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "subscribe_stock_alert",
+      "q": "restock alert for product ORD-1015",
+      "wo": [
+        "get_product"
+      ],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_payment_status",
+      "q": "is my payment for ORD-1015 confirmed?",
+      "wo": [
+        "get_payment_status",
+        "get_order_status"
+      ],
+      "w": [
+        "get_payment_status"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": true
+    },
+    {
+      "p": "reorder_previous",
+      "q": "reorder ORD-1015",
+      "wo": [
+        "reorder"
+      ],
+      "w": [
+        "reorder"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_order_details",
+      "q": "info about my order ORD-1015",
+      "wo": [
+        "get_order",
+        "get_order_status",
+        "track_order",
+        "get_order_items",
+        "get_order_total"
+      ],
+      "w": [
+        "track_order",
+        "get_order_status",
+        "estimate_delivery"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "cancel_order",
+      "q": "ORD-1016 cancel please, bought it by accident",
+      "wo": [
+        "cancel_order"
+      ],
+      "w": [
+        "cancel_order"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "track_order",
+      "q": "order ORD-1016 tracking info please",
+      "wo": [
+        "track_order",
+        "get_order_status",
+        "get_order_timeline"
+      ],
+      "w": [
+        "track_order",
+        "get_order_status",
+        "estimate_delivery"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": true
+    },
+    {
+      "p": "return_item",
+      "q": "ORD-1016 doesnt work, i want to return it and get my money b",
+      "wo": [
+        "get_order"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_order_status",
+      "q": "i placed order ORD-1016 yesterday, is it being prepared?",
+      "wo": [
+        "get_order_status"
+      ],
+      "w": [
+        "track_order",
+        "get_order_status",
+        "estimate_delivery"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "process_refund",
+      "q": "please refund order ORD-1016, charged twice",
+      "wo": [
+        "get_order"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_order_invoice",
+      "q": "where can i find the receipt for order ORD-1016?",
+      "wo": [
+        "get_receipt"
+      ],
+      "w": [
+        "track_order",
+        "get_order_status",
+        "estimate_delivery"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "check_stock",
+      "q": "can i order ORD-1016 right now or is it out of stock?",
+      "wo": [
+        "get_order_items"
+      ],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "add_to_cart",
+      "q": "add ORD-1016 to my basket",
+      "wo": [
+        "get_order_items"
+      ],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "apply_coupon",
+      "q": "how do i use coupon ORDER1016?",
+      "wo": [],
+      "w": [
+        "apply_coupon"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "create_support_ticket",
+      "q": "open a complaint about ORD-1016",
+      "wo": [
+        "get_order"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_refund_status",
+      "q": "i returned ORD-1016 and waiting for refund",
+      "wo": [
+        "get_return_status",
+        "get_refund_status",
+        "get_return_timeline"
+      ],
+      "w": [
+        "get_refund_status"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "exchange_product",
+      "q": "order ORD-1016 exchange for different model",
+      "wo": [
+        "get_order_items"
+      ],
+      "w": [
+        "get_order_items"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "cancel_subscription",
+      "q": "subscription ORD-1016 cancel",
+      "wo": [
+        "cancel_order"
+      ],
+      "w": [
+        "cancel_order"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_loyalty_points",
+      "q": "do i have any loyalty points?",
+      "wo": [
+        "get_loyalty_points"
+      ],
+      "w": [
+        "get_loyalty_points"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "add_to_wishlist",
+      "q": "save ORD-1016 to my wish list",
+      "wo": [],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_shipping_rates",
+      "q": "show me shipping rates for ORD-1016",
+      "wo": [
+        "get_shipping_rates"
+      ],
+      "w": [
+        "get_shipping_rates"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "subscribe_stock_alert",
+      "q": "email me when ORD-1016 is in stock",
+      "wo": [],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_payment_status",
+      "q": "payment status on order ORD-1016",
+      "wo": [
+        "get_payment_status"
+      ],
+      "w": [
+        "get_payment_status"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "reorder_previous",
+      "q": "i want to order the same thing as ORD-1016",
+      "wo": [
+        "reorder"
+      ],
+      "w": [
+        "reorder"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_order_details",
+      "q": "order summary for ORD-1016",
+      "wo": [
+        "get_order",
+        "get_order_items",
+        "get_order_total",
+        "get_order_status"
+      ],
+      "w": [
+        "reorder"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "cancel_order",
+      "q": "hi, how do i cancel order ORD-1017?",
+      "wo": [
+        "get_order_status"
+      ],
+      "w": [
+        "cancel_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "track_order",
+      "q": "my package ORD-1017 hasnt arrived, can you track it",
+      "wo": [
+        "track_order",
+        "get_order_status",
+        "estimate_delivery"
+      ],
+      "w": [
+        "track_order",
+        "get_order_status",
+        "estimate_delivery"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "return_item",
+      "q": "start return process for order ORD-1017",
+      "wo": [
+        "get_order",
+        "get_return_reasons",
+        "get_return_status"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": true
+    },
+    {
+      "p": "check_order_status",
+      "q": "can you tell me whats going on with order ORD-1017",
+      "wo": [
+        "get_order_status",
+        "track_order",
+        "estimate_delivery",
+        "get_order_timeline"
+      ],
+      "w": [
+        "track_order",
+        "get_order_status",
+        "estimate_delivery"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "process_refund",
+      "q": "ORD-1017 refund request",
+      "wo": [
+        "get_order_status"
+      ],
+      "w": [
+        "get_refund_status"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_order_invoice",
+      "q": "send me the billing details for ORD-1017",
+      "wo": [
+        "get_invoice",
+        "get_receipt",
+        "get_order_total",
+        "get_order_tax_breakdown"
+      ],
+      "w": [
+        "get_payment_status"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "check_stock",
+      "q": "ORD-1017 stock status?",
+      "wo": [
+        "get_order_status"
+      ],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "add_to_cart",
+      "q": "can you add product ORD-1017 to my cart?",
+      "wo": [
+        "add_to_cart"
+      ],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "apply_coupon",
+      "q": "got a promo code ORDER1017, can you apply it?",
+      "wo": [
+        "apply_coupon"
+      ],
+      "w": [
+        "apply_coupon"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "create_support_ticket",
+      "q": "order ORD-1017 is messed up, help me",
+      "wo": [
+        "get_order",
+        "get_order_status",
+        "get_order_timeline",
+        "get_order_items",
+        "get_order_total",
+        "track_order"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": true
+    },
+    {
+      "p": "get_refund_status",
+      "q": "money still not back for order ORD-1017",
+      "wo": [
+        "get_refund_status",
+        "get_order",
+        "get_return_status"
+      ],
+      "w": [
+        "track_order",
+        "get_order_status",
+        "estimate_delivery"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "exchange_product",
+      "q": "got the wrong size in ORD-1017, can i exchange?",
+      "wo": [
+        "get_order_items"
+      ],
+      "w": [
+        "get_order_items"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "cancel_subscription",
+      "q": "please stop charging me for subscription ORD-1017",
+      "wo": [
+        "get_order_status"
+      ],
+      "w": [
+        "get_order_status"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_loyalty_points",
+      "q": "i want to know my points total",
+      "wo": [
+        "get_loyalty_points"
+      ],
+      "w": [
+        "get_loyalty_points"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "add_to_wishlist",
+      "q": "put ORD-1017 on my wishlist",
+      "wo": [],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_shipping_rates",
+      "q": "how much to ship ORD-1017?",
+      "wo": [
+        "get_shipping_rates"
+      ],
+      "w": [
+        "get_shipping_rates"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "subscribe_stock_alert",
+      "q": "set up stock alert for ORD-1017",
+      "wo": [],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_payment_status",
+      "q": "did you receive payment for ORD-1017?",
+      "wo": [
+        "get_payment_status"
+      ],
+      "w": [
+        "get_payment_status"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "reorder_previous",
+      "q": "duplicate order ORD-1017",
+      "wo": [
+        "duplicate_order"
+      ],
+      "w": [
+        "reorder"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_order_details",
+      "q": "show order ORD-1017",
+      "wo": [
+        "get_order",
+        "get_order_items",
+        "get_order_status",
+        "get_order_total",
+        "estimate_delivery"
+      ],
+      "w": [
+        "reorder"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "cancel_order",
+      "q": "i need order ORD-1018 cancelled before it ships",
+      "wo": [
+        "get_order_status",
+        "get_order"
+      ],
+      "w": [
+        "cancel_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "track_order",
+      "q": "hi i placed order ORD-1018 last week and still waiting",
+      "wo": [
+        "get_order_status",
+        "track_order",
+        "estimate_delivery",
+        "get_order_timeline"
+      ],
+      "w": [
+        "track_order",
+        "get_order_status",
+        "estimate_delivery"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "return_item",
+      "q": "can i return the items from ORD-1018? bought them 2 weeks ag",
+      "wo": [
+        "get_order",
+        "get_return_status"
+      ],
+      "w": [
+        "get_order",
+        "get_return_status"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_order_status",
+      "q": "order ORD-1018 status?",
+      "wo": [
+        "get_order_status"
+      ],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "process_refund",
+      "q": "i want a full refund for order ORD-1018",
+      "wo": [
+        "get_order"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_order_invoice",
+      "q": "i need proof of purchase for order ORD-1018",
+      "wo": [
+        "get_invoice",
+        "get_receipt"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "check_stock",
+      "q": "how many of ORD-1018 do you have left?",
+      "wo": [],
+      "w": [
+        "get_order_items"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "add_to_cart",
+      "q": "id like to buy ORD-1018, add to cart",
+      "wo": [
+        "add_to_cart"
+      ],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "apply_coupon",
+      "q": "discount code ORDER1018",
+      "wo": [
+        "apply_coupon"
+      ],
+      "w": [
+        "apply_coupon"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "create_support_ticket",
+      "q": "support needed for ORD-1018",
+      "wo": [
+        "get_order"
+      ],
+      "w": [
+        "get_order_status",
+        "track_order",
+        "estimate_delivery",
+        "get_order_timeline"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_refund_status",
+      "q": "update on my refund for ORD-1018 please",
+      "wo": [
+        "get_refund_status",
+        "get_return_status",
+        "get_order_status"
+      ],
+      "w": [
+        "get_refund_status"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": true
+    },
+    {
+      "p": "exchange_product",
+      "q": "exchange ORD-1018 item for a larger one",
+      "wo": [
+        "get_order_items"
+      ],
+      "w": [
+        "get_order_items"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "cancel_subscription",
+      "q": "i want out of subscription ORD-1018",
+      "wo": [],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "check_loyalty_points",
+      "q": "rewards balance check",
+      "wo": [
+        "get_loyalty_points"
+      ],
+      "w": [
+        "get_loyalty_points"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "add_to_wishlist",
+      "q": "i like ORD-1018, save it for me",
+      "wo": [
+        "duplicate_order"
+      ],
+      "w": [
+        "get_order_items"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_shipping_rates",
+      "q": "delivery fee for order ORD-1018",
+      "wo": [
+        "get_shipping_rates"
+      ],
+      "w": [
+        "get_shipping_rates"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "subscribe_stock_alert",
+      "q": "ORD-1018 out of stock, notify me when back",
+      "wo": [
+        "get_order_items"
+      ],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_payment_status",
+      "q": "has ORD-1018 been paid?",
+      "wo": [
+        "get_payment_status"
+      ],
+      "w": [
+        "get_payment_status"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "reorder_previous",
+      "q": "can you re-place order ORD-1018?",
+      "wo": [
+        "reorder"
+      ],
+      "w": [
+        "reorder"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_order_details",
+      "q": "give me details on ORD-1018",
+      "wo": [
+        "get_order",
+        "get_order_status",
+        "get_order_items",
+        "get_order_total",
+        "get_order_timeline"
+      ],
+      "w": [
+        "get_order_status",
+        "track_order",
+        "estimate_delivery",
+        "get_order_timeline"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "cancel_order",
+      "q": "cancel ORD-1019, my card was charged but i dont want it",
+      "wo": [
+        "cancel_order"
+      ],
+      "w": [
+        "cancel_order"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "track_order",
+      "q": "is ORD-1019 on its way? need it by friday",
+      "wo": [
+        "get_order_status",
+        "track_order",
+        "estimate_delivery"
+      ],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "return_item",
+      "q": "i want to send order ORD-1019 back",
+      "wo": [
+        "get_order_status"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "check_order_status",
+      "q": "when will order ORD-1019 be ready?",
+      "wo": [
+        "get_order_status",
+        "estimate_delivery",
+        "get_order_timeline"
+      ],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "process_refund",
+      "q": "money back for ORD-1019 please",
+      "wo": [
+        "refund_payment"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_order_invoice",
+      "q": "ORD-1019 invoice download",
+      "wo": [
+        "get_invoice"
+      ],
+      "w": [
+        "get_invoice"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_stock",
+      "q": "is product ORD-1019 still available to purchase?",
+      "wo": [
+        "get_product",
+        "get_product_availability"
+      ],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "add_to_cart",
+      "q": "shopping cart add ORD-1019",
+      "wo": [],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "apply_coupon",
+      "q": "apply ORDER1019 to my purchase",
+      "wo": [],
+      "w": [
+        "apply_coupon"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "create_support_ticket",
+      "q": "file a complaint about order ORD-1019",
+      "wo": [
+        "add_order_note"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_refund_status",
+      "q": "ORD-1019 refund, any news?",
+      "wo": [
+        "get_refund_status"
+      ],
+      "w": [
+        "get_refund_status"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "exchange_product",
+      "q": "need to trade in my item from ORD-1019",
+      "wo": [
+        "get_order"
+      ],
+      "w": [
+        "get_order_items"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "cancel_subscription",
+      "q": "terminate subscription ORD-1019",
+      "wo": [
+        "cancel_order"
+      ],
+      "w": [
+        "cancel_order"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_loyalty_points",
+      "q": "what are my current loyalty points?",
+      "wo": [
+        "get_loyalty_points"
+      ],
+      "w": [
+        "get_loyalty_points"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "add_to_wishlist",
+      "q": "add ORD-1019 to favorites",
+      "wo": [],
+      "w": [],
+      "ph": 1,
+      "ex": true,
+      "co": false
+    },
+    {
+      "p": "get_shipping_rates",
+      "q": "shipping options and prices for ORD-1019",
+      "wo": [
+        "get_shipping_rates"
+      ],
+      "w": [
+        "get_shipping_rates"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "subscribe_stock_alert",
+      "q": "subscribe to restock notification ORD-1019",
+      "wo": [],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_payment_status",
+      "q": "check if payment went through for ORD-1019",
+      "wo": [
+        "get_payment_status",
+        "get_order_status"
+      ],
+      "w": [
+        "get_payment_status"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": true
+    },
+    {
+      "p": "reorder_previous",
+      "q": "same as ORD-1019 please, reorder",
+      "wo": [
+        "reorder"
+      ],
+      "w": [
+        "reorder"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_order_details",
+      "q": "what was in my order ORD-1019?",
+      "wo": [
+        "get_order_items"
+      ],
+      "w": [
+        "track_order",
+        "get_order_status",
+        "estimate_delivery"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "cancel_order",
+      "q": "Cancel my order ORD-1020",
+      "wo": [
+        "cancel_order"
+      ],
+      "w": [
+        "cancel_order"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "track_order",
+      "q": "Where is my order ORD-1020?",
+      "wo": [
+        "get_order_status",
+        "track_order",
+        "estimate_delivery"
+      ],
+      "w": [
+        "track_order",
+        "get_order_status",
+        "estimate_delivery"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "return_item",
+      "q": "I want to return my order ORD-1020",
+      "wo": [
+        "get_order"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_order_status",
+      "q": "What is the status of order ORD-1020?",
+      "wo": [
+        "get_order_status"
+      ],
+      "w": [
+        "get_refund_status"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "process_refund",
+      "q": "I need a refund for order ORD-1020",
+      "wo": [
+        "get_order"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_order_invoice",
+      "q": "Get the invoice for order ORD-1020",
+      "wo": [
+        "get_invoice"
+      ],
+      "w": [
+        "get_invoice"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_stock",
+      "q": "Is product ORD-1020 in stock?",
+      "wo": [
+        "get_product_availability"
+      ],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "add_to_cart",
+      "q": "Add product ORD-1020 to my cart",
+      "wo": [
+        "add_to_cart"
+      ],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "apply_coupon",
+      "q": "Apply coupon code ORDER1020 to my cart",
+      "wo": [
+        "apply_coupon"
+      ],
+      "w": [
+        "apply_coupon"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "create_support_ticket",
+      "q": "I need help with order ORD-1020",
+      "wo": [
+        "get_order"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_refund_status",
+      "q": "What is the refund status for order ORD-1020?",
+      "wo": [
+        "get_refund_status"
+      ],
+      "w": [
+        "get_refund_status"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "exchange_product",
+      "q": "I want to exchange an item from order ORD-1020",
+      "wo": [
+        "get_order_items"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "cancel_subscription",
+      "q": "Cancel my subscription ORD-1020",
+      "wo": [],
+      "w": [
+        "cancel_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "check_loyalty_points",
+      "q": "How many loyalty points do I have?",
+      "wo": [
+        "get_loyalty_points"
+      ],
+      "w": [
+        "get_loyalty_points"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "add_to_wishlist",
+      "q": "Add product ORD-1020 to my wishlist",
+      "wo": [],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_shipping_rates",
+      "q": "What are the shipping options for order ORD-1020?",
+      "wo": [
+        "get_shipping_rates"
+      ],
+      "w": [
+        "get_shipping_rates"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "subscribe_stock_alert",
+      "q": "Notify me when product ORD-1020 is back in stock",
+      "wo": [],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_payment_status",
+      "q": "Check payment status for order ORD-1020",
+      "wo": [
+        "get_payment_status"
+      ],
+      "w": [
+        "get_payment_status"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "reorder_previous",
+      "q": "Reorder everything from order ORD-1020",
+      "wo": [
+        "reorder"
+      ],
+      "w": [
+        "reorder"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_order_details",
+      "q": "Show me the details for order ORD-1020",
+      "wo": [
+        "get_order",
+        "get_order_items",
+        "get_order_total",
+        "get_order_status"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": true
+    },
+    {
+      "p": "cancel_order",
+      "q": "hey i need to cancel order 1021 asap",
+      "wo": [
+        "cancel_order"
+      ],
+      "w": [
+        "cancel_order"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "track_order",
+      "q": "any updates on ORD-1021? its been 5 days",
+      "wo": [
+        "get_order_status",
+        "track_order",
+        "estimate_delivery",
+        "get_order_timeline"
+      ],
+      "w": [
+        "get_order_status",
+        "track_order",
+        "estimate_delivery",
+        "get_order_timeline"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "return_item",
+      "q": "the product from order ORD-1021 is defective, need to return",
+      "wo": [
+        "get_order_items"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "check_order_status",
+      "q": "is my order ORD-1021 confirmed?",
+      "wo": [
+        "get_order_status"
+      ],
+      "w": [
+        "track_order",
+        "get_order_status",
+        "estimate_delivery"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "process_refund",
+      "q": "refund me for ORD-1021 please, product was broken",
+      "wo": [
+        "refund_payment"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_order_invoice",
+      "q": "i need a receipt for ORD-1021 for my taxes",
+      "wo": [
+        "get_receipt"
+      ],
+      "w": [
+        "get_payment_status"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "check_stock",
+      "q": "do you still have item ORD-1021?",
+      "wo": [],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "add_to_cart",
+      "q": "i wanna buy ORD-1021, add it",
+      "wo": [
+        "add_to_cart"
+      ],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "apply_coupon",
+      "q": "i have a discount code ORDER1021",
+      "wo": [
+        "apply_coupon"
+      ],
+      "w": [
+        "apply_coupon"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "create_support_ticket",
+      "q": "something went wrong with ORD-1021, need support",
+      "wo": [
+        "get_order",
+        "get_order_status",
+        "get_order_timeline",
+        "track_order"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": true
+    },
+    {
+      "p": "get_refund_status",
+      "q": "when will i get my refund for ORD-1021?",
+      "wo": [
+        "get_refund_status",
+        "get_return_status",
+        "get_order"
+      ],
+      "w": [
+        "get_refund_status"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": true
+    },
+    {
+      "p": "exchange_product",
+      "q": "can i swap something from ORD-1021 for a different size?",
+      "wo": [
+        "get_order_items"
+      ],
+      "w": [
+        "get_order_items"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "cancel_subscription",
+      "q": "i want to stop my subscription ORD-1021",
+      "wo": [
+        "get_order_status"
+      ],
+      "w": [
+        "cancel_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "check_loyalty_points",
+      "q": "whats my points balance?",
+      "wo": [
+        "get_loyalty_points"
+      ],
+      "w": [
+        "get_loyalty_points"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "add_to_wishlist",
+      "q": "save ORD-1021 for later",
+      "wo": [
+        "duplicate_order"
+      ],
+      "w": [
+        "reorder"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_shipping_rates",
+      "q": "how much is delivery for ORD-1021?",
+      "wo": [
+        "get_shipping_rates",
+        "get_order_status"
+      ],
+      "w": [
+        "get_shipping_rates"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": true
+    },
+    {
+      "p": "subscribe_stock_alert",
+      "q": "alert me when ORD-1021 is available again",
+      "wo": [],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_payment_status",
+      "q": "did my payment for ORD-1021 go through?",
+      "wo": [
+        "get_payment_status",
+        "get_order_status"
+      ],
+      "w": [
+        "get_payment_status"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": true
+    },
+    {
+      "p": "reorder_previous",
+      "q": "i want the same stuff as ORD-1021 again",
+      "wo": [
+        "reorder"
+      ],
+      "w": [
+        "reorder"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_order_details",
+      "q": "what did i order in ORD-1021?",
+      "wo": [
+        "get_order_items"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "cancel_order",
+      "q": "i changed my mind about ORD-1022, please cancel it",
+      "wo": [
+        "cancel_order"
+      ],
+      "w": [
+        "cancel_order"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "track_order",
+      "q": "track order 1022 please",
+      "wo": [
+        "track_order",
+        "get_order_status",
+        "estimate_delivery"
+      ],
+      "w": [
+        "track_order",
+        "get_order_status",
+        "estimate_delivery"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "return_item",
+      "q": "how do i send back order ORD-1022?",
+      "wo": [
+        "get_order",
+        "get_return_status",
+        "get_return_policy",
+        "get_return_reasons"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": true
+    },
+    {
+      "p": "check_order_status",
+      "q": "just checking on ORD-1022, any update?",
+      "wo": [
+        "get_order_status",
+        "track_order",
+        "estimate_delivery"
+      ],
+      "w": [
+        "get_order_status",
+        "track_order",
+        "estimate_delivery",
+        "get_order_timeline"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": true
+    },
+    {
+      "p": "process_refund",
+      "q": "order ORD-1022 was terrible, i want my money back",
+      "wo": [
+        "get_order"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_order_invoice",
+      "q": "can you send the invoice for order ORD-1022 to my email?",
+      "wo": [
+        "get_invoice"
+      ],
+      "w": [
+        "get_invoice"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_stock",
+      "q": "check if ORD-1022 is available",
+      "wo": [
+        "get_order_status"
+      ],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "add_to_cart",
+      "q": "put ORD-1022 in my shopping cart",
+      "wo": [
+        "duplicate_order"
+      ],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "apply_coupon",
+      "q": "use promo ORDER1022 on my order",
+      "wo": [
+        "apply_order_discount"
+      ],
+      "w": [
+        "apply_coupon"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "create_support_ticket",
+      "q": "create a ticket for order ORD-1022",
+      "wo": [],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_refund_status",
+      "q": "check refund progress for order ORD-1022",
+      "wo": [
+        "get_refund_status",
+        "get_order_status"
+      ],
+      "w": [
+        "get_refund_status"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": true
+    },
+    {
+      "p": "exchange_product",
+      "q": "exchange request for ORD-1022",
+      "wo": [
+        "get_order_items"
+      ],
+      "w": [
+        "get_order_items"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "cancel_subscription",
+      "q": "unsubscribe from ORD-1022",
+      "wo": [
+        "get_order"
+      ],
+      "w": [
+        "cancel_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "check_loyalty_points",
+      "q": "check my rewards",
+      "wo": [
+        "get_loyalty_points"
+      ],
+      "w": [
+        "get_loyalty_points"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "add_to_wishlist",
+      "q": "wishlist ORD-1022",
+      "wo": [
+        "get_order_items"
+      ],
+      "w": [
+        "reorder"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_shipping_rates",
+      "q": "shipping cost for order ORD-1022",
+      "wo": [
+        "get_shipping_rates"
+      ],
+      "w": [
+        "get_shipping_rates"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "subscribe_stock_alert",
+      "q": "stock notification for ORD-1022 please",
+      "wo": [
+        "get_order"
+      ],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_payment_status",
+      "q": "payment confirmation for ORD-1022",
+      "wo": [
+        "get_payment_status",
+        "get_receipt",
+        "get_order_status"
+      ],
+      "w": [
+        "get_payment_status"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": true
+    },
+    {
+      "p": "reorder_previous",
+      "q": "repeat order ORD-1022",
+      "wo": [
+        "reorder"
+      ],
+      "w": [
+        "reorder"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_order_details",
+      "q": "order ORD-1022 details",
+      "wo": [
+        "get_order",
+        "get_order_items",
+        "get_order_total",
+        "get_order_status",
+        "estimate_delivery"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": true
+    },
+    {
+      "p": "cancel_order",
+      "q": "can you stop order ORD-1023 from shipping? i dont want it an",
+      "wo": [
+        "get_order_status"
+      ],
+      "w": [
+        "cancel_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "track_order",
+      "q": "i havent received ORD-1023 yet, where is it?",
+      "wo": [
+        "get_order_status",
+        "track_order",
+        "estimate_delivery",
+        "get_order_timeline"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "return_item",
+      "q": "return ORD-1023, wrong size",
+      "wo": [
+        "create_return"
+      ],
+      "w": [
+        "create_return"
+      ],
+      "ph": 1,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_order_status",
+      "q": "did order ORD-1023 go through?",
+      "wo": [
+        "get_order_status",
+        "get_payment_status",
+        "verify_order"
+      ],
+      "w": [
+        "get_payment_status"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "process_refund",
+      "q": "process a refund for ORD-1023",
+      "wo": [
+        "refund_payment"
+      ],
+      "w": [
+        "get_refund_status"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_order_invoice",
+      "q": "invoice for ORD-1023 please",
+      "wo": [
+        "get_invoice"
+      ],
+      "w": [
+        "get_invoice"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_stock",
+      "q": "is ORD-1023 sold out?",
+      "wo": [
+        "get_order_items"
+      ],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "add_to_cart",
+      "q": "add item ORD-1023 to cart please",
+      "wo": [],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "apply_coupon",
+      "q": "apply ORDER1023 coupon",
+      "wo": [
+        "apply_coupon"
+      ],
+      "w": [
+        "apply_coupon"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "create_support_ticket",
+      "q": "i have a problem with my order ORD-1023",
+      "wo": [],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_refund_status",
+      "q": "has the refund for ORD-1023 been processed?",
+      "wo": [
+        "get_refund_status",
+        "get_order_status"
+      ],
+      "w": [
+        "get_refund_status"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": true
+    },
+    {
+      "p": "exchange_product",
+      "q": "wrong color on ORD-1023, want to exchange",
+      "wo": [
+        "get_order"
+      ],
+      "w": [
+        "get_order_items"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "cancel_subscription",
+      "q": "end my subscription ORD-1023 please",
+      "wo": [
+        "get_order_status"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "check_loyalty_points",
+      "q": "how many points have i earned?",
+      "wo": [
+        "get_loyalty_points"
+      ],
+      "w": [
+        "get_loyalty_points"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "add_to_wishlist",
+      "q": "i want to save product ORD-1023",
+      "wo": [
+        "save_cart"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_shipping_rates",
+      "q": "what are the delivery prices for ORD-1023?",
+      "wo": [
+        "get_shipping_rates"
+      ],
+      "w": [
+        "get_shipping_rates"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "subscribe_stock_alert",
+      "q": "let me know when ORD-1023 is restocked",
+      "wo": [],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_payment_status",
+      "q": "was order ORD-1023 charged?",
+      "wo": [
+        "get_payment_status"
+      ],
+      "w": [
+        "get_payment_status"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "reorder_previous",
+      "q": "buy the same items as order ORD-1023",
+      "wo": [
+        "reorder"
+      ],
+      "w": [
+        "reorder"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_order_details",
+      "q": "pull up order ORD-1023",
+      "wo": [
+        "get_order",
+        "get_order_status",
+        "get_order_items",
+        "get_order_total"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": true
+    },
+    {
+      "p": "cancel_order",
+      "q": "please cancel ORD-1024 i ordered the wrong thing",
+      "wo": [
+        "cancel_order"
+      ],
+      "w": [
+        "cancel_order"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "track_order",
+      "q": "can you check shipping status for order ORD-1024",
+      "wo": [
+        "get_order_status",
+        "track_order",
+        "get_order_timeline"
+      ],
+      "w": [
+        "track_order",
+        "get_order_status",
+        "estimate_delivery"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "return_item",
+      "q": "i got order ORD-1024 but its not what i expected, return ple",
+      "wo": [
+        "get_order"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_order_status",
+      "q": "status update for ORD-1024 please",
+      "wo": [
+        "get_order_status",
+        "track_order",
+        "estimate_delivery"
+      ],
+      "w": [
+        "get_order_status",
+        "track_order",
+        "estimate_delivery",
+        "get_order_timeline"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": true
+    },
+    {
+      "p": "process_refund",
+      "q": "can i get a refund on order ORD-1024? never received it",
+      "wo": [
+        "get_order_status"
+      ],
+      "w": [
+        "get_refund_status"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_order_invoice",
+      "q": "i need a pdf invoice of order ORD-1024",
+      "wo": [
+        "get_invoice"
+      ],
+      "w": [
+        "get_invoice"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "check_stock",
+      "q": "i want to buy ORD-1024 but is it in stock?",
+      "wo": [
+        "get_product_availability"
+      ],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "add_to_cart",
+      "q": "cart add ORD-1024",
+      "wo": [],
+      "w": [
+        "reorder"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "apply_coupon",
+      "q": "enter code ORDER1024 for discount",
+      "wo": [
+        "apply_coupon"
+      ],
+      "w": [
+        "apply_coupon"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "create_support_ticket",
+      "q": "ORD-1024 has issues, please help",
+      "wo": [],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_refund_status",
+      "q": "refund status ORD-1024",
+      "wo": [
+        "get_refund_status",
+        "get_order_status"
+      ],
+      "w": [
+        "get_refund_status"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": true
+    },
+    {
+      "p": "exchange_product",
+      "q": "i need to exchange the product from order ORD-1024",
+      "wo": [
+        "get_order_items"
+      ],
+      "w": [
+        "get_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "cancel_subscription",
+      "q": "how do i cancel subscription ORD-1024?",
+      "wo": [
+        "get_order_status"
+      ],
+      "w": [
+        "cancel_order"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "check_loyalty_points",
+      "q": "loyalty points balance",
+      "wo": [
+        "get_loyalty_points"
+      ],
+      "w": [
+        "get_loyalty_points"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "add_to_wishlist",
+      "q": "add ORD-1024 to my saved items",
+      "wo": [],
+      "w": [],
+      "ph": 1,
+      "ex": true,
+      "co": false
+    },
+    {
+      "p": "get_shipping_rates",
+      "q": "cheapest shipping for ORD-1024?",
+      "wo": [
+        "get_shipping_rates"
+      ],
+      "w": [
+        "get_shipping_rates"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "subscribe_stock_alert",
+      "q": "i want to be notified when ORD-1024 comes back",
+      "wo": [],
+      "w": [
+        "get_product_availability"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    },
+    {
+      "p": "get_payment_status",
+      "q": "verify payment ORD-1024",
+      "wo": [
+        "get_payment_status"
+      ],
+      "w": [
+        "get_payment_status"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "reorder_previous",
+      "q": "place same order as ORD-1024",
+      "wo": [
+        "reorder"
+      ],
+      "w": [
+        "reorder"
+      ],
+      "ph": 3,
+      "ex": true,
+      "co": true
+    },
+    {
+      "p": "get_order_details",
+      "q": "whats in order ORD-1024?",
+      "wo": [
+        "get_order",
+        "get_order_items",
+        "get_order_status",
+        "get_order_total"
+      ],
+      "w": [
+        "reorder"
+      ],
+      "ph": 3,
+      "ex": false,
+      "co": false
+    }
+  ]
+}
