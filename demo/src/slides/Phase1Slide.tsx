@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
+import { TOOL_NAMES as BENCH_TOOL_NAMES, getToolsForPattern, makeQuery, BENCHMARK_STATS } from '../benchmarkData';
 
 interface SlideProps {
   active: boolean;
@@ -18,11 +19,27 @@ const LLM_COST_STRIP = { x: LLM.x + 360, y: LLM.y + 200, w: 300, h: 20 };
 const TOOL_Y = 430;
 const TOOL_H = 90;
 const TOOL_W = 210;
-const TOOLS = [
-  { id: 'get_order', label: 'GET_ORDER', x: 135, output: '→ order.status = "shipped"' },
-  { id: 'cancel_order', label: 'CANCEL_ORDER', x: 375, output: '→ cancelled ✓' },
-  { id: 'refund_payment', label: 'REFUND_PAYMENT', x: 615, output: '→ refund $89.99 queued' },
-];
+// Tool chain for the cancel_order pattern comes from the benchmark.
+const CANCEL_TOOL_CHAIN = getToolsForPattern('cancel_order');
+const TOOL_OUTPUTS: Record<string, string> = {
+  get_order:      '→ $89.99, processing',
+  cancel_order:   '→ cancelled ✓',
+  refund_payment: '→ refund $89.99 queued',
+};
+const TOOL_X = [135, 375, 615];
+const TOOLS = CANCEL_TOOL_CHAIN.map((id, i) => ({
+  id,
+  label: id.toUpperCase(),
+  x: TOOL_X[i],
+  output: TOOL_OUTPUTS[id] ?? '→ done',
+}));
+// Demo query sampled from QUERY_PATTERNS.cancel_order.
+const DEMO_QUERY = makeQuery('cancel_order', 410); // template 0, id=1410
+// Per-query averages derived from the benchmark run.
+const AVG_TOKENS_PER_QUERY = Math.round(BENCHMARK_STATS.totalTokensWithout / BENCHMARK_STATS.totalQueries);
+const AVG_COST_PER_QUERY = BENCHMARK_STATS.totalCostWithout / BENCHMARK_STATS.totalQueries;
+const AVG_LAT_SEC = (BENCHMARK_STATS.avgLatWithoutMs / 1000).toFixed(1);
+const AVG_COST_STR = `$${AVG_COST_PER_QUERY.toFixed(3)}`;
 
 const RESPONSE = { x: 350, y: 550, w: 260, h: 100 };
 
@@ -36,20 +53,11 @@ const GRID_ORIGIN_X = LLM_GRID_PANE.x + (LLM_GRID_PANE.w - (GRID_COLS * (GRID_CE
 const GRID_ORIGIN_Y = LLM_GRID_PANE.y + 20;
 const SELECTED_CELLS = [18, 56, 109]; // which cells become tools
 
-// Fake tool names for grid cell tooltips (verbs × domains = 128)
-const TOOL_NAME_VERBS = ['get', 'list', 'create', 'update', 'delete', 'query', 'fetch', 'send', 'process', 'verify', 'check', 'lookup', 'search', 'sync', 'cancel', 'refund'];
-const TOOL_NAME_NOUNS = ['order', 'customer', 'product', 'refund', 'email', 'ticket', 'payment', 'user'];
-const TOOL_NAMES: string[] = [];
-for (let i = 0; i < GRID_COLS * GRID_ROWS; i++) {
-  const v = TOOL_NAME_VERBS[i % TOOL_NAME_VERBS.length];
-  const n = TOOL_NAME_NOUNS[Math.floor(i / TOOL_NAME_VERBS.length) % TOOL_NAME_NOUNS.length];
-  TOOL_NAMES.push(`${v}_${n}`);
-}
-// Override the three selected cells with the real tool ids
-SELECTED_CELLS.forEach((idx, i) => {
-  const t = ['get_order', 'cancel_order', 'refund_payment'][i];
-  TOOL_NAMES[idx] = t;
-});
+// Grid tooltips pull from the real 128-tool benchmark catalog.
+const TOOL_NAMES = BENCH_TOOL_NAMES.slice(0, GRID_COLS * GRID_ROWS);
+// Override selected cells with the cancel_order chain so the "caught" cells
+// match the tool cards rendered below.
+SELECTED_CELLS.forEach((idx, i) => { TOOL_NAMES[idx] = CANCEL_TOOL_CHAIN[i]; });
 
 function cellPos(i: number) {
   const col = i % GRID_COLS;
@@ -205,7 +213,7 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
     // t=0.0s — customer
     schedule(() => {
       setVisibleBoxes(prev => new Set(prev).add('customer'));
-      onNarrate('Request received: Cancel my order ORD-412');
+      onNarrate(`Request received: ${DEMO_QUERY}`);
       setPhase('customer');
     }, 0);
 
@@ -222,7 +230,7 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
     // t=1.3s — grid cascade
     schedule(() => {
       setGridRevealed(true);
-      onNarrate('LLM scanning 128 tools...');
+      onNarrate(`LLM scanning ${BENCHMARK_STATS.toolCount} tools...`);
     }, 1300);
 
     // t=1.8s — start scan sweeps (3 full sweeps over ~2.5s)
@@ -252,7 +260,7 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
       }, 1900 + idx * 550);
     });
 
-    // Cost/token ticker: ramp 0→842 tokens and $0→$0.021 over 2.5s starting at t=1.8s
+    // Cost/token ticker: per-query averages from BENCHMARK_STATS.
     schedule(() => {
       const startT = performance.now();
       const duration = 2500;
@@ -260,8 +268,8 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
         const elapsed = performance.now() - startT;
         const t = Math.min(elapsed / duration, 1);
         const eased = 1 - Math.pow(1 - t, 2); // ease-out
-        setTokenCount(Math.round(eased * 842));
-        setCost(eased * 0.021);
+        setTokenCount(Math.round(eased * AVG_TOKENS_PER_QUERY));
+        setCost(eased * AVG_COST_PER_QUERY);
         if (t < 1) {
           requestAnimationFrame(tick);
         }
@@ -325,7 +333,7 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
     // response appears
     schedule(() => {
       setResponseVisible(true);
-      onNarrate('Response generated. 4.2s, $0.021 per request');
+      onNarrate(`Response generated. ${AVG_LAT_SEC}s, ${AVG_COST_STR} per request`);
     }, 6750);
 
     // receipt rows reveal
@@ -366,7 +374,7 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
           <text x={CUSTOMER.x + CUSTOMER.w / 2} y={CUSTOMER.y + HEADER_H + (CUSTOMER.h - HEADER_H) / 2 + 4}
                 fontSize={14} fontFamily="'Geist', sans-serif" fill="#1a1a1a"
                 fontStyle="italic" textAnchor="middle" dominantBaseline="middle">
-            Cancel my order ORD-412
+            {DEMO_QUERY}
           </text>
           <BoxHeader x={CUSTOMER.x} y={CUSTOMER.y} w={CUSTOMER.w} rx={8}
                      label="CUSTOMER MESSAGE" status={phase === 'idle' ? 'idle' : 'done'} showCheck={phase !== 'idle'} />
@@ -390,7 +398,7 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
           <text x={GRID_ORIGIN_X} y={LLM_GRID_PANE.y + 8}
                 fontSize={10} fontFamily="'Geist Mono', monospace" fill={LABEL_COLOR}
                 letterSpacing={0.8}>
-            128 TOOLS
+            {`${BENCHMARK_STATS.toolCount} TOOLS`}
           </text>
           {gridRevealed && Array.from({ length: GRID_COLS * GRID_ROWS }).map((_, i) => {
             const col = i % GRID_COLS;
@@ -526,8 +534,8 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
 
           {/* Receipt rows */}
           {[
-            { label: 'time', value: '4.2s', color: '#1a1a1a', pulse: false },
-            { label: 'cost', value: '$0.021', color: '#1a1a1a', pulse: false },
+            { label: 'time', value: `${AVG_LAT_SEC}s`, color: '#1a1a1a', pulse: false },
+            { label: 'cost', value: AVG_COST_STR, color: '#1a1a1a', pulse: false },
             { label: 'status', value: '✓ complete', color: '#22c55e', pulse: true },
           ].map((row, idx) => {
             const rowY = RESPONSE.y + HEADER_H + 16 + idx * 18;

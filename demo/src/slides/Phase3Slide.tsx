@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
+import { BENCHMARK_STATS, makeQuery } from '../benchmarkData';
 
 interface SlideProps {
   active: boolean;
@@ -69,12 +70,14 @@ const PIPELINE: { id: NodeId; label: string }[] = [
 const TABLE  = { x: 370, y: 40,  w: 550, h: 360 };
 const RESULT = { x: 370, y: 420, w: 550, h: 208 };
 
-// Aggregate across 1000-query benchmark (gpt-5.4, 128 tools)
+// Aggregate across the full benchmark run (see BENCHMARK_STATS).
+const fmtMs = (ms: number) => ms >= 1000 ? `${(ms / 1000).toFixed(1)}s` : `${ms}ms`;
+const fmtTok = (n: number) => n >= 1_000_000 ? `${(n / 1_000_000).toFixed(1)}M` : `${Math.round(n / 1000)}K`;
 const TABLE_ROWS = [
-  { label: 'avg latency', p1: '4.2s',   p3: '1.8s' },
-  { label: 'total cost',  p1: '$21.00', p3: '$7.98' },
-  { label: 'total tokens', p1: '2.4M',  p3: '430K' },
-  { label: 'memory hits', p1: '0',      p3: '822 / 1000' },
+  { label: 'avg latency', p1: fmtMs(BENCHMARK_STATS.avgLatWithoutMs), p3: fmtMs(BENCHMARK_STATS.avgLatWithMs) },
+  { label: 'total cost',  p1: `$${BENCHMARK_STATS.totalCostWithout.toFixed(2)}`, p3: `$${BENCHMARK_STATS.totalCostWith.toFixed(2)}` },
+  { label: 'total tokens', p1: fmtTok(BENCHMARK_STATS.totalTokensWithout), p3: fmtTok(BENCHMARK_STATS.totalTokensWith) },
+  { label: 'memory hits', p1: '0', p3: `${BENCHMARK_STATS.memoryHits} / ${BENCHMARK_STATS.totalQueries}` },
 ];
 
 // Mini DAG inside DAG node — compact diamond on the left side of body
@@ -213,7 +216,7 @@ export function Phase3Slide({ active, onNarrate }: SlideProps) {
       <g>
         <text x={x} y={y} fontSize={14}
               fontFamily="'Geist', sans-serif" fontStyle="italic" fill="#1a1a1a">
-          Cancel order ORD-789
+          {makeQuery('cancel_order', 790)}
         </text>
         <line x1={x} y1={y + 14} x2={x + w} y2={y + 14}
               stroke={DIVIDER_COLOR} strokeWidth={1} />
@@ -300,7 +303,7 @@ export function Phase3Slide({ active, onNarrate }: SlideProps) {
         </text>
         <text x={x + w} y={y + 32} fontSize={11}
               fontFamily="'Geist Mono', monospace" fill="#1a1a1a" textAnchor="end">
-          822
+          {BENCHMARK_STATS.memoryHits}
         </text>
       </g>
     );
@@ -525,7 +528,7 @@ export function Phase3Slide({ active, onNarrate }: SlideProps) {
           <text x={RESULT.x + RESULT.w / 2} y={RESULT.y + HEADER_H + 56}
                 fontSize={42} fontFamily="'Geist', sans-serif" fontWeight={700}
                 fill="#1a1a1a" textAnchor="middle" letterSpacing={-1}>
-            2.3×
+            {BENCHMARK_STATS.speedup}×
           </text>
           <text x={RESULT.x + RESULT.w / 2} y={RESULT.y + HEADER_H + 78}
                 fontSize={11} fontFamily="'Geist Mono', monospace" fill={LABEL_COLOR}
@@ -535,12 +538,12 @@ export function Phase3Slide({ active, onNarrate }: SlideProps) {
           <text x={RESULT.x + RESULT.w / 2} y={RESULT.y + HEADER_H + 128}
                 fontSize={42} fontFamily="'Geist', sans-serif" fontWeight={700}
                 fill="#1a1a1a" textAnchor="middle" letterSpacing={-1}>
-            62%
+            {BENCHMARK_STATS.costSavings}%
           </text>
           <text x={RESULT.x + RESULT.w / 2} y={RESULT.y + HEADER_H + 150}
                 fontSize={11} fontFamily="'Geist Mono', monospace" fill={LABEL_COLOR}
                 textAnchor="middle" letterSpacing={0.8}>
-            CHEAPER  ·  82% TOKENS SAVED
+            {`CHEAPER  ·  ${BENCHMARK_STATS.tokenSavings}% TOKENS SAVED`}
           </text>
           {/* Divider + caption */}
           <line x1={RESULT.x + 24} y1={RESULT.y + HEADER_H + 180}
@@ -550,7 +553,7 @@ export function Phase3Slide({ active, onNarrate }: SlideProps) {
                 fontSize={13} fontFamily="'Geist Mono', monospace" fill="#22c55e"
                 textAnchor="middle" fontWeight={600}
                 className={phase === 'done' ? 'complete-pulse' : undefined}>
-            822 of 1000 queries skipped the LLM
+            {`${BENCHMARK_STATS.memoryHits} of ${BENCHMARK_STATS.totalQueries} queries skipped the LLM`}
           </text>
         </g>
       </svg>
