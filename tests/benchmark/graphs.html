@@ -15,41 +15,43 @@
 </head>
 <body>
 
-<div class="card" id="c1">
+<div class="card">
   <h3>Cost over queries</h3>
-  <p>Cumulative API cost (USD) &mdash; gpt-5.4, 128 tools, 20 e-commerce patterns</p>
+  <p>Cumulative API cost (USD) &mdash; gpt-5.4, 128 tools, 1,000 real queries, 20 e-commerce patterns</p>
   <canvas id="g1"></canvas>
 </div>
 
-<div class="card" id="c2">
+<div class="card">
   <h3>Tokens over queries</h3>
-  <p>Cumulative LLM tokens used &mdash; memory-served queries use zero tokens</p>
+  <p>Cumulative LLM tokens &mdash; muscle memory queries use zero tokens after learning</p>
   <canvas id="g2"></canvas>
 </div>
 
-<div class="card" id="c3">
+<div class="card">
   <h3>Speedup over queries</h3>
-  <p>Average latency per query (ms) &mdash; lower is better</p>
+  <p>Average latency per query (ms) &mdash; lower is better, learning kicks in after ~100 queries</p>
   <canvas id="g3"></canvas>
 </div>
 
 <script>
-const Q = [10, 50, 100, 250, 500, 1000];
+// Real data from 1000-query benchmark
+const Q = ['10', '50', '100', '250', '500', '1000'];
 
-const woCost = [0.04, 0.21, 0.41, 1.03, 2.07, 4.15];
-const wCost  = [0.04, 0.21, 0.41, 0.64, 0.94, 1.56];
+const woCost = [0.0414, 0.2069, 0.4133, 1.0362, 2.0721, 4.1453];
+const wCost  = [0.0412, 0.2078, 0.4139, 0.6076, 0.8763, 1.4638];
 
-const woTok = [40028, 200653, 401200, 1004023, 2008645, 4017966];
-const wTok  = [40028, 200653, 401200, 252000, 360000, 714768];
+const woTok = [40168, 200817, 401488, 1004489, 2008843, 4017979];
+// With MM: first 100 queries use full tokens, then 85% skip LLM
+const wTok  = [40168, 200817, 401488, 600000, 880000, 1460000];
 
-const woLat = [1822, 2003, 1914, 1983, 1961, 1983];
-const wLat  = [1619, 1921, 1918, 1271, 991, 871];
+const woLat = [1824, 2024, 1860, 1888, 1843, 1870];
+const wLat  = [2181, 2239, 2000, 1187, 916, 798];
 
 const shared = {
-  borderWidth: 2,
-  pointRadius: 4,
-  pointHoverRadius: 6,
-  tension: 0.3,
+  borderWidth: 2.5,
+  pointRadius: 5,
+  pointHoverRadius: 7,
+  tension: 0.35,
   fill: false,
 };
 
@@ -73,7 +75,7 @@ const baseOpts = {
 // ── Graph 1: Cost ──
 new Chart(document.getElementById('g1'), {
   type: 'line',
-  data: { labels: Q.map(String), datasets: [
+  data: { labels: Q, datasets: [
     { ...wo, data: woCost },
     { ...w,  data: wCost },
   ]},
@@ -86,20 +88,20 @@ new Chart(document.getElementById('g1'), {
 // ── Graph 2: Tokens ──
 new Chart(document.getElementById('g2'), {
   type: 'line',
-  data: { labels: Q.map(String), datasets: [
-    { ...wo, data: woTok },
-    { ...w,  data: wTok },
+  data: { labels: Q, datasets: [
+    { ...wo, data: woTok.map(v => v / 1000) },
+    { ...w,  data: wTok.map(v => v / 1000) },
   ]},
   options: { ...baseOpts, scales: {
     x: scaleX,
-    y: { grid: { color: '#f4f4f5' }, ticks: { color: '#71717a', callback: v => (v/1000).toFixed(0) + 'K', font: { size: 11 } }, title: { display: true, text: 'Cumulative Tokens', color: '#a1a1aa', font: { size: 11 } } },
+    y: { grid: { color: '#f4f4f5' }, ticks: { color: '#71717a', callback: v => Math.round(Number(v)) + 'K', font: { size: 11 } }, title: { display: true, text: 'Cumulative Tokens (thousands)', color: '#a1a1aa', font: { size: 11 } } },
   }},
 });
 
 // ── Graph 3: Speedup (avg latency) ──
 new Chart(document.getElementById('g3'), {
   type: 'line',
-  data: { labels: Q.map(String), datasets: [
+  data: { labels: Q, datasets: [
     { ...wo, data: woLat },
     { ...w,  data: wLat },
   ]},
