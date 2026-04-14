@@ -95,6 +95,7 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
   const [thoughtLines, setThoughtLines] = useState<string[]>([]);
   const [tokenCount, setTokenCount] = useState(0);
   const [cost, setCost] = useState(0);
+  const [selectedCells, setSelectedCells] = useState<Set<number>>(new Set());
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   const schedule = useCallback((fn: () => void, ms: number) => {
@@ -114,6 +115,7 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
       setThoughtLines([]);
       setTokenCount(0);
       setCost(0);
+      setSelectedCells(new Set());
       return;
     }
 
@@ -181,6 +183,14 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
       requestAnimationFrame(tick);
     }, 1800);
 
+    // t=4.3s — three cells catch
+    schedule(() => {
+      setSelectedCells(new Set(SELECTED_CELLS));
+      setLlmBreathing(false);
+      setPhase('llm-selected');
+      onNarrate('3 tools selected. Executing plan...');
+    }, 4300);
+
     return () => {
       timersRef.current.forEach(clearTimeout);
       timersRef.current = [];
@@ -231,9 +241,11 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
             const cy = GRID_ORIGIN_Y + row * (GRID_CELL_H + GRID_GAP);
             const delay = (col + row) * 20;
 
-            // Brighten based on distance from scan column (falloff)
+            const isSelected = selectedCells.has(i);
             let fill = '#e4e0f0';
-            if (scanCol !== null) {
+            if (isSelected) {
+              fill = '#1a1a1a';
+            } else if (scanCol !== null) {
               const dist = Math.abs(col - scanCol);
               if (dist === 0) fill = '#8b5cf6';
               else if (dist === 1) fill = '#b8a4f0';
@@ -243,8 +255,8 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
             return (
               <rect key={`cell-${i}`} x={cx} y={cy} width={GRID_CELL_W} height={GRID_CELL_H}
                     rx={1.5} fill={fill}
-                    className="cell-reveal"
-                    style={{ animationDelay: `${delay}ms`, transition: 'fill 0.12s' }} />
+                    className={`cell-reveal${isSelected ? ' cell-catch' : ''}`}
+                    style={{ animationDelay: `${delay}ms`, transition: isSelected ? 'none' : 'fill 0.12s' }} />
             );
           })}
 
