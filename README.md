@@ -18,7 +18,7 @@ const generate = withMemory(generateText);
 
 const result = await generate({
   model: anthropic('claude-sonnet-4-20250514'),
-  tools: { get_order, cancel_order, process_refund },
+  tools: { get_order, cancel_order, refund_payment },
   prompt: 'Cancel my order ORD-412',
 });
 
@@ -27,8 +27,8 @@ console.log(result.text);
 
 // Optional: check which phase handled it
 console.log(result.experimental_muscle_memory?.phase);
-// Request #1-5: 1 (full LLM, ~4s, ~$0.02)
-// Request #6+:  3 (muscle memory, ~200ms, ~$0.001)
+// First requests for a new intent: 1 (full LLM, ~4.2s, ~$0.021)
+// Once a template is learned:      3 (muscle memory, ~1.8s, ~$0.008)
 ```
 
 That's it. `result.text` works exactly like before. Your tools, your model, your prompts. Nothing else changes.
@@ -75,10 +75,10 @@ const generate = withMemory(generateText, {
 // Metrics
 generate.metrics();
 // {
-//   total: 1200,
+//   total: 1000,
 //   byPhase: [
-//     { phase: 1, c: 340, avgLat: 4200, avgCost: 0.021 },
-//     { phase: 3, c: 860, avgLat: 180,  avgCost: 0.001 },
+//     { phase: 1, c: 178, avgLat: 4200, avgCost: 0.021 },
+//     { phase: 3, c: 822, avgLat: 1800, avgCost: 0.008 },
 //   ],
 //   successRate: 0.98
 // }
@@ -107,7 +107,7 @@ Request arrives
  Phase 1                              Phase 3
  AI SDK generateText()                extract args (regex or small LLM)
  full reasoning + tools               walk the graph deterministically
- ~4s, ~$0.02                          ~200ms, ~$0.001
+ ~4.2s, ~$0.021                       ~1.8s, ~$0.008
   |                                      |
   v                                      v
  save trace ──────────────────────> return result
@@ -130,10 +130,31 @@ const generate = withMemory(generateText, {
 });
 ```
 
+## Benchmark
+
+1000 queries across 20 intents against a 128-tool e-commerce catalog, run on `gpt-5.4`. Each query is executed twice — once through plain `generateText`, once through `muscleMemory` — so the numbers are head-to-head on identical prompts.
+
+| metric           | without muscle memory | with muscle memory |
+| ---------------- | --------------------- | ------------------ |
+| avg latency      | 4.2s                  | 1.8s               |
+| avg cost / query | $0.021                | $0.008             |
+| total tokens     | 2.4M                  | 432K               |
+| Phase 3 hits     | —                     | 822 / 1000         |
+
+**2.3× faster · 62% cheaper · 82% fewer tokens.**
+
+Reproduce:
+```bash
+npm install
+OPENAI_API_KEY=… npm run benchmark
+```
+
+Source: `tests/benchmark/run.ts`. Tool catalog: `tests/benchmark/tools.ts`. Query set: `tests/benchmark/queries.ts`.
+
 ## Demo
 
 ```bash
 cd demo && npm install && npm run dev
 ```
 
-Interactive demo showing Phase 1 vs Phase 3 side by side.
+Five-slide walkthrough of Phase 1 → learning → Phase 3, backed by the real query set and benchmark numbers above.
