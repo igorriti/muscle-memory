@@ -338,3 +338,73 @@ html, body {
   border: 1px solid #eaeaea;
   border-radius: 3px;
 }
+
+/* ── Breathing dashed border (LLM active) ── */
+@keyframes breathe {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+.breathe {
+  animation: breathe 1.6s ease-in-out infinite;
+}
+
+/* ── Grid cell cascade reveal ── */
+@keyframes cellReveal {
+  from { opacity: 0; transform: scale(0.4); }
+  to { opacity: 1; transform: scale(1); }
+}
+.cell-reveal {
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+  animation: cellReveal 0.22s ease-out forwards;
+}
+
+/* ── Grid cell scan flash (during sweep) ── */
+@keyframes cellFlash {
+  0% { fill: #e4e0f0; }
+  35% { fill: #8b5cf6; }
+  100% { fill: #e4e0f0; }
+}
+
+/* ── Grid cell catch (stays selected) ── */
+@keyframes cellCatch {
+  0% { transform: scale(1); fill: #8b5cf6; }
+  45% { transform: scale(1.35); fill: #1a1a1a; }
+  100% { transform: scale(1); fill: #1a1a1a; }
+}
+.cell-catch {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: cellCatch 0.18s ease-out forwards;
+}
+
+/* ── Typewriter caret blink ── */
+@keyframes caretBlink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+.caret {
+  animation: caretBlink 0.8s steps(1) infinite;
+}
+
+/* ── Receipt row reveal ── */
+@keyframes rowReveal {
+  from { opacity: 0; transform: translateX(-4px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.row-reveal {
+  opacity: 0;
+  animation: rowReveal 0.22s ease-out forwards;
+}
+
+/* ── Response seal bar wipe ── */
+@keyframes sealWipe {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.seal-wipe {
+  transform-box: fill-box;
+  transform-origin: left center;
+  animation: sealWipe 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
