@@ -135,6 +135,9 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
   const [toolOutputs, setToolOutputs] = useState<Record<string, string>>({});
   const [toolDone, setToolDone] = useState<Set<string>>(new Set());
   const [visibleEdges, setVisibleEdges] = useState<Set<string>>(new Set());
+  const [responseVisible, setResponseVisible] = useState(false);
+  const [receiptRows, setReceiptRows] = useState<number>(0);
+  const [sealVisible, setSealVisible] = useState(false);
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   const schedule = useCallback((fn: () => void, ms: number) => {
@@ -161,6 +164,9 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
       setToolOutputs({});
       setToolDone(new Set());
       setVisibleEdges(new Set());
+      setResponseVisible(false);
+      setReceiptRows(0);
+      setSealVisible(false);
       return;
     }
 
@@ -278,6 +284,23 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
         return next;
       });
     }, 6000);
+
+    // t=6.4s — response appears
+    schedule(() => {
+      setResponseVisible(true);
+      onNarrate('Response generated. 4.2s, $0.021 per request');
+    }, 6400);
+
+    // t=6.5s / 6.62s / 6.74s — receipt rows reveal
+    schedule(() => setReceiptRows(1), 6500);
+    schedule(() => setReceiptRows(2), 6620);
+    schedule(() => setReceiptRows(3), 6740);
+
+    // t=6.9s — seal wipes + phase done
+    schedule(() => {
+      setSealVisible(true);
+      setPhase('done');
+    }, 6900);
 
     return () => {
       timersRef.current.forEach(clearTimeout);
@@ -434,12 +457,47 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
           })}
         </g>
 
-        {/* Response placeholder */}
-        <g style={{ opacity: 0 }}>
+        {/* Response with receipt rows and seal */}
+        <g style={{ opacity: responseVisible ? 1 : 0, transition: 'opacity 0.3s ease-out' }}>
           <rect x={RESPONSE.x} y={RESPONSE.y} width={RESPONSE.w} height={RESPONSE.h}
                 rx={8} fill="#effdf4" stroke="#86efac" strokeWidth={1} />
           <BoxHeader x={RESPONSE.x} y={RESPONSE.y} w={RESPONSE.w} rx={8}
-                     label="RESPONSE" status={phase === 'done' ? 'done' : 'idle'} showCheck={phase === 'done'} />
+                     label="RESPONSE" status={phase === 'done' ? 'done' : 'idle'}
+                     showCheck={phase === 'done'} />
+
+          {/* Receipt rows */}
+          {[
+            { label: 'time', value: '4.2s' },
+            { label: 'cost', value: '$0.021' },
+            { label: 'status', value: '✓ complete' },
+          ].map((row, idx) => {
+            const rowY = RESPONSE.y + HEADER_H + 14 + idx * 18;
+            return receiptRows > idx ? (
+              <g key={row.label} className="row-reveal">
+                <text x={RESPONSE.x + 16} y={rowY} fontSize={11}
+                      fontFamily="'Geist Mono', monospace" fill="#888">
+                  {row.label}
+                </text>
+                <text x={RESPONSE.x + RESPONSE.w - 16} y={rowY} fontSize={11}
+                      fontFamily="'Geist Mono', monospace" fill="#166534"
+                      textAnchor="end">
+                  {row.value}
+                </text>
+                {idx < 2 && (
+                  <line x1={RESPONSE.x + 16} y1={rowY + 5}
+                        x2={RESPONSE.x + RESPONSE.w - 16} y2={rowY + 5}
+                        stroke="#d0ead8" strokeWidth={0.5} />
+                )}
+              </g>
+            ) : null;
+          })}
+
+          {/* Green seal bar */}
+          {sealVisible && (
+            <rect x={RESPONSE.x + 2} y={RESPONSE.y + RESPONSE.h - 5}
+                  width={RESPONSE.w - 4} height={4} rx={2} fill="#22c55e"
+                  className="seal-wipe" />
+          )}
         </g>
       </svg>
     </div>
