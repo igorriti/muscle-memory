@@ -4,6 +4,8 @@ export type { MuscleMemoryConfig } from './muscle-memory.js';
 
 // ── Stores ──
 export { SqliteStore } from './store.js';
+export { RedisStore } from './redis-store.js';
+export type { RedisClient, RedisStoreConfig } from './redis-store.js';
 export type { Store } from './types.js';
 
 // ── Alternative wrapper API ──

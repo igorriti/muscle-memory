@@ -15,6 +15,7 @@ export class Tracer {
   }
 
   private async generateEmbedding(traceId: string, text: string): Promise<void> {
+    if (!this.config.embeddingModel) return;  // no embedding model, skip
     const { embedding } = await embed({
       model: this.config.embeddingModel,
       value: text,

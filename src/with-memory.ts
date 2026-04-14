@@ -14,6 +14,10 @@ import { DEFAULT_CONFIG, MithrilConfig, Trace, TraceStep, ToolRegistry, Store } 
 export interface MemoryOptions {
   /** Path to SQLite database. Default: './muscle-memory.db' */
   db?: string;
+  /** AI SDK embedding model. Optional — skips embedding if not set. */
+  embeddingModel?: any;
+  /** AI SDK extractor model (small/cheap). Optional — skips SLM extraction if not set. */
+  extractorModel?: any;
   /** Min successful traces before learning a template. Default: 3 */
   minTraces?: number;
   /** Confidence threshold for Phase 3. Default: 0.90 */
@@ -130,6 +134,8 @@ export function withMemory<T extends (...args: any[]) => Promise<any>>(
 ) {
   const config: MithrilConfig = {
     ...DEFAULT_CONFIG,
+    embeddingModel: options.embeddingModel ?? null,
+    extractorModel: options.extractorModel ?? null,
     dbPath: options.db ?? DEFAULT_CONFIG.dbPath,
     minTracesForTemplate: options.minTraces ?? DEFAULT_CONFIG.minTracesForTemplate,
     confidenceThreshold: options.confidence ?? DEFAULT_CONFIG.confidenceThreshold,

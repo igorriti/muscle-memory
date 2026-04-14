@@ -13,6 +13,8 @@ export interface MuscleMemoryConfig {
   model: any;
   /** Phase 3: the "extractor" model (cheap/small). Any AI SDK model. Optional — skips SLM if regex works. */
   extractionModel?: any;
+  /** AI SDK embedding model for similarity matching. Optional — skips embedding if not set. */
+  embeddingModel?: any;
   /** AI SDK tools — same format you already use with generateText. */
   tools: Record<string, any>;
   /** Where to persist traces and templates. Default: SqliteStore('./muscle-memory.db') */
@@ -61,6 +63,7 @@ export function muscleMemory(userConfig: MuscleMemoryConfig) {
     ...DEFAULT_CONFIG,
     plannerModel: userConfig.model,
     extractorModel: userConfig.extractionModel ?? userConfig.model,
+    embeddingModel: userConfig.embeddingModel ?? null,
     systemPrompt: userConfig.system ?? DEFAULT_CONFIG.systemPrompt,
     minTracesForTemplate: userConfig.minTraces ?? DEFAULT_CONFIG.minTracesForTemplate,
     confidenceThreshold: userConfig.confidence ?? DEFAULT_CONFIG.confidenceThreshold,

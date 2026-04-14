@@ -36,6 +36,10 @@ export class ArgExtractor {
       return { args: regexArgs, allRequiredPresent: true, missingFields: [] };
     }
 
+    if (!this.config.extractorModel) {
+      return { args: regexArgs, allRequiredPresent: false, missingFields: regexMissing };
+    }
+
     try {
       const { object } = await generateObject({
         model: this.config.extractorModel,

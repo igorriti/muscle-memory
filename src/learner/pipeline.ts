@@ -99,6 +99,8 @@ function computeCentroid(embeddings: number[][]): number[] {
 }
 
 async function extractGraph(traces: Trace[], config: MithrilConfig): Promise<ExecutionGraph> {
+  if (!config.plannerModel) throw new Error('plannerModel required for learning');
+
   const traceSummaries = traces.map(t => ({
     message: t.userMessage,
     steps: t.steps.map(s => ({
@@ -159,6 +161,12 @@ function inferArgSchema(traces: Trace[]): ArgField[] {
 }
 
 async function generateName(traces: Trace[], config: MithrilConfig): Promise<string> {
+  if (!config.extractorModel) {
+    // fallback: generate name from first trace's tool calls
+    const tools = traces[0].steps.map(s => s.toolName);
+    return tools.slice(0, 2).join('_');
+  }
+
   const messages = traces.slice(0, 5).map(t => t.userMessage);
   const { text } = await generateText({
     model: config.extractorModel,

@@ -100,9 +100,12 @@ export interface RoutingDecision {
 }
 
 export interface MithrilConfig {
-  plannerModel: string;
-  extractorModel: string;
-  embeddingModel: string;
+  /** AI SDK model instance for planning/graph extraction. */
+  plannerModel: any;
+  /** AI SDK model instance for argument extraction and naming (cheap/small). */
+  extractorModel: any;
+  /** AI SDK embedding model instance for similarity matching. */
+  embeddingModel: any;
   similarityThreshold: number;
   confidenceThreshold: number;
   ambiguousZoneLower: number;
@@ -116,9 +119,9 @@ export interface MithrilConfig {
 }
 
 export const DEFAULT_CONFIG: MithrilConfig = {
-  plannerModel: 'anthropic/claude-sonnet-4-20250514',
-  extractorModel: 'anthropic/claude-haiku-4-5-20251001',
-  embeddingModel: 'openai/text-embedding-3-small',
+  plannerModel: null as any,
+  extractorModel: null as any,
+  embeddingModel: null as any,
   similarityThreshold: 0.85,
   confidenceThreshold: 0.90,
   ambiguousZoneLower: 0.70,

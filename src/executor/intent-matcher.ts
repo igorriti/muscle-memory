@@ -38,6 +38,7 @@ export class IntentMatcher {
     }
 
     if (this.templates.length === 0) return null;
+    if (!this.config.embeddingModel) return null;  // no embedding model configured
 
     const { embedding } = await embed({
       model: this.config.embeddingModel,
