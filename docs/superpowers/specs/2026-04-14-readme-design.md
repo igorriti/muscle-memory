@@ -7,10 +7,12 @@
 ## Goal
 
 Replace the current feature-reference README with a layered document that:
-1. Hooks judges / first-time visitors in the first 15 lines (one-line install + wrap snippet, followed by a benchmark table).
+1. Hooks judges / first-time visitors in the first 15 lines by leading with the **learning loop** (traces → cron job → compiled templates) and a benchmark table.
 2. Gives developers enough technical depth below the fold to evaluate for real use.
 
 Keep it minimal. Every section earns its place.
+
+**Framing rule:** do NOT sell this as "wrap a function." The wrapper is an implementation detail, not a value prop. The value prop is: your agent has a learning job that runs in the background and makes it faster over time.
 
 ## Audience
 
@@ -29,15 +31,16 @@ In order. Content notes describe intent, not final copy.
 
 ### 1. Title + tagline
 - `# muscle-memory`
-- One line: *Agents that learn. Wrap once. Get faster and cheaper with every call.*
+- One line: *Agents that learn. A background job turns repeated traces into compiled templates — every call after that is ~20x faster and ~20x cheaper.*
+- No mention of wrapping, SDKs, or `generateText` in the tagline.
 
 ### 2. Hero visual slot
 - Placeholder: `[IMG: side-by-side gif — Phase 1 (thinking, ~4s) vs Phase 3 (instant, ~200ms)]`
 - Asset spec: terminal recording of the demo app, two panels, same prompt, shows latency badges. To be produced after demo is built.
 
-### 3. Install + wrap
+### 3. Install + minimal usage
 - `npm install muscle-memory`
-- Minimal `withMemory(generateText)` snippet (~5–8 lines). Show that the call signature is identical to vanilla `generateText`.
+- Short snippet (~5–8 lines) showing the agent being called like normal. Do NOT narrate this as "wrapping" — just show it working. No "same API as generateText" framing. The reader should see: import, call, get a result with a phase badge on it.
 
 ### 4. The numbers
 Compact 3-column table:
@@ -58,8 +61,15 @@ No claims beyond what the current implementation actually delivers. Numbers come
 ### 6. Quickstart
 - One complete, copy-pasteable example (~20 lines): imports, tool definitions (re-use `get_order` / `cancel_order` / `process_refund` from current README), a `generate(...)` call, logging `result.text` and `result.experimental_muscle_memory?.phase`.
 
-### 7. Teach it
-- `learn()` as a background job. 6-ish lines. Cron one-liner as an aside. Drop the "Option B inline" path for brevity — mention in config table if needed.
+### 7. The learning job (hero section — promote above Quickstart if possible)
+- This is the differentiator. Treat it as such.
+- Lead with the cron one-liner:
+  ```
+  0 * * * * node scripts/learn.js
+  ```
+- Then the `learn()` call (6-ish lines): point it at the same SQLite file the agent writes to, set `minTraces` and `confidence`, let it run.
+- One sentence on what it does: clusters semantically-similar traces, compiles each cluster into a DAG template, marks it active once confidence is high enough.
+- Do NOT mention "Option A / Option B" or inline learning. One path only: it's a background job.
 
 ### 8. Configuration
 Compact table: option / default / purpose. Covers `db`, `minTraces`, `confidence`, `similarity`, `learnInline`. No prose.
@@ -90,6 +100,9 @@ Placeholder format in the markdown: an HTML comment `<!-- IMG: ... -->` plus a v
 
 ## Explicit non-goals
 
+- No "wrap your function" framing anywhere in the pitch.
+- No "Option A / Option B" patterns. One recommended path per feature.
+- No inline-learning path in the README (it exists in code; it's not the story).
 - No before/after two-column code layout (mobile rendering).
 - No narrative/story intro.
 - No full API reference — link to source if needed.
