@@ -213,6 +213,7 @@ html, body {
   font-family: 'Geist', sans-serif;
   font-size: 13px;
   cursor: pointer;
+  transition: background 0.32s cubic-bezier(0.33, 1, 0.68, 1);
 }
 
 .btn:hover {
@@ -220,19 +221,21 @@ html, body {
 }
 
 .btn-preset {
-  padding: 6px 10px;
+  padding: 7px 10px;
   background: #fff;
   color: #1a1a1a;
-  border: 1px solid #eaeaea;
+  border: 1px solid #d4d4d4;
   border-radius: 6px;
   font-family: 'Geist Mono', monospace;
   font-size: 11px;
   cursor: pointer;
   text-align: left;
+  transition: border-color 0.32s cubic-bezier(0.33, 1, 0.68, 1), transform 0.32s cubic-bezier(0.33, 1, 0.68, 1);
 }
 
 .btn-preset:hover {
-  border-color: #999;
+  border-color: #1a1a1a;
+  transform: translateX(2px);
 }
 
 /* ── Stat cards ── */
@@ -337,4 +340,117 @@ html, body {
   background: #fafafa;
   border: 1px solid #eaeaea;
   border-radius: 3px;
+}
+
+/* ── Breathing dashed border (LLM active) ── */
+@keyframes breathe {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+.breathe {
+  animation: breathe 1.6s ease-in-out infinite;
+}
+
+/* ── Grid cell cascade reveal ── */
+@keyframes cellReveal {
+  from { opacity: 0; transform: scale(0.4); }
+  to { opacity: 1; transform: scale(1); }
+}
+.cell-reveal {
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+  animation: cellReveal 0.22s ease-out forwards;
+}
+
+/* ── Grid cell scan flash (during sweep) ── */
+@keyframes cellFlash {
+  0% { fill: #e4e0f0; }
+  35% { fill: #8b5cf6; }
+  100% { fill: #e4e0f0; }
+}
+
+/* ── Grid cell catch (stays selected) ── */
+@keyframes cellCatch {
+  0% { transform: scale(1); fill: #8b5cf6; }
+  45% { transform: scale(1.35); fill: #1a1a1a; }
+  100% { transform: scale(1); fill: #1a1a1a; }
+}
+.cell-catch {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: cellCatch 0.18s ease-out forwards;
+}
+
+/* ── Typewriter caret blink ── */
+@keyframes caretBlink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+.caret {
+  animation: caretBlink 0.8s steps(1) infinite;
+}
+
+/* ── Receipt row reveal ── */
+@keyframes rowReveal {
+  from { opacity: 0; transform: translateX(-4px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.row-reveal {
+  opacity: 0;
+  animation: rowReveal 0.22s ease-out forwards;
+}
+
+/* ── Response seal bar wipe ── */
+@keyframes sealWipe {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+.seal-wipe {
+  transform-box: fill-box;
+  transform-origin: left center;
+  animation: sealWipe 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* ── Grid cell hover (B) ── */
+.grid-cell {
+  cursor: crosshair;
+}
+
+/* ── Card interactive hover (A) ── */
+.card-interactive {
+  cursor: pointer;
+  transition: transform 0.5s cubic-bezier(0.33, 1, 0.68, 1), filter 0.5s cubic-bezier(0.33, 1, 0.68, 1);
+  will-change: transform, filter;
+}
+.card-interactive rect:first-of-type {
+  transition: stroke 0.5s cubic-bezier(0.33, 1, 0.68, 1);
+}
+.card-interactive:hover {
+  transform: translateY(-4px);
+  filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.09));
+}
+.card-interactive:hover rect:first-of-type {
+  stroke: #1a1a1a;
+}
+
+/* ── Mini-DAG edge draw ── */
+@keyframes miniEdgeDraw {
+  to { stroke-dashoffset: 0; }
+}
+.mini-edge {
+  stroke-dasharray: 200;
+  stroke-dashoffset: 200;
+}
+.mini-edge.visible {
+  animation: miniEdgeDraw 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* ── Complete-row idle pulse (D) ── */
+@keyframes completePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+.complete-pulse {
+  animation: completePulse 2.2s ease-in-out infinite;
 }
