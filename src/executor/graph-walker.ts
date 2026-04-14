@@ -25,7 +25,13 @@ export async function walkGraph(
     }
 
     const toolDef = tools[node.tool];
-    if (!toolDef) throw new Error(`Tool "${node.tool}" not found in registry`);
+    if (!toolDef) {
+      // Template references a tool the LLM hallucinated — skip this node
+      context[node.id] = { output: { error: `Unknown tool: ${node.tool}` } };
+      steps.push({ stepId: stepId++, toolName: node.tool, toolInput: resolvedArgs, toolOutput: { error: `Unknown tool: ${node.tool}` }, latencyMs: 0, success: false, dependsOn: stepId > 1 ? stepId - 2 : null, error: `Unknown tool: ${node.tool}` });
+      currentNodeId = null;
+      continue;
+    }
 
     const toolStart = Date.now();
     let toolOutput: any;

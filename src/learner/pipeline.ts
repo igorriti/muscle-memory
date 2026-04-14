@@ -1,6 +1,6 @@
 import { generateText, embed } from 'ai';
 import { v4 as uuid } from 'uuid';
-import { Store, MithrilConfig, Template, Trace, ExecutionGraph, ArgField } from '../types.js';
+import { Store, MithrilConfig, Template, Trace, ExecutionGraph, GraphNode, GraphEdge, ArgField } from '../types.js';
 
 function cosine(a: number[], b: number[]): number {
   let dot = 0, normA = 0, normB = 0;
@@ -20,7 +20,9 @@ export async function runLearningPipeline(
   const unclassified = store.getUnclassifiedTraces();
   if (unclassified.length === 0) return { templatesCreated: 0, templatesUpdated: 0 };
 
-  const clusters = clusterTraces(unclassified, 0.80);
+  // Cluster by tool sequence: traces that called the same tools in the same order
+  // belong together. This is far more accurate than embedding similarity for clustering.
+  const clusters = clusterByToolSequence(unclassified);
 
   let created = 0;
   let updated = 0;
@@ -35,7 +37,7 @@ export async function runLearningPipeline(
     if (existingMatch) {
       updated++;
     } else {
-      const graph = await extractGraph(cluster, config);
+      const graph = extractGraphFromTraces(cluster);
       const argSchema = inferArgSchema(cluster);
       const name = await generateName(cluster, config);
 
@@ -62,6 +64,22 @@ export async function runLearningPipeline(
   }
 
   return { templatesCreated: created, templatesUpdated: updated };
+}
+
+/**
+ * Cluster traces by their tool-call sequence.
+ * "Cancel my order" and "hey cancel asap" both call [cancel_order] → same cluster.
+ * "Track my order" calls [track_order] → different cluster.
+ * This is deterministic and perfectly accurate — no embedding guesswork.
+ */
+function clusterByToolSequence(traces: Trace[]): Trace[][] {
+  const groups = new Map<string, Trace[]>();
+  for (const t of traces) {
+    const key = t.steps.map(s => s.toolName).join(' → ') || '(no tools)';
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key)!.push(t);
+  }
+  return [...groups.values()];
 }
 
 function clusterTraces(traces: Trace[], threshold: number): Trace[][] {
@@ -98,39 +116,78 @@ function computeCentroid(embeddings: number[][]): number[] {
   return centroid;
 }
 
-async function extractGraph(traces: Trace[], config: MithrilConfig): Promise<ExecutionGraph> {
-  if (!config.plannerModel) throw new Error('plannerModel required for learning');
+/**
+ * Build the execution graph directly from recorded traces.
+ * No LLM needed — the traces already contain exact tool names, args, and order.
+ *
+ * Algorithm:
+ * 1. Find the most common tool sequence across traces
+ * 2. Build nodes from that sequence with arg templates
+ * 3. Build edges connecting sequential nodes
+ */
+function extractGraphFromTraces(traces: Trace[]): ExecutionGraph {
+  // Find the most common tool-call sequence
+  const sequenceCounts = new Map<string, { count: number; steps: Trace['steps'] }>();
+  for (const t of traces) {
+    const key = t.steps.map(s => s.toolName).join(' → ');
+    const existing = sequenceCounts.get(key);
+    if (existing) {
+      existing.count++;
+    } else {
+      sequenceCounts.set(key, { count: 1, steps: t.steps });
+    }
+  }
 
-  const traceSummaries = traces.map(t => ({
-    message: t.userMessage,
-    steps: t.steps.map(s => ({
-      tool: s.toolName,
-      input: s.toolInput,
-      output: s.toolOutput,
-      success: s.success,
-    })),
-  }));
+  // Pick the most frequent sequence
+  let bestSteps: Trace['steps'] = traces[0]?.steps ?? [];
+  let bestCount = 0;
+  for (const [, entry] of sequenceCounts) {
+    if (entry.count > bestCount) {
+      bestCount = entry.count;
+      bestSteps = entry.steps;
+    }
+  }
 
-  const { text } = await generateText({
-    model: config.plannerModel,
-    system: `You are a workflow analyst. Given execution traces of the same task type, extract the common execution graph as a DAG. Return ONLY valid JSON matching this schema:
-{
-  "nodes": [{ "id": "n1", "tool": "tool_name", "argsTemplate": { "field": "{variable_or_static}" } }],
-  "edges": [{ "from": "n1", "to": "n2", "condition": "n1.output.field == 'value'" | null, "weight": 0.88, "type": "normal" | "fallback" }],
-  "rootNodeId": "n1"
-}
-Rules:
-- Concrete values that change between traces become {variable_name} in argsTemplate
-- Values that come from a previous node's output use {nodeId.output.field}
-- Static values stay as-is
-- weight = fraction of traces that took this edge
-- Mark edges that only activate on failure as "fallback"`,
-    prompt: JSON.stringify(traceSummaries, null, 2),
+  // Build nodes from the steps
+  const nodes: GraphNode[] = bestSteps.map((step, i) => {
+    // Build argsTemplate: values that vary across traces become {field_name}
+    const argsTemplate: Record<string, string> = {};
+    const allInputsAtStep = traces
+      .filter(t => t.steps[i]?.toolName === step.toolName)
+      .map(t => t.steps[i]?.toolInput ?? {});
+
+    for (const [key, value] of Object.entries(step.toolInput ?? {})) {
+      const valuesAtKey = allInputsAtStep.map(inp => inp[key]).filter(v => v != null);
+      const unique = new Set(valuesAtKey.map(String));
+      if (unique.size > 1) {
+        // Value varies → make it a variable
+        argsTemplate[key] = `{${key}}`;
+      } else {
+        // Value is constant → keep it static
+        argsTemplate[key] = String(value);
+      }
+    }
+
+    return { id: `n${i + 1}`, tool: step.toolName, argsTemplate };
   });
 
-  const jsonMatch = text.match(/\{[\s\S]*\}/);
-  if (!jsonMatch) throw new Error('Failed to extract graph from traces');
-  return JSON.parse(jsonMatch[0]) as ExecutionGraph;
+  // Build edges connecting sequential nodes
+  const edges: GraphEdge[] = [];
+  for (let i = 0; i < nodes.length - 1; i++) {
+    edges.push({
+      from: nodes[i].id,
+      to: nodes[i + 1].id,
+      condition: null,
+      weight: bestCount / traces.length,
+      type: 'normal' as const,
+    });
+  }
+
+  return {
+    nodes,
+    edges,
+    rootNodeId: nodes[0]?.id ?? 'n1',
+  };
 }
 
 function inferArgSchema(traces: Trace[]): ArgField[] {
@@ -171,7 +228,6 @@ async function generateName(traces: Trace[], config: MithrilConfig): Promise<str
   const { text } = await generateText({
     model: config.extractorModel,
     prompt: `Given these user messages that all represent the same type of task, generate a short snake_case name (2-3 words max) that describes the task type. Messages:\n${messages.join('\n')}\n\nName:`,
-    temperature: 0,
   });
   return text.trim().toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
 }

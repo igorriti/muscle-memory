@@ -9,6 +9,7 @@
  * Real-time comparison of latency, tokens, and cost.
  */
 import 'dotenv/config';
+(globalThis as any).AI_SDK_LOG_WARNINGS = false;
 import { openai } from '@ai-sdk/openai';
 import { generateText } from 'ai';
 import { muscleMemory, SqliteStore } from '../../src/index.js';
@@ -246,7 +247,10 @@ async function main() {
             // Wait for embeddings to complete
             await new Promise(r => setTimeout(r, checkpoint === 100 ? 5000 : 3000));
             const lr = await agent.learn();
-            console.log(`  >>> LEARNED @${checkpoint}: ${lr.templatesCreated} templates created <<<`);
+            // Show what templates exist
+            const metrics = agent.metrics();
+            const matchRate = done > 0 ? ((memCount / done) * 100).toFixed(0) : '0';
+            console.log(`  >>> LEARNED @${checkpoint}: +${lr.templatesCreated} templates | match rate: ${matchRate}% <<<`);
             break; // only one learn per query completion
           }
         }
