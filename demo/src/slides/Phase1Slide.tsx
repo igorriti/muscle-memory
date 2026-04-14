@@ -81,96 +81,146 @@ function BoxHeader({ x, y, w, rx, label, status, showCheck }: BoxHeaderProps) {
 
 export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
   const [phase, setPhase] = useState<Phase>('idle');
+  const [visibleBoxes, setVisibleBoxes] = useState<Set<string>>(new Set());
+  const [gridRevealed, setGridRevealed] = useState(false);
+  const [llmBreathing, setLlmBreathing] = useState(false);
+  const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  const schedule = useCallback((fn: () => void, ms: number) => {
+    const t = setTimeout(fn, ms);
+    timersRef.current.push(t);
+  }, []);
 
   useEffect(() => {
     if (!active) {
+      timersRef.current.forEach(clearTimeout);
+      timersRef.current = [];
       setPhase('idle');
+      setVisibleBoxes(new Set());
+      setGridRevealed(false);
+      setLlmBreathing(false);
       return;
     }
-    setPhase('customer');
-    onNarrate('Request received: Cancel my order ORD-412');
+
+    // t=0.0s — customer
+    schedule(() => {
+      setVisibleBoxes(prev => new Set(prev).add('customer'));
+      onNarrate('Request received: Cancel my order ORD-412');
+      setPhase('customer');
+    }, 0);
+
+    // t=1.0s — LLM materializes
+    schedule(() => {
+      setVisibleBoxes(prev => new Set(prev).add('llm'));
+      setLlmBreathing(true);
+      setPhase('llm-scanning');
+    }, 1000);
+
+    // t=1.3s — grid cascade
+    schedule(() => {
+      setGridRevealed(true);
+      onNarrate('LLM scanning 128 tools...');
+    }, 1300);
+
+    return () => {
+      timersRef.current.forEach(clearTimeout);
+      timersRef.current = [];
+    };
   }, [active]);
 
   return (
     <div className="slide" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <svg width={960} height={680} viewBox="0 0 960 680">
         {/* Customer message placeholder */}
-        <rect x={CUSTOMER.x} y={CUSTOMER.y} width={CUSTOMER.w} height={CUSTOMER.h}
-              rx={8} fill="#eff3ff" stroke="#c7d7fe" strokeWidth={1} />
-        {/* Customer body */}
-        <text x={CUSTOMER.x + 14} y={CUSTOMER.y + HEADER_H + 22} fontSize={36}
-              fontFamily="Georgia, serif" fill="#c7d7fe" opacity={0.7}>
-          &ldquo;
-        </text>
-        <text x={CUSTOMER.x + CUSTOMER.w / 2} y={CUSTOMER.y + HEADER_H + (CUSTOMER.h - HEADER_H) / 2 + 4}
-              fontSize={14} fontFamily="'Geist', sans-serif" fill="#334"
-              fontStyle="italic" textAnchor="middle" dominantBaseline="middle">
-          Cancel my order ORD-412
-        </text>
-        <BoxHeader x={CUSTOMER.x} y={CUSTOMER.y} w={CUSTOMER.w} rx={8}
-                   label="CUSTOMER MESSAGE" status={phase === 'idle' ? 'idle' : 'done'} showCheck={phase !== 'idle'} />
+        <g style={{ opacity: visibleBoxes.has('customer') ? 1 : 0, transition: 'opacity 0.3s ease-out' }}>
+          <rect x={CUSTOMER.x} y={CUSTOMER.y} width={CUSTOMER.w} height={CUSTOMER.h}
+                rx={8} fill="#eff3ff" stroke="#c7d7fe" strokeWidth={1} />
+          {/* Customer body */}
+          <text x={CUSTOMER.x + 14} y={CUSTOMER.y + HEADER_H + 22} fontSize={36}
+                fontFamily="Georgia, serif" fill="#c7d7fe" opacity={0.7}>
+            &ldquo;
+          </text>
+          <text x={CUSTOMER.x + CUSTOMER.w / 2} y={CUSTOMER.y + HEADER_H + (CUSTOMER.h - HEADER_H) / 2 + 4}
+                fontSize={14} fontFamily="'Geist', sans-serif" fill="#334"
+                fontStyle="italic" textAnchor="middle" dominantBaseline="middle">
+            Cancel my order ORD-412
+          </text>
+          <BoxHeader x={CUSTOMER.x} y={CUSTOMER.y} w={CUSTOMER.w} rx={8}
+                     label="CUSTOMER MESSAGE" status={phase === 'idle' ? 'idle' : 'done'} showCheck={phase !== 'idle'} />
+        </g>
 
         {/* LLM workspace placeholder */}
-        <rect x={LLM.x} y={LLM.y} width={LLM.w} height={LLM.h}
-              rx={8} fill="#f6f2ff" stroke="#cbb8ff" strokeWidth={1} strokeDasharray="6,3" />
-        <BoxHeader x={LLM.x} y={LLM.y} w={LLM.w} rx={8}
-                   label="LLM REASONING"
-                   status={phase === 'llm-scanning' ? 'active' : phase === 'idle' || phase === 'customer' ? 'idle' : 'done'}
-                   showCheck={phase === 'tools-executing' || phase === 'response' || phase === 'done'} />
+        <g style={{ opacity: visibleBoxes.has('llm') ? 1 : 0, transition: 'opacity 0.3s ease-out' }}>
+          <rect x={LLM.x} y={LLM.y} width={LLM.w} height={LLM.h}
+                rx={8} fill="#f6f2ff" stroke="#cbb8ff" strokeWidth={1} strokeDasharray="6,3"
+                className={llmBreathing ? 'breathe' : ''} />
+          <BoxHeader x={LLM.x} y={LLM.y} w={LLM.w} rx={8}
+                     label="LLM REASONING"
+                     status={phase === 'llm-scanning' ? 'active' : phase === 'idle' || phase === 'customer' ? 'idle' : 'done'}
+                     showCheck={phase === 'tools-executing' || phase === 'response' || phase === 'done'} />
 
-        {/* Left pane: tool grid */}
-        <text x={LLM_GRID_PANE.x + LLM_GRID_PANE.w / 2} y={LLM_GRID_PANE.y + 8}
-              fontSize={10} fontFamily="'Geist Mono', monospace" fill="#888"
-              textAnchor="middle" letterSpacing={1}>
-          128 TOOLS
-        </text>
-        {Array.from({ length: GRID_COLS * GRID_ROWS }).map((_, i) => {
-          const col = i % GRID_COLS;
-          const row = Math.floor(i / GRID_COLS);
-          const cx = GRID_ORIGIN_X + col * (GRID_CELL_W + GRID_GAP);
-          const cy = GRID_ORIGIN_Y + row * (GRID_CELL_H + GRID_GAP);
-          return (
-            <rect key={`cell-${i}`} x={cx} y={cy} width={GRID_CELL_W} height={GRID_CELL_H}
-                  rx={1.5} fill="#e4e0f0" />
-          );
-        })}
+          {/* Left pane: tool grid */}
+          <text x={LLM_GRID_PANE.x + LLM_GRID_PANE.w / 2} y={LLM_GRID_PANE.y + 8}
+                fontSize={10} fontFamily="'Geist Mono', monospace" fill="#888"
+                textAnchor="middle" letterSpacing={1}>
+            128 TOOLS
+          </text>
+          {gridRevealed && Array.from({ length: GRID_COLS * GRID_ROWS }).map((_, i) => {
+            const col = i % GRID_COLS;
+            const row = Math.floor(i / GRID_COLS);
+            const cx = GRID_ORIGIN_X + col * (GRID_CELL_W + GRID_GAP);
+            const cy = GRID_ORIGIN_Y + row * (GRID_CELL_H + GRID_GAP);
+            // Diagonal wipe: delay by (col + row) * 20ms
+            const delay = (col + row) * 20;
+            return (
+              <rect key={`cell-${i}`} x={cx} y={cy} width={GRID_CELL_W} height={GRID_CELL_H}
+                    rx={1.5} fill="#e4e0f0"
+                    className="cell-reveal"
+                    style={{ animationDelay: `${delay}ms` }} />
+            );
+          })}
 
-        {/* Right pane: thought stream placeholder */}
-        <text x={LLM_THOUGHT_PANE.x} y={LLM_THOUGHT_PANE.y + 8}
-              fontSize={10} fontFamily="'Geist Mono', monospace" fill="#888" letterSpacing={1}>
-          THOUGHT STREAM
-        </text>
+          {/* Right pane: thought stream placeholder */}
+          <text x={LLM_THOUGHT_PANE.x} y={LLM_THOUGHT_PANE.y + 8}
+                fontSize={10} fontFamily="'Geist Mono', monospace" fill="#888" letterSpacing={1}>
+            THOUGHT STREAM
+          </text>
 
-        {/* Bottom cost strip */}
-        <line x1={LLM_COST_STRIP.x} y1={LLM_COST_STRIP.y - 6}
-              x2={LLM_COST_STRIP.x + LLM_COST_STRIP.w} y2={LLM_COST_STRIP.y - 6}
-              stroke="#e0d8f0" strokeWidth={1} />
-        <text x={LLM_COST_STRIP.x} y={LLM_COST_STRIP.y + 4}
-              fontSize={10} fontFamily="'Geist Mono', monospace" fill="#666">
-          TOKENS 0
-        </text>
-        <text x={LLM_COST_STRIP.x + LLM_COST_STRIP.w} y={LLM_COST_STRIP.y + 4}
-              fontSize={10} fontFamily="'Geist Mono', monospace" fill="#666" textAnchor="end">
-          $0.000
-        </text>
+          {/* Bottom cost strip */}
+          <line x1={LLM_COST_STRIP.x} y1={LLM_COST_STRIP.y - 6}
+                x2={LLM_COST_STRIP.x + LLM_COST_STRIP.w} y2={LLM_COST_STRIP.y - 6}
+                stroke="#e0d8f0" strokeWidth={1} />
+          <text x={LLM_COST_STRIP.x} y={LLM_COST_STRIP.y + 4}
+                fontSize={10} fontFamily="'Geist Mono', monospace" fill="#666">
+            TOKENS 0
+          </text>
+          <text x={LLM_COST_STRIP.x + LLM_COST_STRIP.w} y={LLM_COST_STRIP.y + 4}
+                fontSize={10} fontFamily="'Geist Mono', monospace" fill="#666" textAnchor="end">
+            $0.000
+          </text>
+        </g>
 
         {/* Tool card placeholders */}
-        {TOOLS.map(t => (
-          <g key={t.id}>
-            <rect x={t.x} y={TOOL_Y} width={TOOL_W} height={TOOL_H}
-                  rx={4} fill="#282835" stroke="#3a3a48" strokeWidth={1} />
-            <BoxHeader x={t.x} y={TOOL_Y} w={TOOL_W} rx={4}
-                       label={t.label}
-                       status={phase === 'response' || phase === 'done' ? 'done' : phase === 'tools-executing' ? 'active' : 'idle'}
-                       showCheck={phase === 'response' || phase === 'done'} />
-          </g>
-        ))}
+        <g style={{ opacity: 0 }}>
+          {TOOLS.map(t => (
+            <g key={t.id}>
+              <rect x={t.x} y={TOOL_Y} width={TOOL_W} height={TOOL_H}
+                    rx={4} fill="#282835" stroke="#3a3a48" strokeWidth={1} />
+              <BoxHeader x={t.x} y={TOOL_Y} w={TOOL_W} rx={4}
+                         label={t.label}
+                         status={phase === 'response' || phase === 'done' ? 'done' : phase === 'tools-executing' ? 'active' : 'idle'}
+                         showCheck={phase === 'response' || phase === 'done'} />
+            </g>
+          ))}
+        </g>
 
         {/* Response placeholder */}
-        <rect x={RESPONSE.x} y={RESPONSE.y} width={RESPONSE.w} height={RESPONSE.h}
-              rx={8} fill="#effdf4" stroke="#86efac" strokeWidth={1} />
-        <BoxHeader x={RESPONSE.x} y={RESPONSE.y} w={RESPONSE.w} rx={8}
-                   label="RESPONSE" status={phase === 'done' ? 'done' : 'idle'} showCheck={phase === 'done'} />
+        <g style={{ opacity: 0 }}>
+          <rect x={RESPONSE.x} y={RESPONSE.y} width={RESPONSE.w} height={RESPONSE.h}
+                rx={8} fill="#effdf4" stroke="#86efac" strokeWidth={1} />
+          <BoxHeader x={RESPONSE.x} y={RESPONSE.y} w={RESPONSE.w} rx={8}
+                     label="RESPONSE" status={phase === 'done' ? 'done' : 'idle'} showCheck={phase === 'done'} />
+        </g>
       </svg>
     </div>
   );
