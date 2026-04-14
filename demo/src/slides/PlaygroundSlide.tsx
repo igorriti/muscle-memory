@@ -1,6 +1,17 @@
 import { useState, useRef, useCallback } from 'react';
 import { simulatePhase1, simulatePhase3, SimResult } from '../simulator';
-import { SAMPLE_QUERIES } from '../benchmarkData';
+import { SAMPLE_QUERIES, BENCHMARK_STATS } from '../benchmarkData';
+
+// Per-query averages from the benchmark — used as the source of truth for all
+// numbers shown in the playground (response cards, history, summary strip).
+const P1_AVG_LAT_MS = BENCHMARK_STATS.avgLatWithoutMs;
+const P3_AVG_LAT_MS = BENCHMARK_STATS.avgLatWithMs;
+const P1_AVG_COST = BENCHMARK_STATS.totalCostWithout / BENCHMARK_STATS.totalQueries;
+const P3_AVG_COST = BENCHMARK_STATS.totalCostWith / BENCHMARK_STATS.totalQueries;
+const fmtLat = (ms: number) => ms >= 1000 ? `${(ms / 1000).toFixed(1)}s` : `${Math.round(ms)}ms`;
+const fmtCost = (c: number) => `$${c.toFixed(3)}`;
+const P1_RESP = `${fmtLat(P1_AVG_LAT_MS)} · ${fmtCost(P1_AVG_COST)}`;
+const P3_RESP = `${fmtLat(P3_AVG_LAT_MS)} · ${fmtCost(P3_AVG_COST)}`;
 
 interface SlideProps {
   active: boolean;
@@ -150,12 +161,15 @@ export function PlaygroundSlide({ active: _active, onNarrate: _onNarrate }: Slid
       if (p1Done && p3Done && p1Result && p3Result && currentRun === runIdRef.current) {
         setLastResult({ p1: p1Result, p3: p3Result });
         setShowMetrics(true);
+        // Show the benchmark averages (same source used by all other slides)
+        // rather than the simulator's visual-animation timings, which are tuned
+        // for legibility, not accuracy.
         setChatHistory(prev => [...prev, {
           query: message,
-          p1Ms: p1Result!.totalMs,
-          p3Ms: p3Result!.totalMs,
-          p1Cost: p1Result!.cost,
-          p3Cost: p3Result!.cost,
+          p1Ms: P1_AVG_LAT_MS,
+          p3Ms: P3_AVG_LAT_MS,
+          p1Cost: P1_AVG_COST,
+          p3Cost: P3_AVG_COST,
           response: p3Result!.response,
         }]);
         setRunning(false);
@@ -172,7 +186,7 @@ export function PlaygroundSlide({ active: _active, onNarrate: _onNarrate }: Slid
       } else if (stepId.startsWith('tool_')) {
         upsertNode(setP1Nodes, stepId, name || stepId, status, status === 'done' ? 'ok' : 'executing...');
       } else if (stepId === 'response') {
-        upsertNode(setP1Nodes, 'response', 'Response', status, status === 'done' ? '4.2s · $0.021' : 'generating...');
+        upsertNode(setP1Nodes, 'response', 'Response', status, status === 'done' ? P1_RESP : 'generating...');
       }
     }).then(result => {
       p1Result = result;
@@ -195,7 +209,7 @@ export function PlaygroundSlide({ active: _active, onNarrate: _onNarrate }: Slid
       } else if (stepId.startsWith('tool_')) {
         upsertNode(setP3Nodes, stepId, name || stepId, status, status === 'done' ? 'ok' : 'exec...');
       } else if (stepId === 'response') {
-        upsertNode(setP3Nodes, 'response', 'Response', status, '180ms · $0.001');
+        upsertNode(setP3Nodes, 'response', 'Response', status, P3_RESP);
       }
     }).then(result => {
       p3Result = result;
@@ -346,9 +360,9 @@ export function PlaygroundSlide({ active: _active, onNarrate: _onNarrate }: Slid
                   fontSize: 10,
                   color: LABEL_COLOR,
                 }}>
-                  <span>P1 {entry.p1Ms}ms</span>
-                  <span>P3 {entry.p3Ms}ms</span>
-                  <span style={{ color: '#22c55e' }}>${entry.p3Cost}</span>
+                  <span>P1 {fmtLat(entry.p1Ms)}</span>
+                  <span>P3 {fmtLat(entry.p3Ms)}</span>
+                  <span style={{ color: '#22c55e' }}>{fmtCost(entry.p3Cost)}</span>
                 </div>
               </div>
             ))}
@@ -380,10 +394,13 @@ export function PlaygroundSlide({ active: _active, onNarrate: _onNarrate }: Slid
               flexShrink: 0,
               background: SURFACE_FILL,
             }}>
+              {/* Summary reflects the full 1000-query benchmark run, not the
+                   single animated simulation above. */}
               {[
-                { label: 'speedup', value: `${Math.round(lastResult.p1.totalMs / lastResult.p3.totalMs)}× faster` },
-                { label: 'savings', value: `${Math.round((1 - lastResult.p3.cost / lastResult.p1.cost) * 100)}% cheaper` },
-                { label: 'reasoning', value: '0 LLM calls' },
+                { label: 'speedup',   value: `${BENCHMARK_STATS.speedup}× faster` },
+                { label: 'savings',   value: `${BENCHMARK_STATS.costSavings}% cheaper` },
+                { label: 'tokens',    value: `${BENCHMARK_STATS.tokenSavings}% saved` },
+                { label: 'memory',    value: `${BENCHMARK_STATS.memoryHits}/${BENCHMARK_STATS.totalQueries} hits` },
               ].map(m => (
                 <div key={m.label} style={{
                   padding: '10px 16px',
