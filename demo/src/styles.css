@@ -1,0 +1,340 @@
+/* ── Reset ── */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ── Body ── */
+html, body {
+  background: #fff;
+  font-family: 'Geist', sans-serif;
+  color: #1a1a1a;
+  overflow: hidden;
+  height: 100vh;
+}
+
+/* ── Slides container ── */
+.slides-container {
+  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Slide ── */
+.slide {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Sticky header ── */
+.header {
+  position: fixed;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  background: #fff;
+  border-bottom: 1px solid #eaeaea;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+}
+
+.header-logo {
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: -0.5px;
+}
+
+.header-label {
+  color: #999;
+  font-size: 13px;
+  margin-left: 16px;
+  font-family: 'Geist Mono', monospace;
+}
+
+/* ── Narration bar ── */
+.narration-bar {
+  position: fixed;
+  top: 48px;
+  z-index: 99;
+  width: 100%;
+  background: #fafafa;
+  border-bottom: 1px solid #eaeaea;
+  padding: 10px 24px;
+  font-family: 'Geist Mono', monospace;
+  font-size: 12px;
+  color: #666;
+  min-height: 36px;
+  transition: opacity 0.3s;
+}
+
+/* ── SVG node spawn ── */
+@keyframes nodeSpawn {
+  from {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.svg-node {
+  transform-box: fill-box;
+  transform-origin: center;
+  opacity: 0;
+}
+
+.svg-node.visible {
+  animation: nodeSpawn 0.4s ease-out forwards;
+}
+
+/* ── Edge draw ── */
+@keyframes edgeDraw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.svg-edge {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+}
+
+.svg-edge.visible {
+  animation: edgeDraw 0.8s ease-out forwards;
+}
+
+/* ── Status light pulse ── */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+.status-pulse {
+  animation: pulse 1s ease-in-out infinite;
+}
+
+/* ── Tool grid flash ── */
+@keyframes toolFlash {
+  0% {
+    fill: #eaeaea;
+  }
+  30% {
+    fill: #1a1a1a;
+  }
+  100% {
+    fill: #eaeaea;
+  }
+}
+
+/* ── Utility classes ── */
+.mono {
+  font-family: 'Geist Mono', monospace;
+}
+
+.green {
+  color: #22c55e;
+}
+
+/* ── Slide content area ── */
+.slide-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 96px 48px 48px;
+}
+
+/* ── Comparison table ── */
+.comparison-table {
+  border-collapse: collapse;
+  font-family: 'Geist Mono', monospace;
+  font-size: 13px;
+}
+
+.comparison-table th,
+.comparison-table td {
+  padding: 8px 16px;
+  border-bottom: 1px solid #eaeaea;
+  text-align: left;
+}
+
+.comparison-table th {
+  font-weight: 500;
+  color: #999;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ── Playground sidebar ── */
+.playground-sidebar {
+  width: 260px;
+  border-right: 1px solid #eaeaea;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+}
+
+/* ── Input styles ── */
+.input-field {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #eaeaea;
+  border-radius: 6px;
+  font-family: 'Geist', sans-serif;
+  font-size: 13px;
+  outline: none;
+}
+
+.input-field:focus {
+  border-color: #999;
+}
+
+/* ── Button styles ── */
+.btn {
+  padding: 8px 16px;
+  background: #1a1a1a;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-family: 'Geist', sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  background: #333;
+}
+
+.btn-preset {
+  padding: 6px 10px;
+  background: #fff;
+  color: #1a1a1a;
+  border: 1px solid #eaeaea;
+  border-radius: 6px;
+  font-family: 'Geist Mono', monospace;
+  font-size: 11px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.btn-preset:hover {
+  border-color: #999;
+}
+
+/* ── Stat cards ── */
+.stat-card {
+  padding: 20px;
+  border: 1px solid #eaeaea;
+  border-radius: 8px;
+}
+
+.stat-value {
+  font-family: 'Geist Mono', monospace;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #999;
+  margin-top: 4px;
+}
+
+/* ── Fade-in ── */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+/* ── Canvas placeholder ── */
+.canvas-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ccc;
+  font-family: 'Geist Mono', monospace;
+  font-size: 13px;
+  height: 100%;
+}
+
+/* ── Chat history ── */
+.chat-history {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.chat-entry {
+  padding: 8px;
+  border: 1px solid #eaeaea;
+  border-radius: 6px;
+  font-size: 11px;
+}
+
+.chat-entry-query {
+  font-family: 'Geist', sans-serif;
+  margin-bottom: 4px;
+}
+
+.chat-entry-meta {
+  font-family: 'Geist Mono', monospace;
+  color: #999;
+  display: flex;
+  gap: 8px;
+}
+
+/* ── Progress bar ── */
+.progress-bar {
+  height: 3px;
+  background: #eaeaea;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #1a1a1a;
+  transition: width 0.3s;
+}
+
+.progress-fill.done {
+  background: #22c55e;
+}
+
+/* ── Tool pill ── */
+.tool-pill {
+  display: inline-block;
+  padding: 2px 6px;
+  font-family: 'Geist Mono', monospace;
+  font-size: 9px;
+  background: #fafafa;
+  border: 1px solid #eaeaea;
+  border-radius: 3px;
+}
