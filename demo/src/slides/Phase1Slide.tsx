@@ -118,6 +118,42 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
                    status={phase === 'llm-scanning' ? 'active' : phase === 'idle' || phase === 'customer' ? 'idle' : 'done'}
                    showCheck={phase === 'tools-executing' || phase === 'response' || phase === 'done'} />
 
+        {/* Left pane: tool grid */}
+        <text x={LLM_GRID_PANE.x + LLM_GRID_PANE.w / 2} y={LLM_GRID_PANE.y + 8}
+              fontSize={10} fontFamily="'Geist Mono', monospace" fill="#888"
+              textAnchor="middle" letterSpacing={1}>
+          128 TOOLS
+        </text>
+        {Array.from({ length: GRID_COLS * GRID_ROWS }).map((_, i) => {
+          const col = i % GRID_COLS;
+          const row = Math.floor(i / GRID_COLS);
+          const cx = GRID_ORIGIN_X + col * (GRID_CELL_W + GRID_GAP);
+          const cy = GRID_ORIGIN_Y + row * (GRID_CELL_H + GRID_GAP);
+          return (
+            <rect key={`cell-${i}`} x={cx} y={cy} width={GRID_CELL_W} height={GRID_CELL_H}
+                  rx={1.5} fill="#e4e0f0" />
+          );
+        })}
+
+        {/* Right pane: thought stream placeholder */}
+        <text x={LLM_THOUGHT_PANE.x} y={LLM_THOUGHT_PANE.y + 8}
+              fontSize={10} fontFamily="'Geist Mono', monospace" fill="#888" letterSpacing={1}>
+          THOUGHT STREAM
+        </text>
+
+        {/* Bottom cost strip */}
+        <line x1={LLM_COST_STRIP.x} y1={LLM_COST_STRIP.y - 6}
+              x2={LLM_COST_STRIP.x + LLM_COST_STRIP.w} y2={LLM_COST_STRIP.y - 6}
+              stroke="#e0d8f0" strokeWidth={1} />
+        <text x={LLM_COST_STRIP.x} y={LLM_COST_STRIP.y + 4}
+              fontSize={10} fontFamily="'Geist Mono', monospace" fill="#666">
+          TOKENS 0
+        </text>
+        <text x={LLM_COST_STRIP.x + LLM_COST_STRIP.w} y={LLM_COST_STRIP.y + 4}
+              fontSize={10} fontFamily="'Geist Mono', monospace" fill="#666" textAnchor="end">
+          $0.000
+        </text>
+
         {/* Tool card placeholders */}
         {TOOLS.map(t => (
           <g key={t.id}>
