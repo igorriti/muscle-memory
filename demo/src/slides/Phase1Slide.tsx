@@ -118,6 +118,8 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
   const [detaching, setDetaching] = useState(false);
   const [detachEngaged, setDetachEngaged] = useState(false);
   const [toolsVisible, setToolsVisible] = useState(false);
+  const [toolOutputs, setToolOutputs] = useState<Record<string, string>>({});
+  const [toolDone, setToolDone] = useState<Set<string>>(new Set());
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   const schedule = useCallback((fn: () => void, ms: number) => {
@@ -141,6 +143,8 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
       setDetaching(false);
       setDetachEngaged(false);
       setToolsVisible(false);
+      setToolOutputs({});
+      setToolDone(new Set());
       return;
     }
 
@@ -230,6 +234,22 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
       setToolsVisible(true);
       setPhase('tools-executing');
     }, 5200);
+
+    // Per-tool output streams starting at 5200 + idx*150
+    TOOLS.forEach((tool, idx) => {
+      const startAt = 5200 + idx * 150;
+      const full = tool.output;
+      const perChar = Math.max(10, Math.floor(350 / full.length));
+      for (let c = 1; c <= full.length; c++) {
+        schedule(() => {
+          setToolOutputs(prev => ({ ...prev, [tool.id]: full.slice(0, c) }));
+        }, startAt + c * perChar);
+      }
+      // Mark done 120ms after full text lands
+      schedule(() => {
+        setToolDone(prev => new Set(prev).add(tool.id));
+      }, startAt + full.length * perChar + 120);
+    });
 
     return () => {
       timersRef.current.forEach(clearTimeout);
@@ -354,16 +374,30 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
 
         {/* Tool card placeholders */}
         <g style={{ opacity: toolsVisible ? 1 : 0, transition: 'opacity 0.25s' }}>
-          {TOOLS.map(t => (
-            <g key={t.id}>
-              <rect x={t.x} y={TOOL_Y} width={TOOL_W} height={TOOL_H}
-                    rx={4} fill="#282835" stroke="#3a3a48" strokeWidth={1} />
-              <BoxHeader x={t.x} y={TOOL_Y} w={TOOL_W} rx={4}
-                         label={t.label}
-                         status={phase === 'response' || phase === 'done' ? 'done' : phase === 'tools-executing' ? 'active' : 'idle'}
-                         showCheck={phase === 'response' || phase === 'done'} />
-            </g>
-          ))}
+          {TOOLS.map(t => {
+            const isDone = toolDone.has(t.id);
+            const isActive = toolsVisible && !isDone;
+            const output = toolOutputs[t.id] || '';
+            return (
+              <g key={t.id}>
+                <rect x={t.x} y={TOOL_Y} width={TOOL_W} height={TOOL_H}
+                      rx={4} fill="#282835" stroke="#3a3a48" strokeWidth={1} />
+                {/* Amber tick signature */}
+                <rect x={t.x + 2} y={TOOL_Y + HEADER_H + 2} width={3} height={8} fill="#f59e0b" />
+                <BoxHeader x={t.x} y={TOOL_Y} w={TOOL_W} rx={4}
+                           label={t.label}
+                           status={isDone ? 'done' : isActive ? 'active' : 'idle'}
+                           showCheck={isDone} />
+                <text x={t.x + 10} y={TOOL_Y + HEADER_H + 30}
+                      fontSize={11} fontFamily="'Geist Mono', monospace" fill="#b8b8c8">
+                  {output}
+                  {isActive && output.length > 0 && output.length < t.output.length && (
+                    <tspan className="caret" fill="#f59e0b">▋</tspan>
+                  )}
+                </text>
+              </g>
+            );
+          })}
         </g>
 
         {/* Response placeholder */}
