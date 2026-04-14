@@ -74,7 +74,15 @@ export function muscleMemory(userConfig: MuscleMemoryConfig) {
   const matcher = new IntentMatcher(store, config);
   const extractor = new ArgExtractor(config);
   const tracer = new Tracer(store, config);
-  matcher.reload();
+
+  // Wait for async store init (sql.js) before first operation
+  const storeReady = ('waitReady' in store && typeof (store as any).waitReady === 'function')
+    ? (store as any).waitReady().then(() => matcher.reload())
+    : Promise.resolve().then(() => matcher.reload());
+  let initialized = false;
+  const ensureReady = async () => {
+    if (!initialized) { await storeReady; initialized = true; }
+  };
 
   return {
     async run(params: { messages?: any[]; prompt?: string }): Promise<{
@@ -84,6 +92,7 @@ export function muscleMemory(userConfig: MuscleMemoryConfig) {
       latencyMs: number;
       costUsd: number;
     }> {
+      await ensureReady();
       const startTime = Date.now();
       const prompt = extractPrompt(params);
       if (!prompt) throw new Error('No prompt or messages provided');
@@ -208,6 +217,7 @@ export function muscleMemory(userConfig: MuscleMemoryConfig) {
     },
 
     async learn() {
+      await ensureReady();
       const { runLearningPipeline } = await import('./learner/pipeline.js');
       const result = await runLearningPipeline(store, config, {});
       matcher.reload();

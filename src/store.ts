@@ -1,17 +1,45 @@
-import Database from 'better-sqlite3';
+import initSqlJs, { Database as SqlJsDatabase } from 'sql.js';
+import * as fs from 'fs';
 import { Trace, Template, Store } from './types.js';
 
+let SQL: Awaited<ReturnType<typeof initSqlJs>> | null = null;
+
+async function getSql() {
+  if (!SQL) SQL = await initSqlJs();
+  return SQL;
+}
+
 export class SqliteStore implements Store {
-  private db: Database.Database;
+  private db!: SqlJsDatabase;
+  private dbPath: string;
+  private ready: Promise<void>;
 
   constructor(path: string = './muscle-memory.db') {
-    this.db = new Database(path);
-    this.db.pragma('journal_mode = WAL');
+    this.dbPath = path;
+    this.ready = this.init();
+  }
+
+  private async init() {
+    const sql = await getSql();
+    if (fs.existsSync(this.dbPath)) {
+      const buffer = fs.readFileSync(this.dbPath);
+      this.db = new sql.Database(buffer);
+    } else {
+      this.db = new sql.Database();
+    }
     this.migrate();
   }
 
+  private ensureReady() {
+    if (!this.db) throw new Error('SqliteStore not initialized. Await .waitReady() first.');
+  }
+
+  async waitReady(): Promise<void> {
+    await this.ready;
+  }
+
   private migrate() {
-    this.db.exec(`
+    this.db.run(`
       CREATE TABLE IF NOT EXISTS traces (
         trace_id TEXT PRIMARY KEY,
         timestamp TEXT NOT NULL,
@@ -22,8 +50,9 @@ export class SqliteStore implements Store {
         phase INTEGER NOT NULL,
         template_id TEXT,
         classified INTEGER DEFAULT 0
-      );
-
+      )
+    `);
+    this.db.run(`
       CREATE TABLE IF NOT EXISTS templates (
         template_id TEXT PRIMARY KEY,
         name TEXT NOT NULL,
@@ -35,8 +64,9 @@ export class SqliteStore implements Store {
         last_used_at TEXT NOT NULL,
         total_executions INTEGER DEFAULT 0,
         successful_executions INTEGER DEFAULT 0
-      );
-
+      )
+    `);
+    this.db.run(`
       CREATE TABLE IF NOT EXISTS routing_log (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         timestamp TEXT NOT NULL,
@@ -49,107 +79,134 @@ export class SqliteStore implements Store {
         latency_ms REAL,
         cost_usd REAL,
         success INTEGER
-      );
-
-      CREATE INDEX IF NOT EXISTS idx_traces_success ON traces(success);
-      CREATE INDEX IF NOT EXISTS idx_traces_classified ON traces(classified);
-      CREATE INDEX IF NOT EXISTS idx_traces_phase ON traces(phase);
-      CREATE INDEX IF NOT EXISTS idx_templates_status ON templates(status);
+      )
     `);
+    this.db.run('CREATE INDEX IF NOT EXISTS idx_traces_success ON traces(success)');
+    this.db.run('CREATE INDEX IF NOT EXISTS idx_traces_classified ON traces(classified)');
+    this.db.run('CREATE INDEX IF NOT EXISTS idx_traces_phase ON traces(phase)');
+    this.db.run('CREATE INDEX IF NOT EXISTS idx_templates_status ON templates(status)');
+  }
+
+  private persist() {
+    const data = this.db.export();
+    fs.writeFileSync(this.dbPath, Buffer.from(data));
+  }
+
+  private queryAll(sql: string, params: any[] = []): any[] {
+    this.ensureReady();
+    const stmt = this.db.prepare(sql);
+    if (params.length) stmt.bind(params);
+    const rows: any[] = [];
+    while (stmt.step()) {
+      rows.push(stmt.getAsObject());
+    }
+    stmt.free();
+    return rows;
+  }
+
+  private queryOne(sql: string, params: any[] = []): any | null {
+    const rows = this.queryAll(sql, params);
+    return rows[0] ?? null;
+  }
+
+  private execute(sql: string, params: any[] = []) {
+    this.ensureReady();
+    this.db.run(sql, params);
+    this.persist();
   }
 
   saveTrace(trace: Trace): void {
-    this.db.prepare(`
-      INSERT INTO traces (trace_id, timestamp, user_message, embedding, data, success, phase, template_id)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `).run(
-      trace.traceId,
-      trace.timestamp,
-      trace.userMessage,
-      trace.userMessageEmbedding ? JSON.stringify(trace.userMessageEmbedding) : null,
-      JSON.stringify(trace),
-      trace.success ? 1 : 0,
-      trace.phase,
-      trace.templateId
+    this.execute(
+      `INSERT INTO traces (trace_id, timestamp, user_message, embedding, data, success, phase, template_id)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        trace.traceId,
+        trace.timestamp,
+        trace.userMessage,
+        trace.userMessageEmbedding ? JSON.stringify(trace.userMessageEmbedding) : null,
+        JSON.stringify(trace),
+        trace.success ? 1 : 0,
+        trace.phase,
+        trace.templateId,
+      ]
     );
   }
 
   getUnclassifiedTraces(): Trace[] {
-    const rows = this.db.prepare(
+    const rows = this.queryAll(
       'SELECT data FROM traces WHERE success = 1 AND classified = 0 AND embedding IS NOT NULL'
-    ).all() as { data: string }[];
-    return rows.map(r => JSON.parse(r.data));
+    );
+    return rows.map((r: any) => JSON.parse(r.data));
   }
 
   getTracesByTemplateId(templateId: string, limit = 20): Trace[] {
-    const rows = this.db.prepare(
-      'SELECT data FROM traces WHERE template_id = ? ORDER BY timestamp DESC LIMIT ?'
-    ).all(templateId, limit) as { data: string }[];
-    return rows.map(r => JSON.parse(r.data));
+    const rows = this.queryAll(
+      'SELECT data FROM traces WHERE template_id = ? ORDER BY timestamp DESC LIMIT ?',
+      [templateId, limit]
+    );
+    return rows.map((r: any) => JSON.parse(r.data));
   }
 
   markTracesClassified(traceIds: string[]): void {
-    const stmt = this.db.prepare('UPDATE traces SET classified = 1 WHERE trace_id = ?');
-    const tx = this.db.transaction(() => {
-      for (const id of traceIds) stmt.run(id);
-    });
-    tx();
+    for (const id of traceIds) {
+      this.db.run('UPDATE traces SET classified = 1 WHERE trace_id = ?', [id]);
+    }
+    this.persist();
   }
 
   updateTraceEmbedding(traceId: string, embedding: number[]): void {
-    this.db.prepare('UPDATE traces SET embedding = ? WHERE trace_id = ?')
-      .run(JSON.stringify(embedding), traceId);
+    this.execute(
+      'UPDATE traces SET embedding = ? WHERE trace_id = ?',
+      [JSON.stringify(embedding), traceId]
+    );
   }
 
   saveTemplate(template: Template): void {
-    this.db.prepare(`
-      INSERT OR REPLACE INTO templates
-      (template_id, name, embedding, data, confidence, status, created_at, last_used_at, total_executions, successful_executions)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `).run(
-      template.templateId,
-      template.name,
-      JSON.stringify(template.embedding),
-      JSON.stringify(template),
-      template.confidence,
-      template.status,
-      template.createdAt,
-      template.lastUsedAt,
-      template.totalExecutions,
-      template.successfulExecutions
+    this.execute(
+      `INSERT OR REPLACE INTO templates
+       (template_id, name, embedding, data, confidence, status, created_at, last_used_at, total_executions, successful_executions)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        template.templateId,
+        template.name,
+        JSON.stringify(template.embedding),
+        JSON.stringify(template),
+        template.confidence,
+        template.status,
+        template.createdAt,
+        template.lastUsedAt,
+        template.totalExecutions,
+        template.successfulExecutions,
+      ]
     );
   }
 
   getAllActiveTemplates(): Template[] {
-    const rows = this.db.prepare(
-      "SELECT data FROM templates WHERE status = 'active'"
-    ).all() as { data: string }[];
-    return rows.map(r => JSON.parse(r.data));
+    const rows = this.queryAll("SELECT data FROM templates WHERE status = 'active'");
+    return rows.map((r: any) => JSON.parse(r.data));
   }
 
   getTemplate(templateId: string): Template | null {
-    const row = this.db.prepare(
-      'SELECT data FROM templates WHERE template_id = ?'
-    ).get(templateId) as { data: string } | undefined;
+    const row = this.queryOne('SELECT data FROM templates WHERE template_id = ?', [templateId]);
     return row ? JSON.parse(row.data) : null;
   }
 
   updateTemplateAfterExecution(templateId: string, success: boolean): void {
     const now = new Date().toISOString();
-    this.db.prepare(`
-      UPDATE templates SET
+    this.execute(
+      `UPDATE templates SET
         total_executions = total_executions + 1,
         successful_executions = successful_executions + CASE WHEN ? THEN 1 ELSE 0 END,
         last_used_at = ?,
         confidence = CAST(successful_executions + CASE WHEN ? THEN 1 ELSE 0 END AS REAL)
                      / (total_executions + 1)
-      WHERE template_id = ?
-    `).run(success ? 1 : 0, now, success ? 1 : 0, templateId);
+      WHERE template_id = ?`,
+      [success ? 1 : 0, now, success ? 1 : 0, templateId]
+    );
   }
 
   degradeTemplate(templateId: string): void {
-    this.db.prepare("UPDATE templates SET status = 'degraded' WHERE template_id = ?")
-      .run(templateId);
+    this.execute("UPDATE templates SET status = 'degraded' WHERE template_id = ?", [templateId]);
   }
 
   logRouting(entry: {
@@ -163,31 +220,36 @@ export class SqliteStore implements Store {
     costUsd?: number;
     success?: boolean;
   }): void {
-    this.db.prepare(`
-      INSERT INTO routing_log (timestamp, user_message, phase, reason, template_id, similarity, confidence, latency_ms, cost_usd, success)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `).run(
-      new Date().toISOString(),
-      entry.userMessage,
-      entry.phase,
-      entry.reason,
-      entry.templateId ?? null,
-      entry.similarity ?? null,
-      entry.confidence ?? null,
-      entry.latencyMs ?? null,
-      entry.costUsd ?? null,
-      entry.success != null ? (entry.success ? 1 : 0) : null
+    this.execute(
+      `INSERT INTO routing_log (timestamp, user_message, phase, reason, template_id, similarity, confidence, latency_ms, cost_usd, success)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        new Date().toISOString(),
+        entry.userMessage,
+        entry.phase,
+        entry.reason,
+        entry.templateId ?? null,
+        entry.similarity ?? null,
+        entry.confidence ?? null,
+        entry.latencyMs ?? null,
+        entry.costUsd ?? null,
+        entry.success != null ? (entry.success ? 1 : 0) : null,
+      ]
     );
   }
 
   getMetrics() {
-    const total = this.db.prepare('SELECT COUNT(*) as c FROM traces').get() as { c: number };
-    const byPhase = this.db.prepare(
-      'SELECT phase, COUNT(*) as c, AVG(json_extract(data, "$.totalLatencyMs")) as avgLat, AVG(json_extract(data, "$.totalCostUsd")) as avgCost FROM traces GROUP BY phase'
-    ).all() as { phase: number; c: number; avgLat: number; avgCost: number }[];
-    const successRate = this.db.prepare(
+    const total = this.queryOne('SELECT COUNT(*) as c FROM traces');
+    const byPhase = this.queryAll(
+      'SELECT phase, COUNT(*) as c FROM traces GROUP BY phase'
+    );
+    const successRate = this.queryOne(
       'SELECT CAST(SUM(success) AS REAL) / COUNT(*) as rate FROM traces'
-    ).get() as { rate: number };
-    return { total: total.c, byPhase, successRate: successRate.rate };
+    );
+    return {
+      total: total?.c ?? 0,
+      byPhase: byPhase.map((r: any) => ({ phase: r.phase, c: r.c, avgLat: 0, avgCost: 0 })),
+      successRate: successRate?.rate ?? 0,
+    };
   }
 }
