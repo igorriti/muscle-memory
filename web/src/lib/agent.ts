@@ -1,4 +1,5 @@
 import { muscleMemory, SqliteStore } from 'muscle-memory';
+import { anthropic } from '@ai-sdk/anthropic';
 import { openai } from '@ai-sdk/openai';
 import { tool } from 'ai';
 import { z } from 'zod';
@@ -74,13 +75,16 @@ let _agent: ReturnType<typeof muscleMemory> | null = null;
 
 export function getAgent() {
   if (!_agent) {
-    if (!process.env.OPENAI_API_KEY) {
-      throw new Error('OPENAI_API_KEY environment variable is required');
+    if (!process.env.ANTHROPIC_API_KEY) {
+      throw new Error('ANTHROPIC_API_KEY environment variable is required');
     }
 
     _agent = muscleMemory({
-      model: openai('gpt-4.1-mini'),
-      extractionModel: openai('gpt-4.1-nano'),
+      // Phase 1: the big model (full reasoning + tool calling)
+      model: anthropic('claude-sonnet-4-20250514'),
+      // Phase 3: the small model (arg extraction only)
+      extractionModel: anthropic('claude-haiku-4-5-20251001'),
+      // Embeddings (OpenAI, cheapest option)
       embeddingModel: openai('text-embedding-3-small'),
       tools,
       store: new SqliteStore('./muscle-memory.db'),
