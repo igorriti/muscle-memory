@@ -84,6 +84,7 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
   const [visibleBoxes, setVisibleBoxes] = useState<Set<string>>(new Set());
   const [gridRevealed, setGridRevealed] = useState(false);
   const [llmBreathing, setLlmBreathing] = useState(false);
+  const [scanCol, setScanCol] = useState<number | null>(null);
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   const schedule = useCallback((fn: () => void, ms: number) => {
@@ -99,6 +100,7 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
       setVisibleBoxes(new Set());
       setGridRevealed(false);
       setLlmBreathing(false);
+      setScanCol(null);
       return;
     }
 
@@ -121,6 +123,26 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
       setGridRevealed(true);
       onNarrate('LLM scanning 128 tools...');
     }, 1300);
+
+    // t=1.8s — start scan sweeps (3 full sweeps over ~2.5s)
+    schedule(() => {
+      let sweepIndex = 0;
+      let col = 0;
+      const SWEEP_MS = 80; // per column
+      const interval = setInterval(() => {
+        setScanCol(col);
+        col++;
+        if (col >= GRID_COLS) {
+          col = 0;
+          sweepIndex++;
+          if (sweepIndex >= 3) {
+            clearInterval(interval);
+            setScanCol(null);
+          }
+        }
+      }, SWEEP_MS);
+      timersRef.current.push(interval as unknown as ReturnType<typeof setTimeout>);
+    }, 1800);
 
     return () => {
       timersRef.current.forEach(clearTimeout);
@@ -170,13 +192,22 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
             const row = Math.floor(i / GRID_COLS);
             const cx = GRID_ORIGIN_X + col * (GRID_CELL_W + GRID_GAP);
             const cy = GRID_ORIGIN_Y + row * (GRID_CELL_H + GRID_GAP);
-            // Diagonal wipe: delay by (col + row) * 20ms
             const delay = (col + row) * 20;
+
+            // Brighten based on distance from scan column (falloff)
+            let fill = '#e4e0f0';
+            if (scanCol !== null) {
+              const dist = Math.abs(col - scanCol);
+              if (dist === 0) fill = '#8b5cf6';
+              else if (dist === 1) fill = '#b8a4f0';
+              else if (dist === 2) fill = '#d4c7f5';
+            }
+
             return (
               <rect key={`cell-${i}`} x={cx} y={cy} width={GRID_CELL_W} height={GRID_CELL_H}
-                    rx={1.5} fill="#e4e0f0"
+                    rx={1.5} fill={fill}
                     className="cell-reveal"
-                    style={{ animationDelay: `${delay}ms` }} />
+                    style={{ animationDelay: `${delay}ms`, transition: 'fill 0.12s' }} />
             );
           })}
 
