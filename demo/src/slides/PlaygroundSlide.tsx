@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback } from 'react';
 import { simulatePhase1, simulatePhase3, SimResult } from '../simulator';
+import { SAMPLE_QUERIES } from '../benchmarkData';
 
 interface SlideProps {
   active: boolean;
@@ -32,12 +33,8 @@ const SURFACE_STROKE = '#d4d4d4';
 const LABEL_COLOR = '#666';
 const DIVIDER_COLOR = '#e5e5e5';
 
-const PRESETS = [
-  'Cancel order ORD-412',
-  'Where is my shipment 1337?',
-  'Payment issue on order ORD-412',
-  'Return item from order ORD-891',
-];
+// Preset queries come from benchmark QUERY_PATTERNS (via SAMPLE_QUERIES).
+const PRESETS = SAMPLE_QUERIES.map(s => s.query);
 
 function statusColor(s: NodeStatus): string {
   if (s === 'active') return '#eab308';

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
+import { QUERY_PATTERNS, makeQuery, CANCEL_ORDER_DAG, BENCHMARK_STATS } from '../benchmarkData';
 
 interface SlideProps {
   active: boolean;
@@ -61,13 +62,8 @@ function getNode(id: string): NodeDef {
   return NODE_DEFS.find(n => n.id === id)!;
 }
 
-// Real queries from the cancel_order benchmark pattern
-const TRACE_MESSAGES = [
-  'Cancel my order ORD-1004',
-  'hey i need to cancel order 1057 asap',
-  'ORD-1089 cancel please, bought it by accident',
-  'cancel ORD-1122, my card was charged',
-];
+// Trace messages come from the benchmark's cancel_order query pattern.
+const TRACE_MESSAGES = [5, 57, 81, 130].map(i => makeQuery('cancel_order', i));
 
 const VECTORS = [
   '[0.82, 0.91, ...]',
@@ -179,7 +175,7 @@ export function LearningSlide({ active, onNarrate }: SlideProps) {
     }
 
     setPhase('running');
-    onNarrate('After 1,000 queries across 20 patterns, templates emerge.');
+    onNarrate(`After ${BENCHMARK_STATS.totalQueries.toLocaleString()} queries across ${BENCHMARK_STATS.patternCount} patterns, templates emerge.`);
 
     schedule(() => showNode('traces', 'active'), 500);
     schedule(() => setVisibleTraces(1), 800);
@@ -384,7 +380,7 @@ export function LearningSlide({ active, onNarrate }: SlideProps) {
         </text>
         <text x={def.x + def.w - 16} y={topY + 58} fontSize={12}
               fontFamily="'Geist Mono', monospace" fill="#1a1a1a" textAnchor="end">
-          822
+          {BENCHMARK_STATS.memoryHits}
         </text>
         <text x={x} y={topY + 82} fontSize={12}
               fontFamily="'Geist Mono', monospace" fill={LABEL_COLOR}>
@@ -392,7 +388,7 @@ export function LearningSlide({ active, onNarrate }: SlideProps) {
         </text>
         <text x={def.x + def.w - 16} y={topY + 82} fontSize={12}
               fontFamily="'Geist Mono', monospace" fill="#1a1a1a" textAnchor="end">
-          5
+          {CANCEL_ORDER_DAG.nodes.length}
         </text>
       </g>
     );
@@ -405,19 +401,20 @@ export function LearningSlide({ active, onNarrate }: SlideProps) {
     const nodeH = 36;
     const colGap = 150;
     const rowGap = 92;
-    const miniNodes = [
-      { label: 'get_order',        x: gx,                y: gy },
-      { label: 'get_order_status', x: gx + colGap,       y: gy },
-      { label: 'cancel_order',     x: gx + colGap * 2,   y: gy },
-      { label: 'get_order_total',  x: gx + colGap * 0.8, y: gy + rowGap },
-      { label: 'refund_payment',   x: gx + colGap * 2,   y: gy + rowGap },
+    // Layout positions for the 5 DAG nodes (indices match CANCEL_ORDER_DAG.nodes).
+    const nodePositions = [
+      { x: gx,                y: gy },            // get_order
+      { x: gx + colGap,       y: gy },            // get_order_status
+      { x: gx + colGap * 2,   y: gy },            // cancel_order
+      { x: gx + colGap * 0.8, y: gy + rowGap },   // get_order_total (rare branch)
+      { x: gx + colGap * 2,   y: gy + rowGap },   // refund_payment
     ];
-    const miniEdges = [
-      { fromIdx: 0, toIdx: 1, weightFinal: 0.92, dashed: false },
-      { fromIdx: 1, toIdx: 2, weightFinal: 0.88, dashed: false },
-      { fromIdx: 2, toIdx: 4, weightFinal: 0.80, dashed: false },
-      { fromIdx: 2, toIdx: 3, weightFinal: 0.20, dashed: true  },
-    ];
+    const miniNodes = CANCEL_ORDER_DAG.nodes.map((label, i) => ({
+      label, x: nodePositions[i].x, y: nodePositions[i].y,
+    }));
+    const miniEdges = CANCEL_ORDER_DAG.edges.map(e => ({
+      fromIdx: e.from, toIdx: e.to, weightFinal: e.weight, dashed: e.dashed,
+    }));
     const centerOf = (n: typeof miniNodes[number]) => ({
       cx: n.x + nodeW / 2, cy: n.y + nodeH / 2,
     });
