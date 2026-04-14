@@ -37,8 +37,6 @@ That's it. `result.text` works exactly like before. Your tools, your model, your
 
 After your agent handles enough requests, run the learning pipeline. This clusters similar traces and extracts reusable execution templates.
 
-**Option A -- Background job (recommended)**
-
 Run as a cron job, worker, or script. Doesn't touch the request path.
 
 ```typescript
@@ -56,17 +54,6 @@ Example cron:
 ```bash
 # Every hour
 0 * * * * node scripts/learn.js
-```
-
-**Option B -- Inline learning (for prototypes)**
-
-The agent checks after every Phase 1 execution if it can learn. Simpler, but adds ~200ms to the first N requests.
-
-```typescript
-const generate = withMemory(generateText, {
-  learnInline: true,   // check for patterns after every Phase 1 execution
-  minTraces: 5,
-});
 ```
 
 ## 3. Monitor (optional)
@@ -126,7 +113,6 @@ const generate = withMemory(generateText, {
   minTraces: 5,              // traces needed before learning (default: 3)
   confidence: 0.90,          // Phase 3 confidence threshold (default: 0.90)
   similarity: 0.85,          // embedding match threshold (default: 0.85)
-  learnInline: false,        // learn on every request (default: false)
 });
 ```
 
