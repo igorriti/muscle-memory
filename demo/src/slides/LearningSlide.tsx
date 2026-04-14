@@ -245,15 +245,26 @@ export function LearningSlide({ active, onNarrate }: SlideProps) {
   const renderTracesBody = (def: NodeDef) => {
     const bodyX = def.x + 16;
     const bodyY = def.y + HEADER_H + 26;
+    const innerW = def.w - 32;
     return TRACE_MESSAGES.map((msg, i) => (
-      <text key={`trace-${i}`}
-            x={bodyX} y={bodyY + i * 30}
-            fontSize={13} fontFamily="'Geist Mono', monospace"
-            fill="#1a1a1a"
-            opacity={i < visibleTraces ? 1 : 0}
-            style={{ transition: 'opacity 0.3s' }}>
-        {msg}
-      </text>
+      <foreignObject key={`trace-${i}`}
+                     x={bodyX} y={bodyY + i * 32 - 16}
+                     width={innerW} height={22}
+                     opacity={i < visibleTraces ? 1 : 0}
+                     style={{ transition: 'opacity 0.3s' }}>
+        <div style={{
+          fontSize: 11,
+          fontFamily: "'Geist Mono', monospace",
+          color: '#1a1a1a',
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          lineHeight: '22px',
+          width: '100%',
+        }}>
+          {msg}
+        </div>
+      </foreignObject>
     ));
   };
 
