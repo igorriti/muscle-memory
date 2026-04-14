@@ -55,6 +55,20 @@ function detachTransform(cellIdx: number, toolIdx: number): string {
   return `translate(${dx}, ${dy}) scale(${sx}, ${sy})`;
 }
 
+function curve(x1: number, y1: number, x2: number, y2: number): string {
+  const cy1 = y1 + (y2 - y1) * 0.4;
+  const cy2 = y1 + (y2 - y1) * 0.6;
+  return `M${x1},${y1} C${x1},${cy1} ${x2},${cy2} ${x2},${y2}`;
+}
+
+const EDGES = [
+  { id: 'customer-llm', d: curve(CUSTOMER.x + CUSTOMER.w / 2, CUSTOMER.y + CUSTOMER.h, LLM.x + LLM.w / 2, LLM.y) },
+  ...TOOLS.map((t) => ({
+    id: `tool-${t.id}-response`,
+    d: curve(t.x + TOOL_W / 2, TOOL_Y + TOOL_H, RESPONSE.x + RESPONSE.w / 2, RESPONSE.y),
+  })),
+];
+
 const HEADER_H = 28;
 const HEADER_FILL = '#1a1a1a';
 
@@ -120,6 +134,7 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
   const [toolsVisible, setToolsVisible] = useState(false);
   const [toolOutputs, setToolOutputs] = useState<Record<string, string>>({});
   const [toolDone, setToolDone] = useState<Set<string>>(new Set());
+  const [visibleEdges, setVisibleEdges] = useState<Set<string>>(new Set());
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   const schedule = useCallback((fn: () => void, ms: number) => {
@@ -145,6 +160,7 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
       setToolsVisible(false);
       setToolOutputs({});
       setToolDone(new Set());
+      setVisibleEdges(new Set());
       return;
     }
 
@@ -154,6 +170,9 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
       onNarrate('Request received: Cancel my order ORD-412');
       setPhase('customer');
     }, 0);
+
+    // t=0.6s — customer→LLM edge
+    schedule(() => setVisibleEdges(prev => new Set(prev).add('customer-llm')), 600);
 
     // t=1.0s — LLM materializes
     schedule(() => {
@@ -251,6 +270,15 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
       }, startAt + full.length * perChar + 120);
     });
 
+    // t=6.0s — tools→response edges
+    schedule(() => {
+      setVisibleEdges(prev => {
+        const next = new Set(prev);
+        TOOLS.forEach(t => next.add(`tool-${t.id}-response`));
+        return next;
+      });
+    }, 6000);
+
     return () => {
       timersRef.current.forEach(clearTimeout);
       timersRef.current = [];
@@ -260,6 +288,12 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
   return (
     <div className="slide" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <svg width={960} height={680} viewBox="0 0 960 680">
+        {EDGES.map(e => (
+          <path key={e.id} d={e.d}
+                className={`svg-edge${visibleEdges.has(e.id) ? ' visible' : ''}`}
+                stroke="#ccc" strokeWidth={1.5} fill="none" />
+        ))}
+
         {/* Customer message placeholder */}
         <g style={{ opacity: visibleBoxes.has('customer') ? 1 : 0, transition: 'opacity 0.3s ease-out' }}>
           <rect x={CUSTOMER.x} y={CUSTOMER.y} width={CUSTOMER.w} height={CUSTOMER.h}
