@@ -1,0 +1,27 @@
+{
+  "name": "muscle-memory-web",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 3000",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "^15.0.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "ai": "^6.0.0",
+    "@ai-sdk/openai": "^1.0.0",
+    "zod": "^3.23.0",
+    "better-sqlite3": "^11.0.0",
+    "uuid": "^10.0.0",
+    "ml-distance": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@types/better-sqlite3": "^7.6.0",
+    "@types/uuid": "^10.0.0",
+    "typescript": "^5.5.0"
+  }
+}

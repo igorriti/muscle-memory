@@ -1,0 +1,6 @@
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+body { font-family: 'Geist', sans-serif; color: #1a1a1a; background: #fff; }
+
+.mono { font-family: 'Geist Mono', monospace; }
+.green { color: #22c55e; }
