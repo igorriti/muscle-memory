@@ -22,7 +22,7 @@ const TOOL_W = 210;
 // Tool chain for the cancel_order pattern comes from the benchmark.
 const CANCEL_TOOL_CHAIN = getToolsForPattern('cancel_order');
 const TOOL_OUTPUTS: Record<string, string> = {
-  get_order:      '→ status: processing, $89.99',
+  get_order:      '→ $89.99, processing',
   cancel_order:   '→ cancelled ✓',
   refund_payment: '→ refund $89.99 queued',
 };
