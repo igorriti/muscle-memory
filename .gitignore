@@ -5,3 +5,4 @@ dist/
 .env
 .env.local
 benchmark-results.json
+web/.next/
