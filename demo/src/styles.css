@@ -213,6 +213,7 @@ html, body {
   font-family: 'Geist', sans-serif;
   font-size: 13px;
   cursor: pointer;
+  transition: background 0.32s cubic-bezier(0.33, 1, 0.68, 1);
 }
 
 .btn:hover {
@@ -220,19 +221,21 @@ html, body {
 }
 
 .btn-preset {
-  padding: 6px 10px;
+  padding: 7px 10px;
   background: #fff;
   color: #1a1a1a;
-  border: 1px solid #eaeaea;
+  border: 1px solid #d4d4d4;
   border-radius: 6px;
   font-family: 'Geist Mono', monospace;
   font-size: 11px;
   cursor: pointer;
   text-align: left;
+  transition: border-color 0.32s cubic-bezier(0.33, 1, 0.68, 1), transform 0.32s cubic-bezier(0.33, 1, 0.68, 1);
 }
 
 .btn-preset:hover {
-  border-color: #999;
+  border-color: #1a1a1a;
+  transform: translateX(2px);
 }
 
 /* ── Stat cards ── */
@@ -407,4 +410,47 @@ html, body {
   transform-box: fill-box;
   transform-origin: left center;
   animation: sealWipe 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* ── Grid cell hover (B) ── */
+.grid-cell {
+  cursor: crosshair;
+}
+
+/* ── Card interactive hover (A) ── */
+.card-interactive {
+  cursor: pointer;
+  transition: transform 0.5s cubic-bezier(0.33, 1, 0.68, 1), filter 0.5s cubic-bezier(0.33, 1, 0.68, 1);
+  will-change: transform, filter;
+}
+.card-interactive rect:first-of-type {
+  transition: stroke 0.5s cubic-bezier(0.33, 1, 0.68, 1);
+}
+.card-interactive:hover {
+  transform: translateY(-4px);
+  filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.09));
+}
+.card-interactive:hover rect:first-of-type {
+  stroke: #1a1a1a;
+}
+
+/* ── Mini-DAG edge draw ── */
+@keyframes miniEdgeDraw {
+  to { stroke-dashoffset: 0; }
+}
+.mini-edge {
+  stroke-dasharray: 200;
+  stroke-dashoffset: 200;
+}
+.mini-edge.visible {
+  animation: miniEdgeDraw 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* ── Complete-row idle pulse (D) ── */
+@keyframes completePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+.complete-pulse {
+  animation: completePulse 2.2s ease-in-out infinite;
 }

@@ -17,24 +17,39 @@ const LLM_COST_STRIP = { x: LLM.x + 360, y: LLM.y + 200, w: 300, h: 20 };
 
 const TOOL_Y = 430;
 const TOOL_H = 90;
-const TOOL_W = 170;
+const TOOL_W = 210;
 const TOOLS = [
-  { id: 'get_order', label: 'GET_ORDER', x: 170, output: '→ order.status = "shipped"' },
-  { id: 'cancel_order', label: 'CANCEL_ORDER', x: 395, output: '→ cancelled ✓' },
-  { id: 'process_refund', label: 'PROCESS_REFUND', x: 620, output: '→ refund $89.00 queued' },
+  { id: 'get_order', label: 'GET_ORDER', x: 135, output: '→ order.status = "shipped"' },
+  { id: 'cancel_order', label: 'CANCEL_ORDER', x: 375, output: '→ cancelled ✓' },
+  { id: 'refund_payment', label: 'REFUND_PAYMENT', x: 615, output: '→ refund $89.99 queued' },
 ];
 
 const RESPONSE = { x: 350, y: 550, w: 260, h: 100 };
 
 // Tool grid (inside LLM_GRID_PANE)
-const GRID_COLS = 8;
-const GRID_ROWS = 16;
-const GRID_CELL_W = 18;
-const GRID_CELL_H = 9;
+const GRID_COLS = 16;
+const GRID_ROWS = 8;
+const GRID_CELL_W = 15;
+const GRID_CELL_H = 12;
 const GRID_GAP = 3;
 const GRID_ORIGIN_X = LLM_GRID_PANE.x + (LLM_GRID_PANE.w - (GRID_COLS * (GRID_CELL_W + GRID_GAP) - GRID_GAP)) / 2;
 const GRID_ORIGIN_Y = LLM_GRID_PANE.y + 20;
-const SELECTED_CELLS = [19, 54, 87]; // which cells become tools
+const SELECTED_CELLS = [18, 56, 109]; // which cells become tools
+
+// Fake tool names for grid cell tooltips (verbs × domains = 128)
+const TOOL_NAME_VERBS = ['get', 'list', 'create', 'update', 'delete', 'query', 'fetch', 'send', 'process', 'verify', 'check', 'lookup', 'search', 'sync', 'cancel', 'refund'];
+const TOOL_NAME_NOUNS = ['order', 'customer', 'product', 'refund', 'email', 'ticket', 'payment', 'user'];
+const TOOL_NAMES: string[] = [];
+for (let i = 0; i < GRID_COLS * GRID_ROWS; i++) {
+  const v = TOOL_NAME_VERBS[i % TOOL_NAME_VERBS.length];
+  const n = TOOL_NAME_NOUNS[Math.floor(i / TOOL_NAME_VERBS.length) % TOOL_NAME_NOUNS.length];
+  TOOL_NAMES.push(`${v}_${n}`);
+}
+// Override the three selected cells with the real tool ids
+SELECTED_CELLS.forEach((idx, i) => {
+  const t = ['get_order', 'cancel_order', 'refund_payment'][i];
+  TOOL_NAMES[idx] = t;
+});
 
 function cellPos(i: number) {
   const col = i % GRID_COLS;
@@ -45,14 +60,24 @@ function cellPos(i: number) {
   };
 }
 
-function detachTransform(cellIdx: number, toolIdx: number): string {
+function lerp(a: number, b: number, t: number): number {
+  return a + (b - a) * t;
+}
+
+function easeInOutCubic(t: number): number {
+  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+}
+
+function detachRectAttrs(cellIdx: number, toolIdx: number, progress: number) {
   const from = cellPos(cellIdx);
-  const to = { x: TOOLS[toolIdx].x, y: TOOL_Y };
-  const dx = to.x - from.x;
-  const dy = to.y - from.y;
-  const sx = TOOL_W / GRID_CELL_W;
-  const sy = TOOL_H / GRID_CELL_H;
-  return `translate(${dx}, ${dy}) scale(${sx}, ${sy})`;
+  const eased = easeInOutCubic(progress);
+  return {
+    x: lerp(from.x, TOOLS[toolIdx].x, eased),
+    y: lerp(from.y, TOOL_Y, eased),
+    width: lerp(GRID_CELL_W, TOOL_W, eased),
+    height: lerp(GRID_CELL_H, TOOL_H, eased),
+    rx: lerp(1.5, 8, eased),
+  };
 }
 
 function curve(x1: number, y1: number, x2: number, y2: number): string {
@@ -69,8 +94,12 @@ const EDGES = [
   })),
 ];
 
-const HEADER_H = 28;
-const HEADER_FILL = '#1a1a1a';
+const HEADER_H = 32;
+const SURFACE_FILL = '#fff';
+const SURFACE_STROKE = '#d4d4d4';
+const LLM_FILL = '#fafafa';
+const LABEL_COLOR = '#666';
+const DIVIDER_COLOR = '#e5e5e5';
 
 const ALL_THOUGHTS = [
   '> parsing intent…',
@@ -97,24 +126,26 @@ interface BoxHeaderProps {
   showCheck?: boolean;
 }
 
-function BoxHeader({ x, y, w, rx, label, status, showCheck }: BoxHeaderProps) {
+function BoxHeader({ x, y, w, label, status, showCheck }: BoxHeaderProps) {
   return (
     <g>
-      <rect x={x} y={y} width={w} height={HEADER_H} rx={rx} fill={HEADER_FILL} />
-      <rect x={x} y={y + HEADER_H - rx} width={w} height={rx} fill={HEADER_FILL} />
-      <circle cx={x + 12} cy={y + HEADER_H / 2} r={4}
+      <circle cx={x + 14} cy={y + HEADER_H / 2} r={3.5}
               fill={statusColor(status)}
               className={status === 'active' ? 'status-pulse' : ''} />
-      <text x={x + 24} y={y + HEADER_H / 2 + 1} fontSize={10}
-            fontFamily="'Geist Mono', monospace" fill="#fff" dominantBaseline="middle">
+      <text x={x + 26} y={y + HEADER_H / 2 + 1} fontSize={10}
+            fontFamily="'Geist Mono', monospace" fill={LABEL_COLOR}
+            letterSpacing={0.8} dominantBaseline="middle">
         {label}
       </text>
       {showCheck && (
-        <text x={x + w - 16} y={y + HEADER_H / 2 + 1} fontSize={12}
-              fill="#22c55e" fontFamily="'Geist Mono', monospace" dominantBaseline="middle">
+        <text x={x + w - 14} y={y + HEADER_H / 2 + 1} fontSize={11}
+              fill="#22c55e" fontFamily="'Geist Mono', monospace"
+              textAnchor="end" dominantBaseline="middle">
           &#10003;
         </text>
       )}
+      <line x1={x + 14} y1={y + HEADER_H} x2={x + w - 14} y2={y + HEADER_H}
+            stroke={DIVIDER_COLOR} strokeWidth={1} />
     </g>
   );
 }
@@ -130,20 +161,21 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
   const [cost, setCost] = useState(0);
   const [selectedCells, setSelectedCells] = useState<Set<number>>(new Set());
   const [detaching, setDetaching] = useState(false);
-  const [detachEngaged, setDetachEngaged] = useState(false);
+  const [detachProgress, setDetachProgress] = useState(0);
   const [toolsVisible, setToolsVisible] = useState(false);
   const [toolOutputs, setToolOutputs] = useState<Record<string, string>>({});
   const [toolDone, setToolDone] = useState<Set<string>>(new Set());
   const [visibleEdges, setVisibleEdges] = useState<Set<string>>(new Set());
   const [responseVisible, setResponseVisible] = useState(false);
   const [receiptRows, setReceiptRows] = useState<number>(0);
-  const [sealVisible, setSealVisible] = useState(false);
+  const [hoveredCell, setHoveredCell] = useState<number | null>(null);
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   const schedule = useCallback((fn: () => void, ms: number) => {
     const t = setTimeout(fn, ms);
     timersRef.current.push(t);
   }, []);
+
 
   useEffect(() => {
     if (!active) {
@@ -159,14 +191,14 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
       setCost(0);
       setSelectedCells(new Set());
       setDetaching(false);
-      setDetachEngaged(false);
+      setDetachProgress(0);
       setToolsVisible(false);
       setToolOutputs({});
       setToolDone(new Set());
       setVisibleEdges(new Set());
       setResponseVisible(false);
       setReceiptRows(0);
-      setSealVisible(false);
+      setHoveredCell(null);
       return;
     }
 
@@ -197,7 +229,7 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
     schedule(() => {
       let sweepIndex = 0;
       let col = 0;
-      const SWEEP_MS = 80; // per column
+      const SWEEP_MS = 50; // per column
       const interval = setInterval(() => {
         setScanCol(col);
         col++;
@@ -245,24 +277,29 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
       onNarrate('3 tools selected. Executing plan...');
     }, 4300);
 
-    // t=4.6s — detach
+    // t=4.6s — detach: RAF-driven animation of x/y/w/h directly
     schedule(() => {
       setDetaching(true);
-      // Next animation frame, engage the transform so CSS sees a state change
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => setDetachEngaged(true));
-      });
+      const duration = 950;
+      const startT = performance.now();
+      const tick = () => {
+        const elapsed = performance.now() - startT;
+        const t = Math.min(elapsed / duration, 1);
+        setDetachProgress(t);
+        if (t < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
     }, 4600);
 
-    // t=5.2s — tool cards visible, detach rects fade out
+    // t=5.55s — tool cards visible (after 950ms detach travel), detach rects fade out
     schedule(() => {
       setToolsVisible(true);
       setPhase('tools-executing');
-    }, 5200);
+    }, 5550);
 
-    // Per-tool output streams starting at 5200 + idx*150
+    // Per-tool output streams starting at 5550 + idx*150
     TOOLS.forEach((tool, idx) => {
-      const startAt = 5200 + idx * 150;
+      const startAt = 5550 + idx * 150;
       const full = tool.output;
       const perChar = Math.max(10, Math.floor(350 / full.length));
       for (let c = 1; c <= full.length; c++) {
@@ -276,31 +313,30 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
       }, startAt + full.length * perChar + 120);
     });
 
-    // t=6.0s — tools→response edges
+    // tools→response edges
     schedule(() => {
       setVisibleEdges(prev => {
         const next = new Set(prev);
         TOOLS.forEach(t => next.add(`tool-${t.id}-response`));
         return next;
       });
-    }, 6000);
+    }, 6350);
 
-    // t=6.4s — response appears
+    // response appears
     schedule(() => {
       setResponseVisible(true);
       onNarrate('Response generated. 4.2s, $0.021 per request');
-    }, 6400);
+    }, 6750);
 
-    // t=6.5s / 6.62s / 6.74s — receipt rows reveal
-    schedule(() => setReceiptRows(1), 6500);
-    schedule(() => setReceiptRows(2), 6620);
-    schedule(() => setReceiptRows(3), 6740);
+    // receipt rows reveal
+    schedule(() => setReceiptRows(1), 6850);
+    schedule(() => setReceiptRows(2), 6970);
+    schedule(() => setReceiptRows(3), 7090);
 
-    // t=6.9s — seal wipes + phase done
+    // phase done
     schedule(() => {
-      setSealVisible(true);
       setPhase('done');
-    }, 6900);
+    }, 7250);
 
     return () => {
       timersRef.current.forEach(clearTimeout);
@@ -310,7 +346,7 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
 
   return (
     <div className="slide" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <svg width={960} height={680} viewBox="0 0 960 680">
+      <svg width={1248} height={884} viewBox="0 0 960 680">
         {EDGES.map(e => (
           <path key={e.id} d={e.d}
                 className={`svg-edge${visibleEdges.has(e.id) ? ' visible' : ''}`}
@@ -318,16 +354,17 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
         ))}
 
         {/* Customer message placeholder */}
-        <g style={{ opacity: visibleBoxes.has('customer') ? 1 : 0, transition: 'opacity 0.3s ease-out' }}>
+        <g className={phase === 'done' ? 'card-interactive' : undefined}
+           style={{ opacity: visibleBoxes.has('customer') ? 1 : 0, transition: 'opacity 0.3s ease-out' }}>
           <rect x={CUSTOMER.x} y={CUSTOMER.y} width={CUSTOMER.w} height={CUSTOMER.h}
-                rx={8} fill="#eff3ff" stroke="#c7d7fe" strokeWidth={1} />
+                rx={8} fill={SURFACE_FILL} stroke={SURFACE_STROKE} strokeWidth={1} />
           {/* Customer body */}
           <text x={CUSTOMER.x + 14} y={CUSTOMER.y + HEADER_H + 22} fontSize={36}
-                fontFamily="Georgia, serif" fill="#c7d7fe" opacity={0.7}>
+                fontFamily="Georgia, serif" fill="#ddd">
             &ldquo;
           </text>
           <text x={CUSTOMER.x + CUSTOMER.w / 2} y={CUSTOMER.y + HEADER_H + (CUSTOMER.h - HEADER_H) / 2 + 4}
-                fontSize={14} fontFamily="'Geist', sans-serif" fill="#334"
+                fontSize={14} fontFamily="'Geist', sans-serif" fill="#1a1a1a"
                 fontStyle="italic" textAnchor="middle" dominantBaseline="middle">
             Cancel my order ORD-412
           </text>
@@ -336,19 +373,23 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
         </g>
 
         {/* LLM workspace placeholder */}
-        <g style={{ opacity: visibleBoxes.has('llm') ? 1 : 0, transition: 'opacity 0.3s ease-out' }}>
+        <g className={phase === 'done' ? 'card-interactive' : undefined}
+           style={{ opacity: visibleBoxes.has('llm') ? 1 : 0, transition: 'opacity 0.3s ease-out' }}>
           <rect x={LLM.x} y={LLM.y} width={LLM.w} height={LLM.h}
-                rx={8} fill="#f6f2ff" stroke="#cbb8ff" strokeWidth={1} strokeDasharray="6,3"
-                className={llmBreathing ? 'breathe' : ''} />
+                rx={8} fill={LLM_FILL} stroke={SURFACE_STROKE} strokeWidth={1} />
+          {/* Pane divider */}
+          <line x1={LLM.x + LLM.w / 2} y1={LLM.y + HEADER_H + 8}
+                x2={LLM.x + LLM.w / 2} y2={LLM.y + LLM.h - 12}
+                stroke={DIVIDER_COLOR} strokeWidth={1} />
           <BoxHeader x={LLM.x} y={LLM.y} w={LLM.w} rx={8}
                      label="LLM REASONING"
                      status={phase === 'llm-scanning' ? 'active' : phase === 'idle' || phase === 'customer' ? 'idle' : 'done'}
                      showCheck={phase === 'tools-executing' || phase === 'response' || phase === 'done'} />
 
           {/* Left pane: tool grid */}
-          <text x={LLM_GRID_PANE.x + LLM_GRID_PANE.w / 2} y={LLM_GRID_PANE.y + 8}
-                fontSize={10} fontFamily="'Geist Mono', monospace" fill="#888"
-                textAnchor="middle" letterSpacing={1}>
+          <text x={GRID_ORIGIN_X} y={LLM_GRID_PANE.y + 8}
+                fontSize={10} fontFamily="'Geist Mono', monospace" fill={LABEL_COLOR}
+                letterSpacing={0.8}>
             128 TOOLS
           </text>
           {gridRevealed && Array.from({ length: GRID_COLS * GRID_ROWS }).map((_, i) => {
@@ -360,52 +401,54 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
 
             const isSelected = selectedCells.has(i);
             if (detaching && isSelected) return null;
-            let fill = '#e4e0f0';
-            if (isSelected) {
+            let fill = '#d4d4d4';
+            if (hoveredCell === i && !isSelected) {
+              fill = '#1a1a1a';
+            } else if (isSelected) {
               fill = '#1a1a1a';
             } else if (scanCol !== null) {
               const dist = Math.abs(col - scanCol);
               if (dist === 0) fill = '#8b5cf6';
-              else if (dist === 1) fill = '#b8a4f0';
-              else if (dist === 2) fill = '#d4c7f5';
+              else if (dist === 1) fill = '#b79df0';
+              else if (dist === 2) fill = '#d4c3ee';
             }
 
             return (
               <rect key={`cell-${i}`} x={cx} y={cy} width={GRID_CELL_W} height={GRID_CELL_H}
                     rx={1.5} fill={fill}
-                    className={`cell-reveal${isSelected ? ' cell-catch' : ''}`}
-                    style={{ animationDelay: `${delay}ms`, transition: isSelected ? 'none' : 'fill 0.12s' }} />
+                    className={`cell-reveal grid-cell${isSelected ? ' cell-catch' : ''}`}
+                    style={{ animationDelay: `${delay}ms`, transition: isSelected ? 'none' : 'fill 0.12s' }}
+                    onMouseEnter={() => setHoveredCell(i)}
+                    onMouseLeave={() => setHoveredCell(prev => (prev === i ? null : prev))} />
             );
           })}
 
           {detaching && SELECTED_CELLS.map((cellIdx, toolIdx) => {
-            const { x, y } = cellPos(cellIdx);
+            const attrs = detachRectAttrs(cellIdx, toolIdx, detachProgress);
             return (
               <rect key={`detach-${cellIdx}`}
-                    x={x} y={y} width={GRID_CELL_W} height={GRID_CELL_H}
-                    rx={1.5} fill="#1a1a1a"
+                    x={attrs.x} y={attrs.y}
+                    width={attrs.width} height={attrs.height}
+                    rx={attrs.rx} fill="#1a1a1a"
                     style={{
-                      transformBox: 'fill-box',
-                      transformOrigin: '0 0',
-                      transition: 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s 0.55s',
-                      transform: detachEngaged ? detachTransform(cellIdx, toolIdx) : 'translate(0,0) scale(1,1)',
+                      transition: 'opacity 0.25s',
                       opacity: toolsVisible ? 0 : 1,
-                    } as React.CSSProperties} />
+                    }} />
             );
           })}
 
           {/* Right pane: thought stream */}
           <text x={LLM_THOUGHT_PANE.x} y={LLM_THOUGHT_PANE.y + 8}
-                fontSize={10} fontFamily="'Geist Mono', monospace" fill="#888" letterSpacing={1}>
+                fontSize={10} fontFamily="'Geist Mono', monospace" fill={LABEL_COLOR} letterSpacing={0.8}>
             THOUGHT STREAM
           </text>
           {thoughtLines.map((line, idx) => {
             const age = thoughtLines.length - 1 - idx;
-            const opacity = Math.max(0.2, 1 - age * 0.2);
+            const opacity = Math.max(0.35, 1 - age * 0.18);
             return (
               <text key={`thought-${idx}`}
                     x={LLM_THOUGHT_PANE.x} y={LLM_THOUGHT_PANE.y + 32 + idx * 22}
-                    fontSize={12} fontFamily="'Geist Mono', monospace" fill="#444"
+                    fontSize={12} fontFamily="'Geist Mono', monospace" fill="#1a1a1a"
                     opacity={opacity}>
                 {line}
                 {idx === thoughtLines.length - 1 && (
@@ -416,17 +459,34 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
           })}
 
           {/* Bottom cost strip */}
-          <line x1={LLM_COST_STRIP.x} y1={LLM_COST_STRIP.y - 6}
-                x2={LLM_COST_STRIP.x + LLM_COST_STRIP.w} y2={LLM_COST_STRIP.y - 6}
-                stroke="#e0d8f0" strokeWidth={1} />
           <text x={LLM_COST_STRIP.x} y={LLM_COST_STRIP.y + 4}
-                fontSize={10} fontFamily="'Geist Mono', monospace" fill="#666">
+                fontSize={10} fontFamily="'Geist Mono', monospace" fill={LABEL_COLOR} letterSpacing={0.8}>
             {`TOKENS ${tokenCount}`}
           </text>
           <text x={LLM_COST_STRIP.x + LLM_COST_STRIP.w} y={LLM_COST_STRIP.y + 4}
-                fontSize={10} fontFamily="'Geist Mono', monospace" fill="#666" textAnchor="end">
+                fontSize={10} fontFamily="'Geist Mono', monospace" fill={LABEL_COLOR} textAnchor="end" letterSpacing={0.8}>
             {`$${cost.toFixed(3)}`}
           </text>
+
+          {/* Grid cell tooltip (B) */}
+          {hoveredCell !== null && (() => {
+            const pos = cellPos(hoveredCell);
+            const name = TOOL_NAMES[hoveredCell];
+            const cx = pos.x + GRID_CELL_W / 2;
+            const tipW = Math.max(84, name.length * 6.2 + 16);
+            const tipY = pos.y - 22;
+            return (
+              <g pointerEvents="none">
+                <rect x={cx - tipW / 2} y={tipY} width={tipW} height={18} rx={4}
+                      fill="#1a1a1a" />
+                <text x={cx} y={tipY + 9} fontSize={10}
+                      fontFamily="'Geist Mono', monospace" fill="#fff"
+                      textAnchor="middle" dominantBaseline="middle">
+                  {name}
+                </text>
+              </g>
+            );
+          })()}
         </g>
 
         {/* Tool card placeholders */}
@@ -436,20 +496,18 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
             const isActive = toolsVisible && !isDone;
             const output = toolOutputs[t.id] || '';
             return (
-              <g key={t.id}>
+              <g key={t.id} className={phase === 'done' ? 'card-interactive' : undefined}>
                 <rect x={t.x} y={TOOL_Y} width={TOOL_W} height={TOOL_H}
-                      rx={4} fill="#282835" stroke="#3a3a48" strokeWidth={1} />
-                {/* Amber tick signature */}
-                <rect x={t.x + 2} y={TOOL_Y + HEADER_H + 2} width={3} height={8} fill="#f59e0b" />
-                <BoxHeader x={t.x} y={TOOL_Y} w={TOOL_W} rx={4}
+                      rx={8} fill={SURFACE_FILL} stroke={SURFACE_STROKE} strokeWidth={1} />
+                <BoxHeader x={t.x} y={TOOL_Y} w={TOOL_W} rx={8}
                            label={t.label}
                            status={isDone ? 'done' : isActive ? 'active' : 'idle'}
                            showCheck={isDone} />
-                <text x={t.x + 10} y={TOOL_Y + HEADER_H + 30}
-                      fontSize={11} fontFamily="'Geist Mono', monospace" fill="#b8b8c8">
+                <text x={t.x + 14} y={TOOL_Y + HEADER_H + 26}
+                      fontSize={12} fontFamily="'Geist Mono', monospace" fill="#1a1a1a">
                   {output}
                   {isActive && output.length > 0 && output.length < t.output.length && (
-                    <tspan className="caret" fill="#f59e0b">▋</tspan>
+                    <tspan className="caret" fill="#8b5cf6">▋</tspan>
                   )}
                 </text>
               </g>
@@ -457,47 +515,42 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
           })}
         </g>
 
-        {/* Response with receipt rows and seal */}
-        <g style={{ opacity: responseVisible ? 1 : 0, transition: 'opacity 0.3s ease-out' }}>
+        {/* Response with receipt rows */}
+        <g className={phase === 'done' ? 'card-interactive' : undefined}
+           style={{ opacity: responseVisible ? 1 : 0, transition: 'opacity 0.3s ease-out' }}>
           <rect x={RESPONSE.x} y={RESPONSE.y} width={RESPONSE.w} height={RESPONSE.h}
-                rx={8} fill="#effdf4" stroke="#86efac" strokeWidth={1} />
+                rx={8} fill={SURFACE_FILL} stroke={SURFACE_STROKE} strokeWidth={1} />
           <BoxHeader x={RESPONSE.x} y={RESPONSE.y} w={RESPONSE.w} rx={8}
                      label="RESPONSE" status={phase === 'done' ? 'done' : 'idle'}
                      showCheck={phase === 'done'} />
 
           {/* Receipt rows */}
           {[
-            { label: 'time', value: '4.2s' },
-            { label: 'cost', value: '$0.021' },
-            { label: 'status', value: '✓ complete' },
+            { label: 'time', value: '4.2s', color: '#1a1a1a', pulse: false },
+            { label: 'cost', value: '$0.021', color: '#1a1a1a', pulse: false },
+            { label: 'status', value: '✓ complete', color: '#22c55e', pulse: true },
           ].map((row, idx) => {
-            const rowY = RESPONSE.y + HEADER_H + 14 + idx * 18;
+            const rowY = RESPONSE.y + HEADER_H + 16 + idx * 18;
             return receiptRows > idx ? (
               <g key={row.label} className="row-reveal">
                 <text x={RESPONSE.x + 16} y={rowY} fontSize={11}
-                      fontFamily="'Geist Mono', monospace" fill="#888">
+                      fontFamily="'Geist Mono', monospace" fill={LABEL_COLOR}>
                   {row.label}
                 </text>
                 <text x={RESPONSE.x + RESPONSE.w - 16} y={rowY} fontSize={11}
-                      fontFamily="'Geist Mono', monospace" fill="#166534"
-                      textAnchor="end">
+                      fontFamily="'Geist Mono', monospace" fill={row.color}
+                      textAnchor="end"
+                      className={row.pulse && phase === 'done' ? 'complete-pulse' : undefined}>
                   {row.value}
                 </text>
                 {idx < 2 && (
-                  <line x1={RESPONSE.x + 16} y1={rowY + 5}
-                        x2={RESPONSE.x + RESPONSE.w - 16} y2={rowY + 5}
-                        stroke="#d0ead8" strokeWidth={0.5} />
+                  <line x1={RESPONSE.x + 16} y1={rowY + 6}
+                        x2={RESPONSE.x + RESPONSE.w - 16} y2={rowY + 6}
+                        stroke={DIVIDER_COLOR} strokeWidth={1} />
                 )}
               </g>
             ) : null;
           })}
-
-          {/* Green seal bar */}
-          {sealVisible && (
-            <rect x={RESPONSE.x + 2} y={RESPONSE.y + RESPONSE.h - 5}
-                  width={RESPONSE.w - 4} height={4} rx={2} fill="#22c55e"
-                  className="seal-wipe" />
-          )}
         </g>
       </svg>
     </div>

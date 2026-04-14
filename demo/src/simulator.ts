@@ -48,12 +48,13 @@ export const TOOL_CATALOG: string[] = [
 // Determine which tools to "use" based on the message
 function getToolsForMessage(message: string): string[] {
   const lower = message.toLowerCase();
-  if (lower.includes('cancel')) return ['get_order', 'cancel_order', 'process_refund', 'send_notification'];
-  if (lower.includes('ship') || lower.includes('track') || lower.includes('where')) return ['get_order', 'get_shipping_status', 'track_shipment', 'send_notification'];
-  if (lower.includes('payment') || lower.includes('refund') || lower.includes('charge')) return ['get_order', 'get_payment_method', 'process_refund', 'send_email'];
-  if (lower.includes('return')) return ['get_order', 'create_return', 'process_refund', 'print_label'];
-  if (lower.includes('password')) return ['get_customer', 'verify_identity', 'reset_password', 'send_email'];
-  return ['get_order', 'get_customer', 'search_knowledge_base', 'send_notification'];
+  // Tool chains match real benchmark patterns (tests/benchmark/tools.ts)
+  if (lower.includes('cancel')) return ['get_order', 'cancel_order', 'refund_payment'];
+  if (lower.includes('ship') || lower.includes('track') || lower.includes('where')) return ['get_order', 'track_order', 'estimate_delivery'];
+  if (lower.includes('payment') || lower.includes('refund') || lower.includes('charge')) return ['get_order', 'get_payment_status', 'refund_payment'];
+  if (lower.includes('return')) return ['get_order', 'get_order_items', 'refund_payment'];
+  if (lower.includes('invoice') || lower.includes('receipt')) return ['get_order', 'get_invoice'];
+  return ['get_order', 'get_order_status'];
 }
 
 function getResponseForMessage(message: string): string {
