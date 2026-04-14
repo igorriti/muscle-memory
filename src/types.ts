@@ -124,7 +124,7 @@ export const DEFAULT_CONFIG: MithrilConfig = {
   embeddingModel: null as any,
   similarityThreshold: 0.85,
   confidenceThreshold: 0.90,
-  ambiguousZoneLower: 0.70,
+  ambiguousZoneLower: 0.55,
   minTracesForTemplate: 3,
   failuresToDegrade: 3,
   degradeSuccessRate: 0.70,

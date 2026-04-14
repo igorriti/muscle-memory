@@ -80,15 +80,14 @@ export async function walkGraph(
   }
 
   const allSuccess = steps.every(s => s.success);
+  const finalResponse = JSON.stringify(steps.map(s => ({ tool: s.toolName, result: s.toolOutput })));
   const trace: Trace = {
     traceId: uuid(),
     timestamp: new Date().toISOString(),
     userMessage,
     userMessageEmbedding: null,
     steps,
-    finalResponse: allSuccess
-      ? 'Request completed successfully.'
-      : 'Request partially completed. Some steps failed.',
+    finalResponse,
     totalTokens: 0,
     totalCostUsd: 0.001,
     totalLatencyMs: Date.now() - startTime,
@@ -106,6 +105,7 @@ function resolveArg(
   userArgs: Record<string, any>,
   context: Record<string, { output: any }>,
 ): any {
+  if (typeof template !== 'string') return template;
   if (!template.startsWith('{')) return template;
 
   const path = template.slice(1, -1);
