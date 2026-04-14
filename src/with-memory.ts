@@ -46,7 +46,7 @@ function toRegistry(tools: Record<string, any> | undefined): ToolRegistry {
     registry[name] = {
       name,
       description: def.description ?? '',
-      inputSchema: def.parameters ?? z.object({}),
+      inputSchema: def.inputSchema ?? def.parameters ?? z.object({}),
       outputSchema: z.any(),
       execute: def.execute ?? (async () => ({})),
       idempotent: false,
@@ -79,18 +79,18 @@ function buildTrace(prompt: string, result: any, startTime: number): Trace {
       steps.push({
         stepId: stepId++,
         toolName: tc.toolName,
-        toolInput: tc.args,
-        toolOutput: tr?.result ?? {},
+        toolInput: tc.input ?? tc.args ?? {},
+        toolOutput: tr?.output ?? tr?.result ?? {},
         latencyMs: 0,
-        success: tr ? !tr.isError : true,
+        success: tr ? !(tr as any).isError : true,
         dependsOn: stepId > 1 ? stepId - 2 : null,
       });
     }
   }
 
-  const usage = result.usage;
-  const inputCost = (usage?.promptTokens ?? 0) * 3 / 1_000_000;
-  const outputCost = (usage?.completionTokens ?? 0) * 15 / 1_000_000;
+  const usage = result.usage as any;
+  const inputCost = (usage?.inputTokens ?? usage?.promptTokens ?? 0) * 1 / 1_000_000;
+  const outputCost = (usage?.outputTokens ?? usage?.completionTokens ?? 0) * 4 / 1_000_000;
 
   return {
     traceId: uuid(),

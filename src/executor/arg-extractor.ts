@@ -46,7 +46,6 @@ export class ArgExtractor {
         schema,
         system: `Extract the following fields from the user message. If a field is not present, return null. Fields: ${argSchema.map(f => `${f.name} (${f.type}, ${f.required ? 'required' : 'optional'}): ${f.description}`).join('; ')}`,
         prompt: userMessage,
-        temperature: 0,
       });
 
       const missing = argSchema

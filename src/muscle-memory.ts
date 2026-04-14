@@ -35,7 +35,7 @@ function toRegistry(tools: Record<string, any>): ToolRegistry {
     registry[name] = {
       name,
       description: def.description ?? '',
-      inputSchema: def.parameters ?? z.object({}),
+      inputSchema: def.inputSchema ?? def.parameters ?? z.object({}),
       outputSchema: z.any(),
       execute: def.execute ?? (async () => ({})),
       idempotent: false,
@@ -74,15 +74,7 @@ export function muscleMemory(userConfig: MuscleMemoryConfig) {
   const matcher = new IntentMatcher(store, config);
   const extractor = new ArgExtractor(config);
   const tracer = new Tracer(store, config);
-
-  // Wait for async store init (sql.js) before first operation
-  const storeReady = ('waitReady' in store && typeof (store as any).waitReady === 'function')
-    ? (store as any).waitReady().then(() => matcher.reload())
-    : Promise.resolve().then(() => matcher.reload());
-  let initialized = false;
-  const ensureReady = async () => {
-    if (!initialized) { await storeReady; initialized = true; }
-  };
+  matcher.reload();
 
   return {
     async run(params: { messages?: any[]; prompt?: string }): Promise<{
@@ -92,7 +84,6 @@ export function muscleMemory(userConfig: MuscleMemoryConfig) {
       latencyMs: number;
       costUsd: number;
     }> {
-      await ensureReady();
       const startTime = Date.now();
       const prompt = extractPrompt(params);
       if (!prompt) throw new Error('No prompt or messages provided');
@@ -166,8 +157,8 @@ export function muscleMemory(userConfig: MuscleMemoryConfig) {
           steps.push({
             stepId: stepId++,
             toolName: tc.toolName,
-            toolInput: tc.args ?? {},
-            toolOutput: tr?.result ?? {},
+            toolInput: tc.input ?? tc.args ?? {},
+            toolOutput: tr?.output ?? tr?.result ?? {},
             latencyMs: 0,
             success: tr ? !tr.isError : true,
             dependsOn: stepId > 1 ? stepId - 2 : null,
@@ -177,7 +168,7 @@ export function muscleMemory(userConfig: MuscleMemoryConfig) {
 
       const usage = (result as any).usage;
       const costUsd = usage
-        ? ((usage.promptTokens ?? 0) * 3 + (usage.completionTokens ?? 0) * 15) / 1_000_000
+        ? ((usage.inputTokens ?? usage.promptTokens ?? 0) * 1 + (usage.outputTokens ?? usage.completionTokens ?? 0) * 4) / 1_000_000
         : 0;
 
       const trace: Trace = {
@@ -217,7 +208,6 @@ export function muscleMemory(userConfig: MuscleMemoryConfig) {
     },
 
     async learn() {
-      await ensureReady();
       const { runLearningPipeline } = await import('./learner/pipeline.js');
       const result = await runLearningPipeline(store, config, {});
       matcher.reload();

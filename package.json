@@ -8,20 +8,21 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "test": "vitest run",
-    "test:integration": "vitest run tests/integration"
+    "test:integration": "vitest run tests/integration",
+    "benchmark": "NODE_OPTIONS='--max-old-space-size=8192' tsx tests/benchmark/run.ts"
   },
   "dependencies": {
-    "@ai-sdk/anthropic": "^3.0.69",
-    "@ai-sdk/openai": "^3.0.52",
-    "@types/sql.js": "^1.4.11",
-    "ai": "^6.0.159",
+    "@ai-sdk/anthropic": "^3.0.0",
+    "@ai-sdk/openai": "^3.0.0",
+    "ai": "^6.0.0",
     "ml-distance": "^4.0.0",
-    "sql.js": "^1.14.1",
     "uuid": "^10.0.0",
-    "zod": "^3.23.0"
+    "zod": "^4.0.0"
   },
   "devDependencies": {
     "@types/uuid": "^10.0.0",
+    "dotenv": "^17.4.2",
+    "tsx": "^4.21.0",
     "typescript": "^5.5.0",
     "vitest": "^2.0.0"
   }

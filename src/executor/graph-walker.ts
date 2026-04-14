@@ -25,7 +25,13 @@ export async function walkGraph(
     }
 
     const toolDef = tools[node.tool];
-    if (!toolDef) throw new Error(`Tool "${node.tool}" not found in registry`);
+    if (!toolDef) {
+      // Template references a tool the LLM hallucinated — skip this node
+      context[node.id] = { output: { error: `Unknown tool: ${node.tool}` } };
+      steps.push({ stepId: stepId++, toolName: node.tool, toolInput: resolvedArgs, toolOutput: { error: `Unknown tool: ${node.tool}` }, latencyMs: 0, success: false, dependsOn: stepId > 1 ? stepId - 2 : null, error: `Unknown tool: ${node.tool}` });
+      currentNodeId = null;
+      continue;
+    }
 
     const toolStart = Date.now();
     let toolOutput: any;
@@ -80,15 +86,14 @@ export async function walkGraph(
   }
 
   const allSuccess = steps.every(s => s.success);
+  const finalResponse = JSON.stringify(steps.map(s => ({ tool: s.toolName, result: s.toolOutput })));
   const trace: Trace = {
     traceId: uuid(),
     timestamp: new Date().toISOString(),
     userMessage,
     userMessageEmbedding: null,
     steps,
-    finalResponse: allSuccess
-      ? 'Request completed successfully.'
-      : 'Request partially completed. Some steps failed.',
+    finalResponse,
     totalTokens: 0,
     totalCostUsd: 0.001,
     totalLatencyMs: Date.now() - startTime,
@@ -106,6 +111,7 @@ function resolveArg(
   userArgs: Record<string, any>,
   context: Record<string, { output: any }>,
 ): any {
+  if (typeof template !== 'string') return template;
   if (!template.startsWith('{')) return template;
 
   const path = template.slice(1, -1);

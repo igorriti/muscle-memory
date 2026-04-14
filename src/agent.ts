@@ -14,7 +14,7 @@ export async function runAgent(
   for (const [name, def] of Object.entries(tools)) {
     aiTools[name] = tool({
       description: def.description,
-      parameters: def.inputSchema as any,
+      inputSchema: def.inputSchema as any,
       execute: def.execute,
     } as any);
   }
@@ -39,8 +39,8 @@ export async function runAgent(
       steps.push({
         stepId: stepId++,
         toolName: tc.toolName,
-        toolInput: tc.args ?? {},
-        toolOutput: toolResult?.result ?? {},
+        toolInput: tc.input ?? tc.args ?? {},
+        toolOutput: toolResult?.output ?? toolResult?.result ?? {},
         latencyMs: 0,
         success: toolResult ? !toolResult.isError : true,
         dependsOn: stepId > 1 ? stepId - 2 : null,
