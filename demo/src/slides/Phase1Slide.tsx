@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
+import { NODE_STYLES, HEADER_COLOR, HEADER_H, type NodeCategory } from '../nodeStyles';
 
 interface SlideProps {
   active: boolean;
@@ -8,13 +9,14 @@ interface SlideProps {
 
 type NodeStatus = 'idle' | 'active' | 'done';
 
+
 const NODE_DEFS = [
-  { id: 'customer', label: 'CUSTOMER MESSAGE', x: 130, y: 20, w: 200, h: 80, body: 'Cancel my order ORD-412' },
-  { id: 'llm', label: 'LLM REASONING', x: 130, y: 150, w: 200, h: 80, body: 'Analyzing intent...' },
-  { id: 'get_order', label: 'GET_ORDER', x: 60, y: 300, w: 100, h: 60, body: '' },
-  { id: 'cancel_order', label: 'CANCEL_ORDER', x: 180, y: 300, w: 120, h: 60, body: '' },
-  { id: 'process_refund', label: 'PROCESS_REFUND', x: 320, y: 300, w: 130, h: 60, body: '' },
-  { id: 'response', label: 'RESPONSE', x: 130, y: 420, w: 200, h: 80, body: '4.2s -- $0.021' },
+  { id: 'customer', label: 'CUSTOMER MESSAGE', x: 100, y: 20, w: 260, h: 100, body: 'Cancel my order ORD-412', category: 'input' as NodeCategory },
+  { id: 'llm', label: 'LLM REASONING', x: 100, y: 170, w: 260, h: 100, body: 'Analyzing intent...', category: 'reasoning' as NodeCategory },
+  { id: 'get_order', label: 'GET_ORDER', x: 30, y: 330, w: 140, h: 80, body: '', category: 'tool' as NodeCategory },
+  { id: 'cancel_order', label: 'CANCEL_ORDER', x: 190, y: 330, w: 140, h: 80, body: '', category: 'tool' as NodeCategory },
+  { id: 'process_refund', label: 'PROCESS_REFUND', x: 350, y: 330, w: 155, h: 80, body: '', category: 'tool' as NodeCategory },
+  { id: 'response', label: 'RESPONSE', x: 100, y: 460, w: 260, h: 100, body: '4.2s -- $0.021', category: 'response' as NodeCategory },
 ];
 
 const EDGE_DEFS = [
@@ -174,9 +176,6 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
     // 6.0s
     schedule(() => onNarrate('Response generated. 4.2s, $0.021 per request'), 6000);
 
-    // 7.5s
-    schedule(() => onComplete(), 7500);
-
     return () => {
       timersRef.current.forEach(clearTimeout);
       timersRef.current = [];
@@ -190,79 +189,64 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
   const renderNode = (def: typeof NODE_DEFS[0]) => {
     const isVisible = visibleNodes.has(def.id);
     const status = nodeStatus[def.id] || 'idle';
-    const headerH = 24;
     const isLlm = def.id === 'llm';
+    const style = NODE_STYLES[def.category];
 
     return (
-      <g
-        key={def.id}
-        className={`svg-node${isVisible ? ' visible' : ''}`}
-      >
+      <g key={def.id} className={`svg-node${isVisible ? ' visible' : ''}`}>
         {/* Container */}
-        <rect x={def.x} y={def.y} width={def.w} height={def.h} rx={6} fill="#fff" stroke="#eaeaea" strokeWidth={1} />
-        {/* Dark header */}
-        <rect x={def.x} y={def.y} width={def.w} height={headerH} rx={6} fill="#1a1a1a" />
-        <rect x={def.x} y={def.y + headerH - 6} width={def.w} height={6} fill="#1a1a1a" />
+        <rect x={def.x} y={def.y} width={def.w} height={def.h} rx={style.rx}
+              fill={style.bodyFill} stroke={style.bodyStroke} strokeWidth={1}
+              strokeDasharray={style.bodyStrokeDash || undefined} />
+        {/* Header */}
+        <rect x={def.x} y={def.y} width={def.w} height={HEADER_H} rx={style.rx} fill={HEADER_COLOR} />
+        <rect x={def.x} y={def.y + HEADER_H - style.rx} width={def.w} height={style.rx} fill={HEADER_COLOR} />
+        {/* Left accent bar */}
+        {style.hasLeftBar && (
+          <rect x={def.x + 1} y={def.y + HEADER_H} width={3} height={def.h - HEADER_H - 1}
+                fill={style.accentColor} />
+        )}
+        {/* Inner border (embedding) */}
+        {style.hasInnerBorder && (
+          <rect x={def.x + 4} y={def.y + HEADER_H + 4} width={def.w - 8} height={def.h - HEADER_H - 8}
+                rx={Math.max(style.rx - 4, 2)} fill="none" stroke="#d0d0d0" strokeWidth={1} strokeDasharray="3,3" />
+        )}
         {/* Status light */}
-        <circle
-          cx={def.x + 10}
-          cy={def.y + headerH / 2}
-          r={3}
-          fill={statusColor(status)}
-          className={status === 'active' ? 'status-pulse' : ''}
-        />
+        <circle cx={def.x + 12} cy={def.y + HEADER_H / 2} r={4}
+                fill={statusColor(status)} className={status === 'active' ? 'status-pulse' : ''} />
         {/* Header text */}
-        <text
-          x={def.x + 20}
-          y={def.y + headerH / 2 + 1}
-          fontSize={8}
-          fontFamily="'Geist Mono', monospace"
-          fill="#fff"
-          dominantBaseline="middle"
-        >
+        <text x={def.x + 24} y={def.y + HEADER_H / 2 + 1} fontSize={10}
+              fontFamily="'Geist Mono', monospace" fill="#fff" dominantBaseline="middle">
           {def.label}
         </text>
         {/* Done checkmark */}
         {status === 'done' && (
-          <text
-            x={def.x + def.w - 14}
-            y={def.y + headerH / 2 + 1}
-            fontSize={10}
-            fill="#22c55e"
-            dominantBaseline="middle"
-            fontFamily="'Geist Mono', monospace"
-          >
+          <text x={def.x + def.w - 16} y={def.y + HEADER_H / 2 + 1} fontSize={12}
+                fill="#22c55e" dominantBaseline="middle" fontFamily="'Geist Mono', monospace">
             &#10003;
           </text>
         )}
         {/* Body content */}
         {def.body && (
-          <text
-            x={def.x + def.w / 2}
-            y={def.y + headerH + (def.h - headerH) / 2}
-            fontSize={10}
-            fontFamily="'Geist Mono', monospace"
-            fill="#666"
-            textAnchor="middle"
-            dominantBaseline="middle"
-          >
+          <text x={def.x + def.w / 2} y={def.y + HEADER_H + (def.h - HEADER_H) / 2}
+                fontSize={13} fontFamily="'Geist Mono', monospace" fill={style.textFill}
+                textAnchor="middle" dominantBaseline="middle">
             {def.body}
           </text>
         )}
         {/* LLM progress bar */}
         {isLlm && (
           <g>
-            <rect x={def.x + 12} y={def.y + def.h - 16} width={def.w - 24} height={3} rx={1.5} fill="#eaeaea" />
-            <rect
-              x={def.x + 12}
-              y={def.y + def.h - 16}
-              width={(def.w - 24) * (llmProgress / 100)}
-              height={3}
-              rx={1.5}
-              fill={llmProgress >= 100 ? '#22c55e' : '#1a1a1a'}
-              style={{ transition: 'width 0.3s' }}
-            />
+            <rect x={def.x + 12} y={def.y + def.h - 18} width={def.w - 24} height={3} rx={1.5} fill="#d0d0d0" />
+            <rect x={def.x + 12} y={def.y + def.h - 18}
+                  width={(def.w - 24) * (llmProgress / 100)} height={3} rx={1.5}
+                  fill={llmProgress >= 100 ? '#22c55e' : style.accentColor}
+                  style={{ transition: 'width 0.3s' }} />
           </g>
+        )}
+        {/* Bottom bar (response) */}
+        {style.hasBottomBar && (
+          <rect x={def.x + 2} y={def.y + def.h - 5} width={def.w - 4} height={4} rx={2} fill={style.accentColor} />
         )}
       </g>
     );
@@ -284,7 +268,7 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
   };
 
   const renderToolGrid = () => {
-    const startX = 500;
+    const startX = 540;
     const startY = 50;
     const cellW = 20;
     const cellH = 14;
@@ -321,7 +305,7 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
         <text
           x={startX + (TOOL_GRID_COLS * (cellW + gap) - gap) / 2}
           y={startY - 12}
-          fontSize={10}
+          fontSize={12}
           fontFamily="'Geist Mono', monospace"
           fill="#999"
           textAnchor="middle"
@@ -335,7 +319,7 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
 
   return (
     <div className="slide" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <svg width={900} height={520} viewBox="0 0 900 520">
+      <svg width={960} height={560} viewBox="0 0 960 560">
         {/* Edges behind nodes */}
         {EDGE_DEFS.map(renderEdge)}
         {/* Nodes */}

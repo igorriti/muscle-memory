@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { HeroSlide } from './slides/HeroSlide';
 import { Phase1Slide } from './slides/Phase1Slide';
 import { LearningSlide } from './slides/LearningSlide';
@@ -23,11 +23,30 @@ export function App() {
     setCurrentSlide(s => Math.min(s + 1, TOTAL_SLIDES - 1));
   }, []);
 
+  const goToPrev = useCallback(() => {
+    setCurrentSlide(s => Math.max(s - 1, 0));
+  }, []);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+        e.preventDefault();
+        goToNext();
+      } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        goToPrev();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [goToNext, goToPrev]);
+
   return (
     <>
       {/* Header */}
       <header className="header" style={{ position: 'fixed', top: 0, zIndex: 100, width: '100%', background: 'white', borderBottom: '1px solid #eaeaea', height: 48, display: 'flex', alignItems: 'center', padding: '0 24px' }}>
-        <span className="header-logo">aig</span>
+        <img src="/muscle.jpeg" alt="Muscle Memory" style={{ width: 28, height: 28, borderRadius: 6, marginRight: 8 }} />
+        <span className="header-logo">Muscle Memory</span>
         <span className="header-label" style={{ color: '#999', fontSize: 13, marginLeft: 16, fontFamily: "'Geist Mono', monospace" }}>
           {SLIDE_LABELS[currentSlide]}
         </span>
@@ -73,6 +92,7 @@ export function App() {
         <Phase3Slide active={currentSlide === 3} onComplete={goToNext} onNarrate={setNarration} />
         <PlaygroundSlide active={currentSlide === 4} onComplete={() => {}} onNarrate={setNarration} />
       </div>
+
     </>
   );
 }

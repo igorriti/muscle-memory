@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
+import { NODE_STYLES, HEADER_COLOR, HEADER_H, type NodeCategory } from '../nodeStyles';
 
 interface SlideProps {
   active: boolean;
@@ -113,9 +114,6 @@ export function Phase3Slide({ active, onComplete, onNarrate }: SlideProps) {
     // 5.0s
     schedule(() => onNarrate(''), 5000);
 
-    // 5.5s
-    schedule(() => onComplete(), 5500);
-
     return () => {
       timersRef.current.forEach(clearTimeout);
       timersRef.current = [];
@@ -124,22 +122,50 @@ export function Phase3Slide({ active, onComplete, onNarrate }: SlideProps) {
 
   const renderNode = (
     x: number, y: number, w: number, h: number,
-    label: string, nodeId: string, bodyContent: React.ReactNode,
+    label: string, nodeId: string, bodyContent: React.ReactNode, category: NodeCategory,
   ) => {
     const state = nodes[nodeId];
     if (!state?.visible) return null;
     const status = state.status;
+    const style = NODE_STYLES[category];
     return (
       <g key={nodeId} className={`svg-node ${state.visible ? 'visible' : ''}`} style={{ animationDelay: '0s' }}>
-        <rect x={x} y={y} width={w} height={h} rx={6} fill="#fff" stroke="#eaeaea" strokeWidth={1} />
-        <rect x={x} y={y} width={w} height={24} rx={6} fill="#1a1a1a" />
-        <rect x={x} y={y + 18} width={w} height={6} fill="#1a1a1a" />
-        <circle cx={x + 14} cy={y + 12} r={3} fill={statusColor(status)} className={status === 'active' ? 'status-pulse' : ''} />
-        <text x={x + 24} y={y + 16} fill="#fff" fontSize={10} fontFamily="'Geist Mono', monospace" style={{ textTransform: 'uppercase' } as any}>{label}</text>
-        {status === 'done' && (
-          <text x={x + w - 14} y={y + 13} fontSize={10} fill="#22c55e" fontFamily="'Geist Mono', monospace">&#10003;</text>
+        {/* Container */}
+        <rect x={x} y={y} width={w} height={h} rx={style.rx}
+              fill={style.bodyFill} stroke={style.bodyStroke} strokeWidth={1}
+              strokeDasharray={style.bodyStrokeDash || undefined} />
+        {/* Header */}
+        <rect x={x} y={y} width={w} height={HEADER_H} rx={style.rx} fill={HEADER_COLOR} />
+        <rect x={x} y={y + HEADER_H - style.rx} width={w} height={style.rx} fill={HEADER_COLOR} />
+        {/* Left accent bar */}
+        {style.hasLeftBar && (
+          <rect x={x + 1} y={y + HEADER_H} width={3} height={h - HEADER_H - 1}
+                fill={style.accentColor} />
         )}
+        {/* Inner border (embedding) */}
+        {style.hasInnerBorder && (
+          <rect x={x + 4} y={y + HEADER_H + 4} width={w - 8} height={h - HEADER_H - 8}
+                rx={Math.max(style.rx - 4, 2)} fill="none" stroke="#d0d0d0" strokeWidth={1} strokeDasharray="3,3" />
+        )}
+        {/* Status light */}
+        <circle cx={x + 14} cy={y + 15} r={4}
+                fill={statusColor(status)} className={status === 'active' ? 'status-pulse' : ''} />
+        {/* Header text */}
+        <text x={x + 24} y={y + 19} fill="#fff" fontSize={10}
+              fontFamily="'Geist Mono', monospace" style={{ textTransform: 'uppercase' } as any}>
+          {label}
+        </text>
+        {/* Checkmark */}
+        {status === 'done' && (
+          <text x={x + w - 16} y={y + 16} fontSize={10} fill="#22c55e"
+                fontFamily="'Geist Mono', monospace">&#10003;</text>
+        )}
+        {/* Body content */}
         {bodyContent}
+        {/* Bottom bar (response) */}
+        {style.hasBottomBar && (
+          <rect x={x + 2} y={y + h - 5} width={w - 4} height={4} rx={2} fill={style.accentColor} />
+        )}
       </g>
     );
   };
@@ -165,10 +191,10 @@ export function Phase3Slide({ active, onComplete, onNarrate }: SlideProps) {
   const renderMiniDag = (bx: number, by: number) => {
     // Diamond pattern: top, left, right, bottom
     const miniNodes = [
-      { x: bx + 80, y: by + 30 },  // top
-      { x: bx + 60, y: by + 48 },  // left
-      { x: bx + 100, y: by + 48 }, // right
-      { x: bx + 80, y: by + 66 },  // bottom
+      { x: bx + 96, y: by + 36 },  // top
+      { x: bx + 72, y: by + 58 },  // left
+      { x: bx + 120, y: by + 58 }, // right
+      { x: bx + 96, y: by + 80 },  // bottom
     ];
     const miniEdges = [
       [0, 1], [0, 2], [1, 3], [2, 3],
@@ -178,10 +204,10 @@ export function Phase3Slide({ active, onComplete, onNarrate }: SlideProps) {
         {miniEdges.map(([from, to], i) => (
           <line
             key={`mini-e-${i}`}
-            x1={miniNodes[from].x + 10}
-            y1={miniNodes[from].y + 7}
-            x2={miniNodes[to].x + 10}
-            y2={miniNodes[to].y + 7}
+            x1={miniNodes[from].x + 12}
+            y1={miniNodes[from].y + 9}
+            x2={miniNodes[to].x + 12}
+            y2={miniNodes[to].y + 9}
             stroke="#ccc"
             strokeWidth={1}
           />
@@ -191,8 +217,8 @@ export function Phase3Slide({ active, onComplete, onNarrate }: SlideProps) {
             key={`mini-n-${i}`}
             x={n.x}
             y={n.y}
-            width={20}
-            height={14}
+            width={24}
+            height={18}
             rx={3}
             fill={dagLit.has(i) ? '#22c55e' : '#eaeaea'}
             style={{ transition: 'fill 0.1s' }}
@@ -202,50 +228,55 @@ export function Phase3Slide({ active, onComplete, onNarrate }: SlideProps) {
     );
   };
 
-  const cx = 130; // x position for all nodes
-  const nw = 180; // node width
+  const cx = 110; // x position for all nodes
+  const nw = 240; // node width
 
   return (
     <div className="slide" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div style={{ display: 'flex', gap: 64, alignItems: 'flex-start', paddingTop: 96 }}>
         {/* Left: SVG Diagram */}
-        <svg width={440} height={480} viewBox="0 0 440 480">
+        <svg width={480} height={600} viewBox="0 0 480 600">
           {/* Edges */}
-          {renderEdge('e-input-embed', cx + nw / 2, 80, cx + nw / 2, 110)}
-          {renderEdge('e-embed-template', cx + nw / 2, 170, cx + nw / 2, 200)}
-          {renderEdge('e-template-dag', cx + nw / 2, 260, cx + nw / 2, 290)}
-          {renderEdge('e-dag-response', cx + nw / 2, 380, cx + nw / 2, 400)}
+          {renderEdge('e-input-embed', cx + nw / 2, 100, cx + nw / 2, 130)}
+          {renderEdge('e-embed-template', cx + nw / 2, 210, cx + nw / 2, 240)}
+          {renderEdge('e-template-dag', cx + nw / 2, 320, cx + nw / 2, 350)}
+          {renderEdge('e-dag-response', cx + nw / 2, 460, cx + nw / 2, 490)}
 
           {/* Input */}
-          {renderNode(cx, 20, nw, 60, 'Input', 'input',
-            <text x={cx + 10} y={y(20, 44)} fill="#666" fontSize={11} fontFamily="'Geist Mono', monospace">Cancel order ORD-789</text>
+          {renderNode(cx, 20, nw, 80, 'Input', 'input',
+            <text x={cx + 10} y={y(20, 50)} fill={NODE_STYLES.input.textFill} fontSize={13} fontFamily="'Geist Mono', monospace">Cancel order ORD-789</text>,
+            'input',
           )}
 
           {/* Embedding Search */}
-          {renderNode(cx, 110, nw, 60, 'Embedding Search', 'embedding',
+          {renderNode(cx, 130, nw, 80, 'Embedding Search', 'embedding',
             <g>
-              <text x={cx + 10} y={y(110, 44)} fill="#666" fontSize={11} fontFamily="'Geist Mono', monospace">similarity: 0.94</text>
-              <rect x={cx + 130} y={y(110, 40)} width={36} height={6} rx={3} fill="#eaeaea" />
-              <rect x={cx + 130} y={y(110, 40)} width={34} height={6} rx={3} fill="#22c55e" />
-            </g>
+              <text x={cx + 10} y={y(130, 50)} fill={NODE_STYLES.embedding.textFill} fontSize={13} fontFamily="'Geist Mono', monospace">similarity: 0.94</text>
+              <rect x={cx + 180} y={y(130, 46)} width={44} height={6} rx={3} fill="#d0d0d0" />
+              <rect x={cx + 180} y={y(130, 46)} width={42} height={6} rx={3} fill="#14b8a6" />
+            </g>,
+            'embedding',
           )}
 
           {/* Template Match */}
-          {renderNode(cx, 200, nw, 60, 'Template Match', 'template',
+          {renderNode(cx, 240, nw, 80, 'Template Match', 'template',
             <g>
-              <text x={cx + 10} y={y(200, 40)} fill="#666" fontSize={11} fontFamily="'Geist Mono', monospace">cancel_order</text>
-              <text x={cx + 10} y={y(200, 54)} fill="#22c55e" fontSize={10} fontFamily="'Geist Mono', monospace">conf: 0.97</text>
-            </g>
+              <text x={cx + 10} y={y(240, 50)} fill={NODE_STYLES.template.textFill} fontSize={13} fontFamily="'Geist Mono', monospace">cancel_order</text>
+              <text x={cx + 10} y={y(240, 66)} fill="#eab308" fontSize={12} fontFamily="'Geist Mono', monospace">conf: 0.97</text>
+            </g>,
+            'template',
           )}
 
           {/* DAG Execution */}
-          {renderNode(cx, 290, nw, 90, 'DAG Execution', 'dag',
-            renderMiniDag(cx, 290)
+          {renderNode(cx, 350, nw, 110, 'DAG Execution', 'dag',
+            renderMiniDag(cx, 350),
+            'dag',
           )}
 
           {/* Response */}
-          {renderNode(cx, 400, nw, 60, 'Response', 'response',
-            <text x={cx + 10} y={y(400, 44)} fill="#22c55e" fontSize={11} fontFamily="'Geist Mono', monospace" fontWeight={600}>180ms -- $0.001</text>
+          {renderNode(cx, 490, nw, 80, 'Response', 'response',
+            <text x={cx + 10} y={y(490, 50)} fill="#22c55e" fontSize={13} fontFamily="'Geist Mono', monospace" fontWeight={600}>180ms -- $0.001</text>,
+            'response',
           )}
         </svg>
 

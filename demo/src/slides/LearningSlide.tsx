@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
+import { NODE_STYLES, HEADER_COLOR, HEADER_H, type NodeCategory } from '../nodeStyles';
 
 interface SlideProps {
   active: boolean;
@@ -22,11 +23,11 @@ const VECTORS = [
 ];
 
 const NODE_DEFS = [
-  { id: 'traces', label: 'TRACES', x: 20, y: 100, w: 160, h: 120 },
-  { id: 'embeddings', label: 'EMBEDDINGS', x: 220, y: 100, w: 140, h: 120 },
-  { id: 'clustering', label: 'CLUSTERING', x: 400, y: 100, w: 140, h: 120 },
-  { id: 'template', label: 'TEMPLATE STORE', x: 580, y: 100, w: 180, h: 120 },
-  { id: 'graph', label: 'GRAPH EXTRACTION', x: 260, y: 300, w: 300, h: 140 },
+  { id: 'traces', label: 'TRACES', x: 20, y: 80, w: 190, h: 140, category: 'data' as NodeCategory },
+  { id: 'embeddings', label: 'EMBEDDINGS', x: 240, y: 80, w: 170, h: 140, category: 'embedding' as NodeCategory },
+  { id: 'clustering', label: 'CLUSTERING', x: 440, y: 80, w: 170, h: 140, category: 'data' as NodeCategory },
+  { id: 'template', label: 'TEMPLATE STORE', x: 640, y: 80, w: 210, h: 140, category: 'template' as NodeCategory },
+  { id: 'graph', label: 'GRAPH EXTRACTION', x: 260, y: 300, w: 340, h: 160, category: 'dag' as NodeCategory },
 ];
 
 const EDGE_DEFS = [
@@ -199,9 +200,6 @@ export function LearningSlide({ active, onComplete, onNarrate }: SlideProps) {
     // 7.0s
     schedule(() => onNarrate('Ready for Phase 3.'), 7000);
 
-    // 8.5s
-    schedule(() => onComplete(), 8500);
-
     return () => {
       timersRef.current.forEach(clearTimeout);
       timersRef.current = [];
@@ -209,8 +207,7 @@ export function LearningSlide({ active, onComplete, onNarrate }: SlideProps) {
   }, [active]);
 
   const renderNodeBody = (id: string, def: typeof NODE_DEFS[0]) => {
-    const headerH = 24;
-    const bodyY = def.y + headerH + 6;
+    const bodyY = def.y + HEADER_H + 8;
     const bodyX = def.x + 8;
 
     if (id === 'traces') {
@@ -218,8 +215,8 @@ export function LearningSlide({ active, onComplete, onNarrate }: SlideProps) {
         <text
           key={`trace-${i}`}
           x={bodyX}
-          y={bodyY + i * 16}
-          fontSize={10}
+          y={bodyY + i * 20}
+          fontSize={13}
           fontFamily="'Geist Mono', monospace"
           fill="#666"
           opacity={i < visibleTraces ? 1 : 0}
@@ -235,8 +232,8 @@ export function LearningSlide({ active, onComplete, onNarrate }: SlideProps) {
         <text
           key={`vec-${i}`}
           x={bodyX}
-          y={bodyY + i * 16}
-          fontSize={10}
+          y={bodyY + i * 20}
+          fontSize={13}
           fontFamily="'Geist Mono', monospace"
           fill="#666"
           opacity={showVectors ? 1 : 0}
@@ -250,7 +247,7 @@ export function LearningSlide({ active, onComplete, onNarrate }: SlideProps) {
     if (id === 'clustering') {
       // Mini dot visualization
       const cx = def.x + def.w / 2;
-      const cy = def.y + headerH + (def.h - headerH) / 2;
+      const cy = def.y + HEADER_H + (def.h - HEADER_H) / 2;
       const spread = clusterPhase === 0 ? 0 : clusterPhase === 1 ? 30 : 6;
       const dotPositions = [
         { dx: -spread, dy: -spread * 0.6 },
@@ -275,7 +272,7 @@ export function LearningSlide({ active, onComplete, onNarrate }: SlideProps) {
             <text
               x={cx}
               y={cy + 28}
-              fontSize={10}
+              fontSize={13}
               fontFamily="'Geist Mono', monospace"
               fill="#999"
               textAnchor="middle"
@@ -290,13 +287,13 @@ export function LearningSlide({ active, onComplete, onNarrate }: SlideProps) {
     if (id === 'template') {
       return (
         <>
-          <text x={bodyX} y={bodyY + 4} fontSize={11} fontFamily="'Geist Mono', monospace" fill="#1a1a1a" fontWeight={600}>
+          <text x={bodyX} y={bodyY + 4} fontSize={13} fontFamily="'Geist Mono', monospace" fill="#1a1a1a" fontWeight={600}>
             cancel_order
           </text>
-          <text x={bodyX} y={bodyY + 22} fontSize={10} fontFamily="'Geist Mono', monospace" fill="#999">
+          <text x={bodyX} y={bodyY + 22} fontSize={13} fontFamily="'Geist Mono', monospace" fill="#999">
             Confidence: 0.97
           </text>
-          <text x={bodyX} y={bodyY + 38} fontSize={10} fontFamily="'Geist Mono', monospace" fill="#999">
+          <text x={bodyX} y={bodyY + 38} fontSize={13} fontFamily="'Geist Mono', monospace" fill="#999">
             Executions: 847
           </text>
         </>
@@ -306,7 +303,7 @@ export function LearningSlide({ active, onComplete, onNarrate }: SlideProps) {
     if (id === 'graph') {
       // Mini DAG inside the graph extraction node
       const gx = def.x + 20;
-      const gy = def.y + headerH + 20;
+      const gy = def.y + HEADER_H + 20;
       const miniNodes = [
         { id: 'mn-get', label: 'get_order', x: gx, y: gy },
         { id: 'mn-cancel', label: 'cancel_order', x: gx + 90, y: gy },
@@ -325,18 +322,18 @@ export function LearningSlide({ active, onComplete, onNarrate }: SlideProps) {
           {graphPhase >= 2 && miniEdges.map((e, i) => (
             <g key={`me-${i}`}>
               <line
-                x1={e.from.x + 30}
-                y1={e.from.y + 10}
+                x1={e.from.x + 35}
+                y1={e.from.y + 12}
                 x2={e.to.x}
-                y2={e.to.y + 10}
+                y2={e.to.y + 12}
                 stroke="#ccc"
                 strokeWidth={1}
                 strokeDasharray={e.dashed ? '3,3' : 'none'}
               />
               <text
-                x={(e.from.x + 30 + e.to.x) / 2}
+                x={(e.from.x + 35 + e.to.x) / 2}
                 y={(e.from.y + e.to.y) / 2 + 6}
-                fontSize={8}
+                fontSize={10}
                 fontFamily="'Geist Mono', monospace"
                 fill="#999"
                 textAnchor="middle"
@@ -351,17 +348,17 @@ export function LearningSlide({ active, onComplete, onNarrate }: SlideProps) {
               <rect
                 x={mn.x}
                 y={mn.y}
-                width={60}
-                height={20}
+                width={70}
+                height={24}
                 rx={3}
                 fill="#fafafa"
                 stroke="#eaeaea"
                 strokeWidth={1}
               />
               <text
-                x={mn.x + 30}
-                y={mn.y + 12}
-                fontSize={7}
+                x={mn.x + 35}
+                y={mn.y + 14}
+                fontSize={9}
                 fontFamily="'Geist Mono', monospace"
                 fill="#666"
                 textAnchor="middle"
@@ -380,37 +377,39 @@ export function LearningSlide({ active, onComplete, onNarrate }: SlideProps) {
   const renderNode = (def: typeof NODE_DEFS[0]) => {
     const isVisible = visibleNodes.has(def.id);
     const status = nodeStatus[def.id] || 'idle';
-    const headerH = 24;
+    const style = NODE_STYLES[def.category];
 
     return (
-      <g
-        key={def.id}
-        className={`svg-node${isVisible ? ' visible' : ''}`}
-      >
+      <g key={def.id} className={`svg-node${isVisible ? ' visible' : ''}`}>
         {/* Container */}
-        <rect x={def.x} y={def.y} width={def.w} height={def.h} rx={6} fill="#fff" stroke="#eaeaea" strokeWidth={1} />
-        {/* Dark header */}
-        <rect x={def.x} y={def.y} width={def.w} height={headerH} rx={6} fill="#1a1a1a" />
-        <rect x={def.x} y={def.y + headerH - 6} width={def.w} height={6} fill="#1a1a1a" />
+        <rect x={def.x} y={def.y} width={def.w} height={def.h} rx={style.rx}
+              fill={style.bodyFill} stroke={style.bodyStroke} strokeWidth={1}
+              strokeDasharray={style.bodyStrokeDash || undefined} />
+        {/* Header */}
+        <rect x={def.x} y={def.y} width={def.w} height={HEADER_H} rx={style.rx} fill={HEADER_COLOR} />
+        <rect x={def.x} y={def.y + HEADER_H - style.rx} width={def.w} height={style.rx} fill={HEADER_COLOR} />
+        {/* Left accent bar */}
+        {style.hasLeftBar && (
+          <rect x={def.x + 1} y={def.y + HEADER_H} width={3} height={def.h - HEADER_H - 1}
+                fill={style.accentColor} />
+        )}
+        {/* Inner border (embedding) */}
+        {style.hasInnerBorder && (
+          <rect x={def.x + 4} y={def.y + HEADER_H + 4} width={def.w - 8} height={def.h - HEADER_H - 8}
+                rx={Math.max(style.rx - 4, 2)} fill="none" stroke="#d0d0d0" strokeWidth={1} strokeDasharray="3,3" />
+        )}
         {/* Status light */}
-        <circle
-          cx={def.x + 10}
-          cy={def.y + headerH / 2}
-          r={3}
-          fill={statusColor(status)}
-          className={status === 'active' ? 'status-pulse' : ''}
-        />
+        <circle cx={def.x + 12} cy={def.y + HEADER_H / 2} r={4}
+                fill={statusColor(status)} className={status === 'active' ? 'status-pulse' : ''} />
         {/* Header text */}
-        <text
-          x={def.x + 20}
-          y={def.y + headerH / 2 + 1}
-          fontSize={8}
-          fontFamily="'Geist Mono', monospace"
-          fill="#fff"
-          dominantBaseline="middle"
-        >
+        <text x={def.x + 24} y={def.y + HEADER_H / 2 + 1} fontSize={10}
+              fontFamily="'Geist Mono', monospace" fill="#fff" dominantBaseline="middle">
           {def.label}
         </text>
+        {/* Bottom bar (response) */}
+        {style.hasBottomBar && (
+          <rect x={def.x + 2} y={def.y + def.h - 5} width={def.w - 4} height={4} rx={2} fill={style.accentColor} />
+        )}
         {/* Body content */}
         {renderNodeBody(def.id, def)}
       </g>
@@ -434,7 +433,7 @@ export function LearningSlide({ active, onComplete, onNarrate }: SlideProps) {
 
   return (
     <div className="slide" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <svg width={900} height={480} viewBox="0 0 900 480">
+      <svg width={960} height={520} viewBox="0 0 960 520">
         {/* Edges behind nodes */}
         {EDGE_DEFS.map(renderEdge)}
         {/* Nodes */}

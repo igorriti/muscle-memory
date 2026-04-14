@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback } from 'react';
 import { simulatePhase1, simulatePhase3, TOOL_CATALOG, SimResult } from '../simulator';
+import { NODE_STYLES, HEADER_COLOR, HEADER_H, type NodeCategory } from '../nodeStyles';
 
 interface SlideProps {
   active: boolean;
@@ -14,6 +15,7 @@ interface NodeEntry {
   label: string;
   status: NodeStatus;
   bodyText?: string;
+  category: NodeCategory;
 }
 
 interface ChatEntry {
@@ -34,24 +36,51 @@ const PRESETS = [
 
 function renderNode(
   x: number, y: number, w: number, h: number,
-  label: string, status: NodeStatus, visible: boolean, bodyText?: string,
+  label: string, status: NodeStatus, visible: boolean, bodyText?: string, category: NodeCategory = 'tool',
 ) {
   if (!visible) return null;
+  const style = NODE_STYLES[category];
   return (
     <g className={`svg-node ${visible ? 'visible' : ''}`} style={{ animationDelay: '0s' }}>
-      <rect x={x} y={y} width={w} height={h} rx={6} fill="white" stroke="#eaeaea" strokeWidth={1} />
-      <rect x={x} y={y} width={w} height={24} rx={6} fill="#1a1a1a" />
-      <rect x={x} y={y + 18} width={w} height={6} fill="#1a1a1a" />
+      {/* Container */}
+      <rect x={x} y={y} width={w} height={h} rx={style.rx}
+            fill={style.bodyFill} stroke={style.bodyStroke} strokeWidth={1}
+            strokeDasharray={style.bodyStrokeDash || undefined} />
+      {/* Header */}
+      <rect x={x} y={y} width={w} height={HEADER_H} rx={style.rx} fill={HEADER_COLOR} />
+      <rect x={x} y={y + HEADER_H - style.rx} width={w} height={style.rx} fill={HEADER_COLOR} />
+      {/* Left accent bar */}
+      {style.hasLeftBar && (
+        <rect x={x + 1} y={y + HEADER_H} width={3} height={h - HEADER_H - 1}
+              fill={style.accentColor} />
+      )}
+      {/* Inner border (embedding) */}
+      {style.hasInnerBorder && (
+        <rect x={x + 4} y={y + HEADER_H + 4} width={w - 8} height={h - HEADER_H - 8}
+              rx={Math.max(style.rx - 4, 2)} fill="none" stroke="#d0d0d0" strokeWidth={1} strokeDasharray="3,3" />
+      )}
+      {/* Status light */}
       <circle
-        cx={x + 14} cy={y + 12} r={3}
+        cx={x + 14} cy={y + HEADER_H / 2} r={4}
         fill={status === 'done' ? '#22c55e' : status === 'active' ? '#eab308' : '#999'}
         className={status === 'active' ? 'status-pulse' : ''}
       />
-      <text x={x + 24} y={y + 16} fill="white" fontSize={10} fontFamily="'Geist Mono', monospace" style={{ textTransform: 'uppercase' } as any}>
+      {/* Header text */}
+      <text x={x + 24} y={y + HEADER_H / 2 + 1} fill="white" fontSize={10}
+            fontFamily="'Geist Mono', monospace" dominantBaseline="middle"
+            style={{ textTransform: 'uppercase' } as any}>
         {label}
       </text>
+      {/* Body text */}
       {bodyText && (
-        <text x={x + 10} y={y + 44} fill="#666" fontSize={11} fontFamily="'Geist Mono', monospace">{bodyText}</text>
+        <text x={x + 10} y={y + HEADER_H + (h - HEADER_H) / 2 + 1} fill={style.textFill} fontSize={12}
+              fontFamily="'Geist Mono', monospace" dominantBaseline="middle">
+          {bodyText}
+        </text>
+      )}
+      {/* Bottom bar (response) */}
+      {style.hasBottomBar && (
+        <rect x={x + 2} y={y + h - 5} width={w - 4} height={4} rx={2} fill={style.accentColor} />
       )}
     </g>
   );
@@ -82,11 +111,11 @@ export function PlaygroundSlide({ active, onNarrate }: SlideProps) {
 
   const upsertNode = useCallback((
     setter: React.Dispatch<React.SetStateAction<NodeEntry[]>>,
-    id: string, label: string, status: NodeStatus, bodyText?: string,
+    id: string, label: string, status: NodeStatus, bodyText?: string, category: NodeCategory = 'tool',
   ) => {
     setter(prev => {
       const idx = prev.findIndex(n => n.id === id);
-      const entry: NodeEntry = { id, label, status, bodyText };
+      const entry: NodeEntry = { id, label, status, bodyText, category };
       if (idx >= 0) {
         const next = [...prev];
         next[idx] = entry;
@@ -131,13 +160,13 @@ export function PlaygroundSlide({ active, onNarrate }: SlideProps) {
       if (currentRun !== runIdRef.current) return;
       const name = data?.name as string | undefined;
       if (stepId === 'intent') {
-        upsertNode(setP1Nodes, 'intent', 'Intent Analysis', status, status === 'done' ? 'intent: order_cancellation' : 'Analyzing...');
+        upsertNode(setP1Nodes, 'intent', 'Intent Analysis', status, status === 'done' ? 'intent: order_cancellation' : 'Analyzing...', 'reasoning');
       } else if (stepId === 'reasoning') {
-        upsertNode(setP1Nodes, 'reasoning', 'LLM Reasoning', status, status === 'done' ? 'Plan generated' : 'Reasoning...');
+        upsertNode(setP1Nodes, 'reasoning', 'LLM Reasoning', status, status === 'done' ? 'Plan generated' : 'Reasoning...', 'reasoning');
       } else if (stepId.startsWith('tool_')) {
         upsertNode(setP1Nodes, stepId, name || stepId, status, status === 'done' ? 'ok' : 'executing...');
       } else if (stepId === 'response') {
-        upsertNode(setP1Nodes, 'response', 'Response', status, status === 'done' ? '4.2s -- $0.021' : 'Generating...');
+        upsertNode(setP1Nodes, 'response', 'Response', status, status === 'done' ? '4.2s -- $0.021' : 'Generating...', 'response');
       }
     }).then(result => {
       p1Result = result;
@@ -151,17 +180,17 @@ export function PlaygroundSlide({ active, onNarrate }: SlideProps) {
       const name = data?.name as string | undefined;
       if (stepId === 'embedding') {
         upsertNode(setP3Nodes, 'embedding', 'Embedding Search', status,
-          `similarity: ${data?.similarity ?? '0.94'}`);
+          `similarity: ${data?.similarity ?? '0.94'}`, 'embedding');
       } else if (stepId === 'template') {
         upsertNode(setP3Nodes, 'template', 'Template Match', status,
-          `${data?.name ?? 'match'} (${data?.confidence ?? '0.97'})`);
+          `${data?.name ?? 'match'} (${data?.confidence ?? '0.97'})`, 'template');
       } else if (stepId === 'extraction') {
         upsertNode(setP3Nodes, 'extraction', 'Arg Extraction', status,
           status === 'done' ? `order_id: ${data?.order_id ?? 'ORD-412'}` : 'extracting...');
       } else if (stepId.startsWith('tool_')) {
         upsertNode(setP3Nodes, stepId, name || stepId, status, status === 'done' ? 'ok' : 'exec...');
       } else if (stepId === 'response') {
-        upsertNode(setP3Nodes, 'response', 'Response', status, '180ms -- $0.001');
+        upsertNode(setP3Nodes, 'response', 'Response', status, '180ms -- $0.001', 'response');
       }
     }).then(result => {
       p3Result = result;
@@ -180,8 +209,8 @@ export function PlaygroundSlide({ active, onNarrate }: SlideProps) {
   };
 
   const renderCanvas = (nodes: NodeEntry[], label: string) => {
-    const nw = 160;
-    const nh = 56;
+    const nw = 200;
+    const nh = 72;
     const cx = 20;
     const startY = 12;
     const gap = 16;
@@ -205,13 +234,13 @@ export function PlaygroundSlide({ active, onNarrate }: SlideProps) {
           {label}
         </div>
         <div style={{ flex: 1, overflow: 'auto', padding: 8 }}>
-          <svg width="100%" height={svgHeight} viewBox={`0 0 220 ${svgHeight}`}>
+          <svg width="100%" height={svgHeight} viewBox={`0 0 260 ${svgHeight}`}>
             {nodes.map((node, i) => {
               const ny = startY + i * (nh + gap);
               return (
                 <g key={node.id}>
                   {i > 0 && renderEdge(cx + nw / 2, ny - gap, ny, true)}
-                  {renderNode(cx, ny, nw, nh, node.label, node.status, true, node.bodyText)}
+                  {renderNode(cx, ny, nw, nh, node.label, node.status, true, node.bodyText, node.category)}
                 </g>
               );
             })}
