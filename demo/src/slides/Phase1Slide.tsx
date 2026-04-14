@@ -36,6 +36,25 @@ const GRID_ORIGIN_X = LLM_GRID_PANE.x + (LLM_GRID_PANE.w - (GRID_COLS * (GRID_CE
 const GRID_ORIGIN_Y = LLM_GRID_PANE.y + 20;
 const SELECTED_CELLS = [19, 54, 87]; // which cells become tools
 
+function cellPos(i: number) {
+  const col = i % GRID_COLS;
+  const row = Math.floor(i / GRID_COLS);
+  return {
+    x: GRID_ORIGIN_X + col * (GRID_CELL_W + GRID_GAP),
+    y: GRID_ORIGIN_Y + row * (GRID_CELL_H + GRID_GAP),
+  };
+}
+
+function detachTransform(cellIdx: number, toolIdx: number): string {
+  const from = cellPos(cellIdx);
+  const to = { x: TOOLS[toolIdx].x, y: TOOL_Y };
+  const dx = to.x - from.x;
+  const dy = to.y - from.y;
+  const sx = TOOL_W / GRID_CELL_W;
+  const sy = TOOL_H / GRID_CELL_H;
+  return `translate(${dx}, ${dy}) scale(${sx}, ${sy})`;
+}
+
 const HEADER_H = 28;
 const HEADER_FILL = '#1a1a1a';
 
@@ -96,6 +115,9 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
   const [tokenCount, setTokenCount] = useState(0);
   const [cost, setCost] = useState(0);
   const [selectedCells, setSelectedCells] = useState<Set<number>>(new Set());
+  const [detaching, setDetaching] = useState(false);
+  const [detachEngaged, setDetachEngaged] = useState(false);
+  const [toolsVisible, setToolsVisible] = useState(false);
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   const schedule = useCallback((fn: () => void, ms: number) => {
@@ -116,6 +138,9 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
       setTokenCount(0);
       setCost(0);
       setSelectedCells(new Set());
+      setDetaching(false);
+      setDetachEngaged(false);
+      setToolsVisible(false);
       return;
     }
 
@@ -191,6 +216,21 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
       onNarrate('3 tools selected. Executing plan...');
     }, 4300);
 
+    // t=4.6s — detach
+    schedule(() => {
+      setDetaching(true);
+      // Next animation frame, engage the transform so CSS sees a state change
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => setDetachEngaged(true));
+      });
+    }, 4600);
+
+    // t=5.2s — tool cards visible, detach rects fade out
+    schedule(() => {
+      setToolsVisible(true);
+      setPhase('tools-executing');
+    }, 5200);
+
     return () => {
       timersRef.current.forEach(clearTimeout);
       timersRef.current = [];
@@ -242,6 +282,7 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
             const delay = (col + row) * 20;
 
             const isSelected = selectedCells.has(i);
+            if (detaching && isSelected) return null;
             let fill = '#e4e0f0';
             if (isSelected) {
               fill = '#1a1a1a';
@@ -257,6 +298,22 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
                     rx={1.5} fill={fill}
                     className={`cell-reveal${isSelected ? ' cell-catch' : ''}`}
                     style={{ animationDelay: `${delay}ms`, transition: isSelected ? 'none' : 'fill 0.12s' }} />
+            );
+          })}
+
+          {detaching && SELECTED_CELLS.map((cellIdx, toolIdx) => {
+            const { x, y } = cellPos(cellIdx);
+            return (
+              <rect key={`detach-${cellIdx}`}
+                    x={x} y={y} width={GRID_CELL_W} height={GRID_CELL_H}
+                    rx={1.5} fill="#1a1a1a"
+                    style={{
+                      transformBox: 'fill-box',
+                      transformOrigin: '0 0',
+                      transition: 'transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s 0.55s',
+                      transform: detachEngaged ? detachTransform(cellIdx, toolIdx) : 'translate(0,0) scale(1,1)',
+                      opacity: toolsVisible ? 0 : 1,
+                    } as React.CSSProperties} />
             );
           })}
 
@@ -296,7 +353,7 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
         </g>
 
         {/* Tool card placeholders */}
-        <g style={{ opacity: 0 }}>
+        <g style={{ opacity: toolsVisible ? 1 : 0, transition: 'opacity 0.25s' }}>
           {TOOLS.map(t => (
             <g key={t.id}>
               <rect x={t.x} y={TOOL_Y} width={TOOL_W} height={TOOL_H}
