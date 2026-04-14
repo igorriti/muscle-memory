@@ -74,26 +74,40 @@ export class IntentMatcher {
       value: userMessage,
     });
 
-    let bestMatch: MatchResult | null = null;
-    let bestSimilarity = -1;
+    // Collect all candidates above the ambiguous zone
+    const candidates: { templateId: string; similarity: number }[] = [];
 
     for (const template of this.templates) {
       if (!template.embedding || template.embedding.length === 0) continue;
       const sim = cosine(embedding, template.embedding);
-      if (sim > bestSimilarity) {
-        bestSimilarity = sim;
-        bestMatch = {
-          templateId: template.templateId,
-          similarity: sim,
-          matchType: 'embedding',
-        };
+      if (sim >= this.config.ambiguousZoneLower) {
+        candidates.push({ templateId: template.templateId, similarity: sim });
       }
     }
 
-    if (!bestMatch || bestMatch.similarity < this.config.ambiguousZoneLower) {
-      return null;
+    if (candidates.length === 0) return null;
+
+    // If multiple candidates are close (within 0.05 of best),
+    // prefer the one whose tool names appear in the query
+    candidates.sort((a, b) => b.similarity - a.similarity);
+    const best = candidates[0];
+    const closeOnes = candidates.filter(c => c.similarity >= best.similarity - 0.05);
+
+    if (closeOnes.length > 1) {
+      // Disambiguate by checking tool names in query
+      for (const candidate of closeOnes) {
+        const tpl = this.templates.find(t => t.templateId === candidate.templateId);
+        if (!tpl) continue;
+        const toolWords = tpl.graph.nodes.map(n =>
+          n.tool.replace(/_/g, ' ').toLowerCase()
+        );
+        // Does the query mention any of this template's specific tools?
+        if (toolWords.some(tw => normalized.includes(tw))) {
+          return { templateId: candidate.templateId, similarity: candidate.similarity, matchType: 'embedding' as const };
+        }
+      }
     }
 
-    return bestMatch;
+    return { templateId: best.templateId, similarity: best.similarity, matchType: 'embedding' as const };
   }
 }

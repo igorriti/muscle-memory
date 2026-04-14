@@ -20,11 +20,10 @@ export async function runLearningPipeline(
   const unclassified = store.getUnclassifiedTraces();
   if (unclassified.length === 0) return { templatesCreated: 0, templatesUpdated: 0 };
 
-  // Cluster by FIRST tool called — traces that start with the same tool
-  // likely represent the same intent even if subsequent tools vary.
-  // This groups "get_order → cancel_order" and "get_order → cancel_order → send_notification"
-  // into the same cluster, then the graph extraction builds the branches.
-  const clusters = clusterByFirstTool(unclassified);
+  // Cluster by exact tool sequence — only traces that called the exact same
+  // tools in the same order belong together. This prevents "cancel order"
+  // and "track order" from merging just because both start with get_order.
+  const clusters = clusterByToolSequence(unclassified);
 
   let created = 0;
   let updated = 0;
@@ -78,18 +77,17 @@ export async function runLearningPipeline(
 // ════════════════════════════════════════════
 
 /**
- * Cluster by the first tool called.
- * "Cancel order" queries always start with cancel_order or get_order.
- * "Track order" queries start with track_order.
- * This creates broader clusters than exact-sequence matching,
- * letting the graph extraction build branches.
+ * Cluster by exact tool-call sequence.
+ * Only traces calling the exact same tools in the same order cluster together.
+ * This prevents "cancel order" [cancel_order] from merging with
+ * "track order" [track_order] even though both mention "order".
  */
-function clusterByFirstTool(traces: Trace[]): Trace[][] {
+function clusterByToolSequence(traces: Trace[]): Trace[][] {
   const groups = new Map<string, Trace[]>();
   for (const t of traces) {
-    const firstTool = t.steps[0]?.toolName ?? '(none)';
-    if (!groups.has(firstTool)) groups.set(firstTool, []);
-    groups.get(firstTool)!.push(t);
+    const key = t.steps.map(s => s.toolName).join('→') || '(none)';
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key)!.push(t);
   }
   return [...groups.values()];
 }
