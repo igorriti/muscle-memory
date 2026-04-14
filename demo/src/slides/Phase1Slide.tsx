@@ -39,6 +39,13 @@ const SELECTED_CELLS = [19, 54, 87]; // which cells become tools
 const HEADER_H = 28;
 const HEADER_FILL = '#1a1a1a';
 
+const ALL_THOUGHTS = [
+  '> parsing intent…',
+  '> matching: order ops…',
+  '> candidates: 7 → 3',
+  '> plan: get · cancel · refund',
+];
+
 type Status = 'idle' | 'active' | 'done';
 
 function statusColor(s: Status): string {
@@ -85,6 +92,9 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
   const [gridRevealed, setGridRevealed] = useState(false);
   const [llmBreathing, setLlmBreathing] = useState(false);
   const [scanCol, setScanCol] = useState<number | null>(null);
+  const [thoughtLines, setThoughtLines] = useState<string[]>([]);
+  const [tokenCount, setTokenCount] = useState(0);
+  const [cost, setCost] = useState(0);
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   const schedule = useCallback((fn: () => void, ms: number) => {
@@ -101,6 +111,9 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
       setGridRevealed(false);
       setLlmBreathing(false);
       setScanCol(null);
+      setThoughtLines([]);
+      setTokenCount(0);
+      setCost(0);
       return;
     }
 
@@ -142,6 +155,30 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
         }
       }, SWEEP_MS);
       timersRef.current.push(interval as unknown as ReturnType<typeof setTimeout>);
+    }, 1800);
+
+    // Thought stream: one line every 500ms starting at t=1.9s
+    ALL_THOUGHTS.forEach((line, idx) => {
+      schedule(() => {
+        setThoughtLines(prev => [...prev, line].slice(-4));
+      }, 1900 + idx * 550);
+    });
+
+    // Cost/token ticker: ramp 0→842 tokens and $0→$0.021 over 2.5s starting at t=1.8s
+    schedule(() => {
+      const startT = performance.now();
+      const duration = 2500;
+      const tick = () => {
+        const elapsed = performance.now() - startT;
+        const t = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - t, 2); // ease-out
+        setTokenCount(Math.round(eased * 842));
+        setCost(eased * 0.021);
+        if (t < 1) {
+          requestAnimationFrame(tick);
+        }
+      };
+      requestAnimationFrame(tick);
     }, 1800);
 
     return () => {
@@ -211,11 +248,26 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
             );
           })}
 
-          {/* Right pane: thought stream placeholder */}
+          {/* Right pane: thought stream */}
           <text x={LLM_THOUGHT_PANE.x} y={LLM_THOUGHT_PANE.y + 8}
                 fontSize={10} fontFamily="'Geist Mono', monospace" fill="#888" letterSpacing={1}>
             THOUGHT STREAM
           </text>
+          {thoughtLines.map((line, idx) => {
+            const age = thoughtLines.length - 1 - idx;
+            const opacity = Math.max(0.2, 1 - age * 0.2);
+            return (
+              <text key={`thought-${idx}`}
+                    x={LLM_THOUGHT_PANE.x} y={LLM_THOUGHT_PANE.y + 32 + idx * 22}
+                    fontSize={12} fontFamily="'Geist Mono', monospace" fill="#444"
+                    opacity={opacity}>
+                {line}
+                {idx === thoughtLines.length - 1 && (
+                  <tspan className="caret" fill="#8b5cf6">▋</tspan>
+                )}
+              </text>
+            );
+          })}
 
           {/* Bottom cost strip */}
           <line x1={LLM_COST_STRIP.x} y1={LLM_COST_STRIP.y - 6}
@@ -223,11 +275,11 @@ export function Phase1Slide({ active, onComplete, onNarrate }: SlideProps) {
                 stroke="#e0d8f0" strokeWidth={1} />
           <text x={LLM_COST_STRIP.x} y={LLM_COST_STRIP.y + 4}
                 fontSize={10} fontFamily="'Geist Mono', monospace" fill="#666">
-            TOKENS 0
+            {`TOKENS ${tokenCount}`}
           </text>
           <text x={LLM_COST_STRIP.x + LLM_COST_STRIP.w} y={LLM_COST_STRIP.y + 4}
                 fontSize={10} fontFamily="'Geist Mono', monospace" fill="#666" textAnchor="end">
-            $0.000
+            {`$${cost.toFixed(3)}`}
           </text>
         </g>
 
