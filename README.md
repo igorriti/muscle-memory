@@ -1,6 +1,6 @@
 # muscle-memory
 
-Agents that learn. Wrap AI SDK's `generateText` — your agent gets faster and cheaper with every request.
+Agents that learn. Wrap AI SDK's `generateText` — your agent gets faster and cheaper with every request. Currently being used on [roomix.ai](https://roomix.ai) to improve the performance of repetitive agent tasks in the field of real estate.
 
 ```bash
 npm install muscle-memory
