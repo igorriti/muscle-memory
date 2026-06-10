@@ -143,4 +143,7 @@ Source: `tests/benchmark/run.ts`. Tool catalog: `tests/benchmark/tools.ts`. Quer
 cd demo && npm install && npm run dev
 ```
 
+This is being used internally on [roomix.ai](https://roomix.ai)
+
+
 Five-slide walkthrough of Phase 1 → learning → Phase 3, backed by the real query set and benchmark numbers above.
